@@ -9,6 +9,8 @@ import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
+import 'package:fido_and_kitch/player.dart';
+
 void main() {
   final game = MyGame();
 
@@ -55,6 +57,10 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector {
     add(Square()
       ..x = 100
       ..y = 100);
+
+    add(Player()
+      ..x = 200
+      ..y = 200);
   }
 
   @override
