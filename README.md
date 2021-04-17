@@ -1,6 +1,12 @@
-# fido_and_kitch
+# fido and kitch
 
 A new Flutter project.
+
+## Install
+
+## Develop
+
+    flutter run
 
 ## Getting Started
 
