@@ -8,6 +8,9 @@ import 'package:flame/components/mixins/has_game_ref.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flame/components/animation_component.dart';
+import 'package:flame/animation.dart';
+import 'package:flame/sprite.dart';
 
 import 'package:fido_and_kitch/player.dart';
 
@@ -58,7 +61,9 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector {
       ..x = 100
       ..y = 100);
 
-    add(Player()
+    Player p = Player();
+    p.load();
+    add(p
       ..x = 200
       ..y = 200);
   }

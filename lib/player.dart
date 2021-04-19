@@ -1,26 +1,37 @@
+import 'dart:ui';
 
+import 'package:flame/animation.dart';
 import 'package:flame/components/animation_component.dart';
-import 'package:galaxygame/dragon.dart';
-import 'package:galaxygame/main.dart';
+import 'package:flame/components/component.dart';
+import 'package:flame/components/mixins/resizable.dart';
+import 'package:flame/sprite.dart';
 
-// https://pub.dev/documentation/flame/latest/components_animation_component/AnimationComponent-class.html
-// https://github.com/GeekyAnts/flutter-galaxy-game/blob/master/lib/explosion.dart
-// 
-// 
-const DRAGON_SIZE = 40.0;
+// https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
+class Player extends PositionComponent with Resizable {
 
-class Player extends AnimationComponent {
-  static const TIME = 0.75;
+  AnimationComponent comp;
 
-  Player()
-      : super.sequenced(DRAGON_SIZE, DRAGON_SIZE, 'cat_walk.png', 7,
-            textureWidth: 31.0, textureHeight: 31.0) {
-    //this.x = dragon.x;
-    //this.y = dragon.y;
-    this.animation.stepTime = TIME / 7;
+  load() {
+    // https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
+    double width = 542;
+    double height = 474;
+    comp = AnimationComponent(width, height, 
+      Animation.spriteList([
+          Sprite(
+            'Walk (1).png',
+            width: width,
+            height: height
+          )
+        ], 
+        stepTime: 0.2,
+        loop: true
+      )
+    );
+
   }
 
-  //bool destroy() {
-  //  return this.animation.isLastFrame;
-  //}
+  @override
+  void render(Canvas c) {
+    comp.render(c);
+  }
 }
