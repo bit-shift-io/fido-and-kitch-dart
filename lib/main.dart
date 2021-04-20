@@ -62,7 +62,6 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector {
       ..y = 100);
 
     Player p = Player();
-    p.load();
     add(p
       ..x = 200
       ..y = 200);

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flame/flame.dart';
 import 'package:flame/animation.dart';
 import 'package:flame/components/animation_component.dart';
 import 'package:flame/components/component.dart';
@@ -11,17 +12,20 @@ class Player extends PositionComponent with Resizable {
 
   AnimationComponent comp;
 
-  load() {
+  Player() : super();
+
+  Future<void> onLoad() async {
+    Image image = await Flame.images.load('cat/Walk (1).png');
+    
     // https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
     double width = 542;
     double height = 474;
+
+    final sprite = Sprite.fromImage(image, width: width, height: height);
+
     comp = AnimationComponent(width, height, 
       Animation.spriteList([
-          Sprite(
-            'Walk (1).png',
-            width: width,
-            height: height
-          )
+          sprite
         ], 
         stepTime: 0.2,
         loop: true
@@ -32,6 +36,8 @@ class Player extends PositionComponent with Resizable {
 
   @override
   void render(Canvas c) {
-    comp.render(c);
+    if (comp != null) {
+      comp.render(c);
+    }
   }
 }
