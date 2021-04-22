@@ -9,3 +9,6 @@ animations:
     stepTime: 0.2
     loop: true
     frames: 10
+states:
+  - name: Walk
+    movementSpeed: 200

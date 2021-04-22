@@ -7,10 +7,12 @@ import 'package:flame/gestures.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/has_game_ref.dart';
 import 'package:flame/game.dart';
+import 'package:flame/keyboard.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fido_and_kitch/player.dart';
+import 'package:flutter/services.dart';
 
 class Palette {
   static const PaletteEntry white = BasicPalette.white;
@@ -44,9 +46,11 @@ class Square extends PositionComponent with HasGameRef<MyGame> {
   }
 }
 
-class MyGame extends BaseGame with DoubleTapDetector, TapDetector {
+class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
   final double squareSize = 128;
   bool running = true;
+
+  List<Player> players = List();
 
   MyGame() {
     add(Square()
@@ -54,9 +58,17 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector {
       ..y = 100);
 
     Player p = Player();
+    players.add(p);
     add(p
       ..x = 200
       ..y = 200);
+  }
+
+  @override
+  void onKeyEvent(e) {
+    for (Player p in players) {
+      p.onKeyEvent(e);
+    }
   }
 
   @override
