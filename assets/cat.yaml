@@ -1,0 +1,11 @@
+name: Kitch
+directory: cat
+animations:
+  - name: Idle
+    stepTime: 0.2
+    loop: true
+    frames: 10
+  - name: Walk
+    stepTime: 0.2
+    loop: true
+    frames: 10

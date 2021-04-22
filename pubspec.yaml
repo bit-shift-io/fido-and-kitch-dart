@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flame: ^0.29.4
   flame_splash_screen: 0.0.1
+  yaml: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +53,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
+    - assets/
     - assets/images/cat/
     - assets/images/dog/
 

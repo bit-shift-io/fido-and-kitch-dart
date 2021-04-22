@@ -4,6 +4,8 @@ import 'package:flame/animation.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/flame.dart';
 import 'dart:ui';
+import "package:flutter/services.dart" as s;
+import "package:yaml/yaml.dart";
 
 List<int> range(start, end) {
   return new List<int>.generate(end - start, (i) => start + i + 1);
@@ -27,4 +29,11 @@ AnimationComponent animationComponentFromSprites(List<Sprite> sprites, {double s
   );
 
   return comp;
+}
+
+dynamic loadYamlFromFile(String fileName) async {
+  final data = await s.rootBundle.loadString(fileName);
+  final mapData = loadYaml(data);
+  print(mapData);
+  return mapData;
 }

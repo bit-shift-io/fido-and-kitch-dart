@@ -8,30 +8,46 @@ import 'package:fido_and_kitch/player_animations.dart';
 // https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
 class Player extends PositionComponent with Resizable {
 
-  AnimationComponent comp;
+  Map<String, AnimationComponent> animations = Map();
+  AnimationComponent currentAnimation;
 
   Player() : super() {
-    print("player constructed");
     onLoad();
   }
 
+  addAnimation(String name, AnimationComponent animationComponent) {
+    animations[name] = animationComponent;
+  }
+
   Future<void> onLoad() async {
-    print("onLoad in player");
-    comp = animationComponentFromSprites(await spritesFromFilenames(walk('cat')), stepTime: 0.2, loop: true);
+    var yaml = await loadYamlFromFile('cat.yaml');
+    String dir = yaml['directory'];
+    var anims = yaml['animations'];
+    for (var a in anims) {
+      addAnimation(a['name'], animationComponentFromSprites(await spritesFromFilenames(anim(dir, a['name'], a['frames'])), stepTime: a['stepTime'], loop: a['loop']));
+    }
+
+    setAnimation('Idle');
+  }
+
+  void setAnimation(animationName) {
+    currentAnimation = animations[animationName];
   }
 
   @override
   void render(Canvas c) {
-    if (comp != null) {
-      comp.render(c);
+    if (currentAnimation != null) {
+      currentAnimation.render(c);
     }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    if (comp != null) {
-      comp.update(dt);
+    if (currentAnimation != null) {
+      currentAnimation.x = x;
+      currentAnimation.y = y;
+      currentAnimation.update(dt);
     }
   }
 }
