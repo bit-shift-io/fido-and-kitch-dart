@@ -1,43 +1,37 @@
 import 'dart:ui';
-
-import 'package:flame/flame.dart';
-import 'package:flame/animation.dart';
 import 'package:flame/components/animation_component.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
-import 'package:flame/sprite.dart';
+import 'package:fido_and_kitch/utils.dart';
+import 'package:fido_and_kitch/player_animations.dart';
 
 // https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
 class Player extends PositionComponent with Resizable {
 
   AnimationComponent comp;
 
-  Player() : super();
+  Player() : super() {
+    print("player constructed");
+    onLoad();
+  }
 
   Future<void> onLoad() async {
-    Image image = await Flame.images.load('cat/Walk (1).png');
-    
-    // https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
-    double width = 542;
-    double height = 474;
-
-    final sprite = Sprite.fromImage(image, width: width, height: height);
-
-    comp = AnimationComponent(width, height, 
-      Animation.spriteList([
-          sprite
-        ], 
-        stepTime: 0.2,
-        loop: true
-      )
-    );
-
+    print("onLoad in player");
+    comp = animationComponentFromSprites(await spritesFromFilenames(walk('cat')), stepTime: 0.2, loop: true);
   }
 
   @override
   void render(Canvas c) {
     if (comp != null) {
       comp.render(c);
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (comp != null) {
+      comp.update(dt);
     }
   }
 }
