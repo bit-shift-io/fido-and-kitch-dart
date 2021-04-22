@@ -1,6 +1,6 @@
-# fido and kitch
+# Fido and Kitch
 
-A new Flutter project.
+Lurid Land made with Flutter and Flame.
 
 ## Install
 
@@ -8,15 +8,8 @@ A new Flutter project.
 
     flutter run
 
-## Getting Started
+## Assets
 
-This project is a starting point for a Flutter application.
+Here are a list of assets we use in the game and their source of origin.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Cat & Dog - https://opengameart.org/content/cat-dog-free-sprites
