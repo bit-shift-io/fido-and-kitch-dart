@@ -7,6 +7,7 @@ import 'package:flame/components/mixins/resizable.dart';
 import 'package:tiled/tiled.dart';
 
 import 'game.dart';
+import 'tiled_map.dart';
 import 'utils.dart';
 import 'player_animations.dart';
 import 'input_action.dart';
@@ -85,7 +86,10 @@ class Player extends PositionComponent with Resizable, ChildComponents, HasGameR
     // hrmmm
     // TODO: maybe use the players position to compute the x, y of the grid the player is on
     // then get tiles to left right, bottom, top etc, to make sure they can move
-    List<Tile> intersectingTiles = (gameRef as MyGame).map.rectIntersectingTiles(toRect());
+    //List<Tile> intersectingTiles = (gameRef as MyGame).map.rectIntersectingTiles(toRect());
+    TiledMap map = (gameRef as MyGame).map;
+    dynamic tileCoords = map.worldToTileSpace(x: x, y: y);
+    Tile t = map.getTile(x: tileCoords.x, y: tileCoords.y, layerName: 'Ground');
 
     if (currentAnimation != null) {
       currentAnimation.x = x;

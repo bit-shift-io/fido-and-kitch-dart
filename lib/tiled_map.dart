@@ -99,4 +99,25 @@ class TiledMap extends Component with ChildComponents {
   void update(double dt) {
     updateChildren(dt);
   }
+
+  dynamic worldToTileSpace({double x, double y}) {
+    double gridX = x / tiled.map.tileWidth;
+    double gridY = y / tiled.map.tileHeight;
+
+    return {x: gridX as int, y: gridY as int};
+  }
+
+  Tile getTile({String layerName, int x, int y}) {
+    if (tiled == null || !tiled.loaded()) {
+      return null;
+    }
+
+    tiled.map.layers.where((layer) => layer.name == layerName).forEach((layer) {
+      List<Tile> row = layer.tiles[y];
+      Tile t = row[x];
+      return t;
+    });
+
+    return null;
+  }
 }
