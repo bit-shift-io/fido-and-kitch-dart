@@ -12,6 +12,10 @@ Not sure this is right but:
 
     flutter run
 
+## Map Editor
+
+https://www.mapeditor.org/
+
 ## Assets
 
 Here are a list of assets we use in the game and their source of origin.

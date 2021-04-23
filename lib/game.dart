@@ -2,6 +2,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:fido_and_kitch/tiled_map.dart';
 import 'package:flame/anchor.dart';
 import 'package:flame/gestures.dart';
 import 'package:flame/components/component.dart';
@@ -51,8 +52,12 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
   bool running = true;
 
   List<Player> players = List();
+  TiledMap map;
 
   MyGame() {
+    map = TiledMap();
+    add(map);
+
     add(Square()
       ..x = 100
       ..y = 100);
@@ -62,6 +67,8 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
     add(p
       ..x = 200
       ..y = 200);
+
+      
   }
 
   @override

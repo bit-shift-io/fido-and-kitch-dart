@@ -6,8 +6,10 @@ import 'package:fido_and_kitch/utils.dart';
 import 'package:fido_and_kitch/player_animations.dart';
 import 'package:fido_and_kitch/input_action.dart';
 
+import 'base_component.dart';
+
 // https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
-class Player extends PositionComponent with Resizable {
+class Player extends PositionComponent with Resizable, ChildComponents {
 
   dynamic data;
   dynamic currentStateData;
