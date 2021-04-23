@@ -10,13 +10,13 @@ import 'package:flutter/material.dart';
 class ChildComponents {
   List<Component> children = [];
 
-  void render(Canvas c) {
+  void renderChildren(Canvas c) {
     for (Component ch in children) {
       ch.render(c);
     }
   }
 
-  void update(double dt) {
+  void updateChildren(double dt) {
     for (Component ch in children) {
       ch.update(dt);
     }

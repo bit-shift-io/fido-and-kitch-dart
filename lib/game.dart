@@ -1,5 +1,6 @@
 
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:fido_and_kitch/tiled_map.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 
 import 'package:fido_and_kitch/player.dart';
 import 'package:flutter/services.dart';
+import 'package:tiled/tiled.dart';
 
 class Palette {
   static const PaletteEntry white = BasicPalette.white;
@@ -48,19 +50,15 @@ class Square extends PositionComponent with HasGameRef<MyGame> {
 }
 
 class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
-  final double squareSize = 128;
+  final double squareSize = 20;
   bool running = true;
 
-  List<Player> players = List();
+  List<Player> players = <Player>[];
   TiledMap map;
 
   MyGame() {
     map = TiledMap();
     add(map);
-
-    add(Square()
-      ..x = 100
-      ..y = 100);
 
     Player p = Player();
     players.add(p);
@@ -68,7 +66,19 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
       ..x = 200
       ..y = 200);
 
-      
+    map.load('map.tmx').then(onMapLoad);  
+  }
+
+  void onMapLoad(value) {
+    print('map loaded');
+
+    ObjectGroup spawns = map.getObjectGroupFromLayer("Spawn");
+
+    for (int i = 0; i < min(players.length, spawns.tmxObjects.length); ++i) {
+      TmxObject spawn = spawns.tmxObjects[i];
+      Player p = players[i];
+      p.spawn(x: spawn.x.toDouble(), y: spawn.y.toDouble());
+    }
   }
 
   @override

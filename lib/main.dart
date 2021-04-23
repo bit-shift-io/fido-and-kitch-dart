@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_splash_screen/flame_splash_screen.dart';
+import 'package:flutter/services.dart';
 
 import 'game.dart';
 import 'player_animations.dart';
@@ -41,11 +44,21 @@ class GameWrapperState extends State<GameWrapper> {
     }
   }
 
-  void preload() {
-    // TODO: read preload.yaml or some game.yaml and blamo!
-    Flame.images.loadAll(walk('cat')).then((images) {
-      startGame();
-    });
+  void preload() async {
+    // TODO: format these into proper paths... do we load all or let the game.yaml determine what dirs to preload?
+    /*
+    final manifestContent = await rootBundle.loadString('AssetManifest.json');
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+
+    final imagePaths = manifestMap.keys
+        .where((String key) => key.contains('images/'))
+        .where((String key) => key.contains('.png'))
+        .toList();
+    */
+
+    final imagePaths = List<String>.empty();
+    final images = await Flame.images.loadAll(imagePaths);
+    startGame();
   }
 
   void startGame() {

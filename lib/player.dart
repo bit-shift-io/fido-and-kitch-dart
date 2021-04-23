@@ -1,15 +1,18 @@
 import 'dart:ui';
+import 'package:flame/anchor.dart';
 import 'package:flame/components/animation_component.dart';
 import 'package:flame/components/component.dart';
+import 'package:flame/components/mixins/has_game_ref.dart';
 import 'package:flame/components/mixins/resizable.dart';
-import 'package:fido_and_kitch/utils.dart';
-import 'package:fido_and_kitch/player_animations.dart';
-import 'package:fido_and_kitch/input_action.dart';
+import 'package:tiled/tiled.dart';
 
+import 'game.dart';
+import 'utils.dart';
+import 'player_animations.dart';
+import 'input_action.dart';
 import 'base_component.dart';
 
-// https://github.com/flame-engine/trex-flame/blob/master/lib/game/t_rex/t_rex.dart
-class Player extends PositionComponent with Resizable, ChildComponents {
+class Player extends PositionComponent with Resizable, ChildComponents, HasGameRef {
 
   dynamic data;
   dynamic currentStateData;
@@ -20,7 +23,13 @@ class Player extends PositionComponent with Resizable, ChildComponents {
   Map<String, InputAction> inputActions = Map();
 
   Player() : super() {
-    onLoad();
+    x = 0.0;
+    y = 0.0;
+    width = 100.0;
+    height = 100.0;
+    anchor = Anchor.bottomCenter;
+    debugMode = true;
+    load();
   }
 
   addAnimation(String name, AnimationComponent animationComponent) {
@@ -31,7 +40,7 @@ class Player extends PositionComponent with Resizable, ChildComponents {
     inputActions[name] = action;
   }
 
-  Future<void> onLoad() async {
+  Future<void> load() async {
     data = await loadYamlFromFile('cat.yaml');
     String dir = data['directory'];
     var anims = data['animations'];
@@ -54,6 +63,8 @@ class Player extends PositionComponent with Resizable, ChildComponents {
 
   @override
   void render(Canvas c) {
+    //super.render(c);
+
     if (currentAnimation != null) {
       currentAnimation.render(c);
     }
@@ -61,7 +72,7 @@ class Player extends PositionComponent with Resizable, ChildComponents {
 
   @override
   void update(double dt) {
-    super.update(dt);
+    //super.update(dt);
 
     if (inputActions['move_left']?.isKeyDown ?? false) {
       x -= currentStateData['movementSpeed'] * dt;
@@ -70,9 +81,17 @@ class Player extends PositionComponent with Resizable, ChildComponents {
       x += currentStateData['movementSpeed'] * dt;
     }
 
+    // perform collision detection
+    // hrmmm
+    // TODO: maybe use the players position to compute the x, y of the grid the player is on
+    // then get tiles to left right, bottom, top etc, to make sure they can move
+    List<Tile> intersectingTiles = (gameRef as MyGame).map.rectIntersectingTiles(toRect());
+
     if (currentAnimation != null) {
       currentAnimation.x = x;
       currentAnimation.y = y;
+      currentAnimation.width = width;
+      currentAnimation.height = height;
       currentAnimation.update(dt);
     }
   }
@@ -81,5 +100,10 @@ class Player extends PositionComponent with Resizable, ChildComponents {
     for (var a in inputActions.values) {
       a.onKeyEvent(e);
     }
+  }
+
+  void spawn({double x, double y}) {
+    this.x = x;
+    this.y = y;
   }
 }

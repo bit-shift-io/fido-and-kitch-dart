@@ -13,7 +13,6 @@ List<int> range(start, end) {
 
 Future<List<Sprite>> spritesFromFilenames(List<String> fileNames) async {
   List<Image> images = await Flame.images.loadAll(fileNames);
-  print('Loaded ${images.length} for walk cycle animation');
   List<Sprite> sprites = List<Sprite>.generate(images.length, (index) => Sprite.fromImage(images[index], width: images[index].width as double, height: images[index].height as double));
   return sprites;
 }
@@ -34,6 +33,5 @@ AnimationComponent animationComponentFromSprites(List<Sprite> sprites, {double s
 dynamic loadYamlFromFile(String fileName) async {
   final data = await s.rootBundle.loadString(fileName);
   final mapData = loadYaml(data);
-  print(mapData);
   return mapData;
 }
