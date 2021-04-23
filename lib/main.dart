@@ -2,8 +2,10 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_splash_screen/flame_splash_screen.dart';
 
-import 'package:fido_and_kitch/game.dart';
-import 'package:fido_and_kitch/player_animations.dart';
+import 'game.dart';
+import 'player_animations.dart';
+
+const bool SKIP_SPLASH = true; // set to false to get a properloading screen
 
 void main() {
   runApp(MaterialApp(
@@ -23,7 +25,6 @@ class GameWrapper extends StatefulWidget {
   GameWrapperState createState() => GameWrapperState();
 }
 
-
 class GameWrapperState extends State<GameWrapper> {
   bool splashGone = false;
   MyGame game;
@@ -32,18 +33,31 @@ class GameWrapperState extends State<GameWrapper> {
   @override
   void initState() {
     super.initState();
-    startGame();
+
+    preload();
+
+    if (SKIP_SPLASH) {
+      startGame();
+    }
+  }
+
+  void preload() {
+    // TODO: read preload.yaml or some game.yaml and blamo!
+    Flame.images.loadAll(walk('cat')).then((images) {
+      startGame();
+    });
   }
 
   void startGame() {
-    Flame.images.loadAll(walk('cat')).then((images) => {
-      setState(() {
+    if (splashGone) {
+      return;
+    }
+
+    setState(() {
         game = MyGame();
         _focusNode.requestFocus();
-        splashGone = true; // remove this line to make the user wait till saplsh anim is complete!
-        print("Images loaded");
-      })
-    });
+        splashGone = SKIP_SPLASH ? true : splashGone;
+      });
   }
 
   @override
@@ -60,16 +74,7 @@ class GameWrapperState extends State<GameWrapper> {
     );
   }
 
-/*
-  void _onRawKeyEvent(RawKeyEvent event) {
-    if(event.logicalKey == LogicalKeyboardKey.enter || event.logicalKey == LogicalKeyboardKey.space) {
-      game.onAction();
-    }
-  }
-*/
-
   Widget _buildGame(BuildContext context) {
-
     if (game == null) {
       return const Center(
         child: Text("Loading"),
