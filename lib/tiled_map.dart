@@ -8,6 +8,7 @@ import 'package:tiled/tiled.dart' show ObjectGroup, Tile, TileMap, TmxObject;
 import 'package:flame_tiled/tiled.dart';
 
 import 'base_component.dart';
+import 'utils.dart';
 
 class TiledMap extends Component with ChildComponents {
   Tiled tiled;
@@ -100,23 +101,30 @@ class TiledMap extends Component with ChildComponents {
     updateChildren(dt);
   }
 
-  dynamic worldToTileSpace({double x, double y}) {
-    double gridX = x / tiled.map.tileWidth;
-    double gridY = y / tiled.map.tileHeight;
-
-    return {x: gridX as int, y: gridY as int};
-  }
-
-  Tile getTile({String layerName, int x, int y}) {
+  IntPoint2 worldToTileSpace(DoublePoint2 position) {
     if (tiled == null || !tiled.loaded()) {
       return null;
     }
+    
+    double gridX = position.x / tiled.map.tileWidth;
+    double gridY = position.y / tiled.map.tileHeight;
 
-    tiled.map.layers.where((layer) => layer.name == layerName).forEach((layer) {
-      List<Tile> row = layer.tiles[y];
-      Tile t = row[x];
+    int x = gridX.round();
+    int y = gridY.round();
+
+    return IntPoint2(x, y);
+  }
+
+  Tile getTile({String layerName, IntPoint2 position}) {
+    if (tiled == null || !tiled.loaded() || position == null) {
+      return null;
+    }
+
+    for (var layer in tiled.map.layers.where((layer) => layer.name == layerName)) {
+      List<Tile> row = layer.tiles[position.y];
+      Tile t = row[position.x];
       return t;
-    });
+    }
 
     return null;
   }

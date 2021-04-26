@@ -88,8 +88,15 @@ class Player extends PositionComponent with Resizable, ChildComponents, HasGameR
     // then get tiles to left right, bottom, top etc, to make sure they can move
     //List<Tile> intersectingTiles = (gameRef as MyGame).map.rectIntersectingTiles(toRect());
     TiledMap map = (gameRef as MyGame).map;
-    dynamic tileCoords = map.worldToTileSpace(x: x, y: y);
-    Tile t = map.getTile(x: tileCoords.x, y: tileCoords.y, layerName: 'Ground');
+    IntPoint2 tileCoords = map.worldToTileSpace(DoublePoint2(x, y));
+    if (tileCoords != null) {
+      IntPoint2 tileBelow = tileCoords.add(0, 1);
+      Tile t = map.getTile(position: tileBelow, layerName: 'Ground');
+      if (t != null) {
+        //print("we found a tile to collide with!");
+        // TODO: modify movement vector
+      }
+    }
 
     if (currentAnimation != null) {
       currentAnimation.x = x;

@@ -7,6 +7,23 @@ import 'dart:ui';
 import "package:flutter/services.dart" as s;
 import "package:yaml/yaml.dart";
 
+
+class IntPoint2 {
+  IntPoint2(this.x, this.y);
+
+  IntPoint2 add(int px, int py) => IntPoint2(x + px, y + py);
+  
+  int x;
+  int y;
+}
+
+class DoublePoint2 {
+  DoublePoint2(this.x, this.y);
+  
+  double x;
+  double y;
+}
+
 List<int> range(start, end) {
   return new List<int>.generate(end - start, (i) => start + i + 1);
 }
