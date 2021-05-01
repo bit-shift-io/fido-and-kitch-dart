@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_splash_screen/flame_splash_screen.dart';
-import 'package:flutter/services.dart';
 
 import 'game.dart';
-import 'player_animations.dart';
 
 const bool SKIP_SPLASH = true; // set to false to get a properloading screen
 
@@ -57,7 +53,7 @@ class GameWrapperState extends State<GameWrapper> {
     */
 
     final imagePaths = List<String>.empty();
-    final images = await Flame.images.loadAll(imagePaths);
+    await Flame.images.loadAll(imagePaths);
     startGame();
   }
 

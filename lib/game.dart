@@ -14,8 +14,9 @@ import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fido_and_kitch/player.dart';
-import 'package:flutter/services.dart';
 import 'package:tiled/tiled.dart';
+
+import 'debug.dart';
 
 class Palette {
   static const PaletteEntry white = BasicPalette.white;
@@ -55,6 +56,7 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
 
   List<Player> players = <Player>[];
   TiledMap map;
+  Debug debug;
 
   MyGame() {
     map = TiledMap();
@@ -65,6 +67,10 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
     add(p
       ..x = 200
       ..y = 200);
+
+    debug = Debug();
+    add(debug);
+ 
 
     map.load('map.tmx').then(onMapLoad);  
   }

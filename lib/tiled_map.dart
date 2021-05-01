@@ -1,10 +1,10 @@
+import 'dart:math';
+
 import 'package:flame/animation.dart';
 import 'package:flame/components/animation_component.dart';
 import 'package:flame/components/component.dart';
-import 'package:flame/flame.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart' hide Animation;
-import 'package:tiled/tiled.dart' show ObjectGroup, Tile, TileMap, TmxObject;
+import 'package:tiled/tiled.dart' show ObjectGroup, Tile, TmxObject;
 import 'package:flame_tiled/tiled.dart';
 
 import 'base_component.dart';
@@ -12,9 +12,12 @@ import 'utils.dart';
 
 class TiledMap extends Component with ChildComponents {
   Tiled tiled;
+  double scale;
 
   Future load(String fileName) async {
-    tiled = Tiled(fileName, Size(16.0, 16.0));
+    tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
+    scale = 2.0;
+
     await tiled.future;
 
     _addCoinsInMap();
@@ -69,7 +72,7 @@ class TiledMap extends Component with ChildComponents {
             return;
           }
 
-          final batch = tiled.batches[tile.image.source];
+          //final batch = tiled.batches[tile.image.source];
 
           final rect = tile.computeDrawRect();
 
@@ -101,31 +104,53 @@ class TiledMap extends Component with ChildComponents {
     updateChildren(dt);
   }
 
-  IntPoint2 worldToTileSpace(DoublePoint2 position) {
+  Int2 worldToTileSpace(Double2 position) {
     if (tiled == null || !tiled.loaded()) {
       return null;
     }
     
-    double gridX = position.x / tiled.map.tileWidth;
-    double gridY = position.y / tiled.map.tileHeight;
+    double gridX = (position.x - tiled.map.tileWidth) / (tiled.map.tileWidth * scale);
+    double gridY = (position.y - (tiled.map.tileHeight * scale)) / (tiled.map.tileHeight * scale);
 
     int x = gridX.round();
     int y = gridY.round();
 
-    return IntPoint2(x, y);
+    return Int2(x, y);
   }
 
-  Tile getTile({String layerName, IntPoint2 position}) {
+  Rect rectFromTilePostion(Int2 position) {
+    if (tiled == null || !tiled.loaded()) {
+      return null;
+    }
+
+    return Rect.fromLTWH(position.x * tiled.map.tileWidth * scale, position.y * tiled.map.tileHeight * scale, tiled.map.tileWidth * scale, tiled.map.tileHeight * scale);
+  }
+
+  Tile getTile({String layerName, Int2 position}) {
     if (tiled == null || !tiled.loaded() || position == null) {
       return null;
     }
 
+    if (position.y < 0 || position.x < 0) {
+      return null;
+    }
+
     for (var layer in tiled.map.layers.where((layer) => layer.name == layerName)) {
+      if (position.y >= layer.tiles.length) {
+        return null;
+      }
       List<Tile> row = layer.tiles[position.y];
+      if (position.x >= row.length) {
+        return null;
+      }
       Tile t = row[position.x];
       return t;
     }
 
     return null;
+  }
+
+  Rect tileRect(Tile tile) {
+    return rectFromTilePostion(Int2(tile.x, tile.y));
   }
 }

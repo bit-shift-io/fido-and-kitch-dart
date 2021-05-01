@@ -1,4 +1,5 @@
 
+import 'dart:math';
 import 'package:flame/components/animation_component.dart';
 import 'package:flame/animation.dart';
 import 'package:flame/sprite.dart';
@@ -6,19 +7,21 @@ import 'package:flame/flame.dart';
 import 'dart:ui';
 import "package:flutter/services.dart" as s;
 import "package:yaml/yaml.dart";
+import 'package:tiled/tiled.dart' show Tile;
 
+class Int2 {
+  Int2(this.x, this.y);
 
-class IntPoint2 {
-  IntPoint2(this.x, this.y);
-
-  IntPoint2 add(int px, int py) => IntPoint2(x + px, y + py);
+  Int2 operator +(Int2 rhs) => Int2(x + rhs.x, y + rhs.y);
   
   int x;
   int y;
 }
 
-class DoublePoint2 {
-  DoublePoint2(this.x, this.y);
+class Double2 {
+  Double2(this.x, this.y);
+
+  Double2 operator *(double rhs) => Double2(x * rhs, y * rhs);
   
   double x;
   double y;
@@ -51,4 +54,8 @@ dynamic loadYamlFromFile(String fileName) async {
   final data = await s.rootBundle.loadString(fileName);
   final mapData = loadYaml(data);
   return mapData;
+}
+
+List<String> anim(dir, aninName, numImages) {
+  return List<String>.generate(numImages, (index) => '$dir/$aninName (${index + 1}).png');
 }
