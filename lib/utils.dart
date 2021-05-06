@@ -1,30 +1,20 @@
-
-import 'dart:math';
-import 'package:flame/components/animation_component.dart';
-import 'package:flame/animation.dart';
+import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/flame.dart';
 import 'dart:ui';
 import "package:flutter/services.dart" as s;
 import "package:yaml/yaml.dart";
-import 'package:tiled/tiled.dart' show Tile;
 
 class Int2 {
   Int2(this.x, this.y);
+  Int2.fromVector2(Vector2 v) { x = v.x as int; y = v.y as int; }
 
   Int2 operator +(Int2 rhs) => Int2(x + rhs.x, y + rhs.y);
   
+  Vector2 toVector2() => Vector2(x as double, y as double);
+
   int x;
   int y;
-}
-
-class Double2 {
-  Double2(this.x, this.y);
-
-  Double2 operator *(double rhs) => Double2(x * rhs, y * rhs);
-  
-  double x;
-  double y;
 }
 
 List<int> range(start, end) {
@@ -33,15 +23,19 @@ List<int> range(start, end) {
 
 Future<List<Sprite>> spritesFromFilenames(List<String> fileNames) async {
   List<Image> images = await Flame.images.loadAll(fileNames);
-  List<Sprite> sprites = List<Sprite>.generate(images.length, (index) => Sprite.fromImage(images[index], width: images[index].width as double, height: images[index].height as double));
+  final futureSprites = List<Future<Sprite>>.generate(images.length, (index) {
+    Vector2 srcSize = Vector2(images[index].width as double, images[index].height as double);
+    return Sprite.load(fileNames[index], srcPosition: Vector2(0,0), srcSize: srcSize);
+  });
+  List<Sprite> sprites = await Future.wait(futureSprites);
   return sprites;
 }
 
-AnimationComponent animationComponentFromSprites(List<Sprite> sprites, {double stepTime, bool loop = true}) {
+SpriteAnimationComponent animationComponentFromSprites(List<Sprite> sprites, {double stepTime, bool loop = true}) {
   double width = sprites[0].image.width as double;
   double height = sprites[0].image.height as double;
-  AnimationComponent comp = AnimationComponent(width, height, 
-    Animation.spriteList(sprites, 
+  SpriteAnimationComponent comp = SpriteAnimationComponent(size: Vector2(width, height), 
+    animation: SpriteAnimation.spriteList(sprites, 
       stepTime: stepTime,
       loop: loop
     )

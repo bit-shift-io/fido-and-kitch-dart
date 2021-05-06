@@ -1,23 +1,27 @@
 
-import 'dart:math' as math;
+//import 'dart:math' as math;
 import 'dart:math';
-import 'dart:ui';
+//import 'dart:ui';
 
 import 'package:fido_and_kitch/tiled_map.dart';
-import 'package:flame/anchor.dart';
+//import 'package:flame/anchor.dart';
 import 'package:flame/gestures.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/mixins/has_game_ref.dart';
+//import 'package:flame/components/component.dart';
+//import 'package:flame/components/mixins/has_game_ref.dart';
 import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
-import 'package:flame/palette.dart';
-import 'package:flutter/material.dart';
+//import 'package:flame/palette.dart';
+//import 'package:flame/viewport.dart';
+//import 'package:flutter/material.dart';
+
 
 import 'package:fido_and_kitch/player.dart';
 import 'package:tiled/tiled.dart';
 
 import 'debug.dart';
+import 'utils.dart';
 
+/*
 class Palette {
   static const PaletteEntry white = BasicPalette.white;
   static const PaletteEntry red = PaletteEntry(Color(0xFFFF0000));
@@ -49,6 +53,7 @@ class Square extends PositionComponent with HasGameRef<MyGame> {
     anchor = Anchor.center;
   }
 }
+*/
 
 class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
   final double squareSize = 20;
@@ -58,7 +63,7 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
   TiledMap map;
   Debug debug;
 
-  MyGame() {
+  Future<void> onLoad() async {
     map = TiledMap();
     add(map);
 
@@ -78,6 +83,10 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
   void onMapLoad(value) {
     print('map loaded');
 
+    // set the viewport to fit the whole map to the screen
+    Vector2 mapSize = map.mapPixelSize();
+    viewport = FixedResolutionViewport(mapSize);
+
     ObjectGroup spawns = map.getObjectGroupFromLayer("Spawn");
 
     for (int i = 0; i < min(players.length, spawns.tmxObjects.length); ++i) {
@@ -96,6 +105,7 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
 
   @override
   void onTapUp(details) {
+    /*
     final touchArea = Rect.fromCenter(
       center: details.localPosition,
       width: 20,
@@ -114,7 +124,7 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
       addLater(Square()
         ..x = touchArea.left
         ..y = touchArea.top);
-    }
+    }*/
   }
 
   @override

@@ -1,29 +1,22 @@
-import 'dart:ui';
-import 'package:flame/anchor.dart';
-import 'package:flame/components/animation_component.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/mixins/has_game_ref.dart';
-import 'package:flame/components/mixins/resizable.dart';
-
+import 'package:flame/components.dart';
 import 'game.dart';
 import 'player_states.dart';
 import 'utils.dart';
 import 'input_action.dart';
-import 'base_component.dart';
 
-class Player extends PositionComponent with Resizable, ChildComponents, HasGameRef<MyGame> {
+class Player extends PositionComponent with HasGameRef<MyGame> {
 
   dynamic data;
 
-  Map<String, AnimationComponent> animations = Map();
-  AnimationComponent currentAnimation;
+  Map<String, SpriteAnimationComponent> animations = Map();
+  SpriteAnimationComponent currentAnimation;
 
   Map<String, InputAction> inputActions = Map();
 
   Map<String, PlayerState> states = Map();
   PlayerState currentState;
 
-  Double2 velocity = Double2(0, 0);
+  Vector2 velocity = Vector2(0, 0);
 
   Player() : super() {
     x = 0.0;
@@ -39,7 +32,7 @@ class Player extends PositionComponent with Resizable, ChildComponents, HasGameR
     states[state.name] = state;
   }
 
-  addAnimation(String name, AnimationComponent animationComponent) {
+  addAnimation(String name, SpriteAnimationComponent animationComponent) {
     animations[name] = animationComponent;
   }
 
@@ -83,24 +76,17 @@ class Player extends PositionComponent with Resizable, ChildComponents, HasGameR
   }
 
   void setAnimation(animationName) {
-    currentAnimation = animations[animationName];
-  }
-
-  @override
-  void render(Canvas c) {
-    c.save();
-    prepareCanvas(c);
-
     if (currentAnimation != null) {
-      currentAnimation.render(c);
+      removeChild(currentAnimation);
     }
-    c.restore();
+    currentAnimation = animations[animationName];
+    if (currentAnimation != null) {
+      addChild(currentAnimation);
+    }
   }
 
   @override
   void update(double dt) {
-    super.update(dt);
-
     if (currentState != null) {
       currentState.update(dt);
     }
@@ -108,8 +94,9 @@ class Player extends PositionComponent with Resizable, ChildComponents, HasGameR
     if (currentAnimation != null) {
       currentAnimation.width = width;
       currentAnimation.height = height;
-      currentAnimation.update(dt);
     }
+
+    super.update(dt);
   }
 
   void onKeyEvent(e) {
@@ -135,12 +122,8 @@ class Player extends PositionComponent with Resizable, ChildComponents, HasGameR
     return m;
   }
 
-  void move(Double2 offset) {
+  void move(Vector2 offset) {
     x += offset.x;
     y += offset.y;
-  }
-
-  Double2 get position {
-    return Double2(x, y);
   }
 }

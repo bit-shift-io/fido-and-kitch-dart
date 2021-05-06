@@ -1,4 +1,5 @@
 import 'package:flame/flame.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_splash_screen/flame_splash_screen.dart';
 
@@ -16,7 +17,7 @@ void main() {
     ),
   ));
 
-  Flame.util.fullScreen();
+  //Flame.util.fullScreen();
 }
 
 class GameWrapper extends StatefulWidget {
@@ -89,6 +90,9 @@ class GameWrapperState extends State<GameWrapper> {
         child: Text("Loading"),
       );
     }
+
+    return GameWidget(game: game);
+    /*
     return Container(
       color: Colors.white,
       constraints: const BoxConstraints.expand(),
@@ -100,6 +104,6 @@ class GameWrapperState extends State<GameWrapper> {
             //onKey: _onRawKeyEvent,
           )
       ),
-    );
+    );*/
   }
 }

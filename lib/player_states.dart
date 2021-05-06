@@ -2,12 +2,13 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:tiled/tiled.dart';
 
 import 'player.dart';
 import 'utils.dart';
-import 'game.dart';
+//import 'game.dart';
 import 'tiled_map.dart';
 
 class PlayerState {
@@ -48,8 +49,8 @@ class Walk extends PlayerState {
 
   @override
   void update(double dt) {
-    Double2 moveVec = Double2(player.getMovementDirection(), player.velocity.y);
-    //Double2 moveVec = Double2(0, player.getMovementDirection());
+    Vector2 moveVec = Vector2(player.getMovementDirection(), player.velocity.y);
+    //Vector2 moveVec = Vector2(0, player.getMovementDirection());
     /*
     if (moveVec.x == 0.0) {
       player.setState('Idle');

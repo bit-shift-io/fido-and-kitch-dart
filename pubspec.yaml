@@ -28,10 +28,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flame: ^0.29.3
+  flame: 1.0.0-rc9
   flame_splash_screen: 0.0.1
   yaml: ^3.1.0
-  flame_tiled: ^0.1.0
+  # flame_tiled: ^0.1.0
+  tiled: 0.6.0
   oxygen: ^0.1.0
 
 dev_dependencies:
