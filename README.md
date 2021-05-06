@@ -21,6 +21,7 @@ https://www.mapeditor.org/
 Here are a list of assets we use in the game and their source of origin.
 
 * Cat & Dog - https://opengameart.org/content/cat-dog-free-sprites
+* Platformer tiles - https://opengameart.org/content/generic-platformer-tiles
 
 ## Todo List
 

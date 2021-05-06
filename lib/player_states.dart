@@ -76,7 +76,7 @@ class Walk extends PlayerState {
       //Rect belowTileRect = map.rectFromTilePostion(tileCoordBelow);
       //player.gameRef.debug.drawRect(belowTileRect, Colors.purple, PaintingStyle.fill);
       
-      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'Foreground');
+      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'Ground');
       if (tileBelow != null && !tileBelow.isEmpty) {
         Rect tileRect = map.tileRect(tileBelow);
 

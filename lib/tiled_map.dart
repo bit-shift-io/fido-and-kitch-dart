@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart' hide Animation, Image;
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart' show Colors;
-import 'package:tiled/tiled.dart' hide Image;
+import 'package:tiled/tiled.dart' as t;
+import 'package:xml/xml.dart';
+import 'package:path/path.dart' as p;
 
 import 'utils.dart';
 
@@ -27,7 +29,7 @@ class _SimpleFlips {
   _SimpleFlips(this.angle, this.flipH, this.flipV);
 
   /// This is the conversion from the truth table that I drew.
-  factory _SimpleFlips.fromFlips(Flips flips) {
+  factory _SimpleFlips.fromFlips(t.Flips flips) {
     int angle;
     bool flipV, flipH;
 
@@ -72,15 +74,28 @@ class _SimpleFlips {
   }
 }
 
+class TsxProv extends t.TsxProvider {
+  final Map<String, String> tilesetMap;
+  
+  TsxProv(this.tilesetMap);
+
+  String getSource(String key) {
+    final str = tilesetMap[key];
+    return str;
+  }
+}
+
 /// This component renders a tile map based on a TMX file from Tiled.
 class Tiled {
   String filename;
-  TileMap map;
+  t.TileMap map;
   Image image;
   Map<String, SpriteBatch> batches = <String, SpriteBatch>{};
   Future future;
   bool _loaded = false;
   Size destTileSize;
+
+  String mapBasePath = 'assets/tiles/';
 
   static Paint paint = Paint()..color = Colors.white;
 
@@ -92,24 +107,56 @@ class Tiled {
 
   Future _load() async {
     map = await _loadMap();
-    image = await Flame.images.load(map.tilesets[0].image.source);
+
+    final imagePath = getTilesetImagePath(map.tilesets[0], map.tilesets[0].image);
+    image = await Flame.images.load(imagePath);
     batches = await _loadImages(map);
     generate();
     _loaded = true;
   }
 
-  Future<TileMap> _loadMap() {
-    return Flame.bundle.loadString('assets/tiles/$filename').then((contents) {
-      final parser = TileMapParser();
-      return parser.parse(contents);
+  String getTilesetImagePath(t.Tileset tileset, t.Image tmxImage) {
+    // the image filepath if relstive to the tileset path
+    // the tileset path is relative to the map
+    final tilesetDir = p.dirname(tileset.source);
+    final imagePath = p.normalize('$mapBasePath$tilesetDir/${tmxImage.source}');
+    final imagePathInImages = imagePath.replaceAll('assets/images/', '');
+    return imagePathInImages;
+  }
+
+  Future<t.TileMap> _loadMap() {
+    return Flame.bundle.loadString('$mapBasePath$filename').then((contents) async {
+
+      // here we need to parse the XML and extract external tileset filenames
+      // then we need to load them as TsxProvider.getSource is no async
+      // so we need to load them before we know what they are!
+
+      final tilesetFilenames = <String>[];
+      final xmlElement = XmlDocument.parse(contents).rootElement;
+      xmlElement.children.whereType<XmlElement>().forEach((XmlElement element) {
+        if (element.name.local == 'tileset') {
+          final tsxFilename = element.getAttribute('source');
+          tilesetFilenames.add(tsxFilename);
+        }
+      });
+
+      final tilesetMap = Map<String, String>();
+      await Future.forEach(tilesetFilenames, (String tsxFilename) async {
+        String contents = await Flame.bundle.loadString('$mapBasePath$tsxFilename');
+        tilesetMap[tsxFilename] = contents;
+      });
+
+      final parser = t.TileMapParser();
+      return parser.parse(contents, tsx: TsxProv(tilesetMap));
     });
   }
 
-  Future<Map<String, SpriteBatch>> _loadImages(TileMap map) async {
+  Future<Map<String, SpriteBatch>> _loadImages(t.TileMap map) async {
     final Map<String, SpriteBatch> result = {};
     await Future.forEach(map.tilesets, (tileset) async {
       await Future.forEach(tileset.images, (tmxImage) async {
-        result[tmxImage.source] = await SpriteBatch.load(tmxImage.source);
+        final imagePath = getTilesetImagePath(tileset, tmxImage);
+        result[tmxImage.source] = await SpriteBatch.load(imagePath);
       });
     });
     return result;
@@ -123,7 +170,7 @@ class Tiled {
     _drawTiles(map);
   }
 
-  void _drawTiles(TileMap map) {
+  void _drawTiles(t.TileMap map) {
     map.layers.where((layer) => layer.visible).forEach((layer) {
       layer.tiles.forEach((tileRow) {
         tileRow.forEach((tile) {
@@ -176,7 +223,7 @@ class Tiled {
 
   /// This returns an object group fetch by name from a given layer.
   /// Use this to add custom behaviour to special objects and groups.
-  Future<ObjectGroup> getObjectGroupFromLayer(String name) {
+  Future<t.ObjectGroup> getObjectGroupFromLayer(String name) {
     return future.then((onValue) {
       return map.objectGroups
           .firstWhere((objectGroup) => objectGroup.name == name);
@@ -191,7 +238,7 @@ class TiledMap extends BaseComponent {
 
   Future load(String fileName) async {
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
-    scale = 2.0;
+    scale = 1.0;
 
     await tiled.future;
 
@@ -200,7 +247,7 @@ class TiledMap extends BaseComponent {
 
   /// This returns an object group fetch by name from a given layer.
   /// Use this to add custom behaviour to special objects and groups.
-  ObjectGroup getObjectGroupFromLayer(String name) {
+  t.ObjectGroup getObjectGroupFromLayer(String name) {
       if (tiled == null || !tiled.loaded()) {
         print('Map still loading!');
         return null;
@@ -211,12 +258,12 @@ class TiledMap extends BaseComponent {
   }
 
   void _addCoinsInMap() {
-    final ObjectGroup objGroup = getObjectGroupFromLayer("AnimatedCoins");
+    final t.ObjectGroup objGroup = getObjectGroupFromLayer("AnimatedCoins");
     if (objGroup == null) {
       return;
     }
     
-    objGroup.tmxObjects.forEach((TmxObject obj) async {
+    objGroup.tmxObjects.forEach((t.TmxObject obj) async {
       final comp = SpriteAnimationComponent(
         size: Vector2(20.0, 20.0),
         animation: await SpriteAnimation.load(
@@ -233,13 +280,13 @@ class TiledMap extends BaseComponent {
     });
   }
 
-  List<Tile> rectIntersectingTiles(Rect r) {
+  List<t.Tile> rectIntersectingTiles(Rect r) {
     if (tiled == null || !tiled.loaded()) {
       print('Map still loading!');
       return [];
     }
 
-    List<Tile> intersectingTiles = [];
+    List<t.Tile> intersectingTiles = [];
 
     tiled.map.layers.where((layer) => layer.visible).forEach((layer) {
       layer.tiles.forEach((tileRow) {
@@ -297,7 +344,7 @@ class TiledMap extends BaseComponent {
     return Rect.fromLTWH(position.x * tiled.map.tileWidth * scale, position.y * tiled.map.tileHeight * scale, tiled.map.tileWidth * scale, tiled.map.tileHeight * scale);
   }
 
-  Tile getTile({String layerName, Int2 position}) {
+  t.Tile getTile({String layerName, Int2 position}) {
     if (tiled == null || !tiled.loaded() || position == null) {
       return null;
     }
@@ -310,18 +357,18 @@ class TiledMap extends BaseComponent {
       if (position.y >= layer.tiles.length) {
         return null;
       }
-      List<Tile> row = layer.tiles[position.y];
+      List<t.Tile> row = layer.tiles[position.y];
       if (position.x >= row.length) {
         return null;
       }
-      Tile t = row[position.x];
-      return t;
+      t.Tile tile = row[position.x];
+      return tile;
     }
 
     return null;
   }
 
-  Rect tileRect(Tile tile) {
+  Rect tileRect(t.Tile tile) {
     return rectFromTilePostion(Int2(tile.x, tile.y));
   }
 

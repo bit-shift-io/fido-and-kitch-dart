@@ -34,6 +34,7 @@ dependencies:
   # flame_tiled: ^0.1.0
   tiled: 0.6.0
   oxygen: ^0.1.0
+  path: ^1.8.0
 
 dev_dependencies:
   flutter_test:

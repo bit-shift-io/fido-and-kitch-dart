@@ -77,7 +77,7 @@ class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvent
     add(debug);
  
 
-    map.load('map.tmx').then(onMapLoad);  
+    map.load('map_2.tmx').then(onMapLoad);  
   }
 
   void onMapLoad(value) {
