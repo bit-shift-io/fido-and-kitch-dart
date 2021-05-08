@@ -13,8 +13,8 @@ class Int2 {
   
   Vector2 toVector2() => Vector2(x as double, y as double);
 
-  int x;
-  int y;
+  int x = 0;
+  int y = 0;
 }
 
 List<int> range(start, end) {

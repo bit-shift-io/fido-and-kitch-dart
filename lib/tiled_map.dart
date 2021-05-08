@@ -344,7 +344,7 @@ class TiledMap extends BaseComponent {
     return Rect.fromLTWH(position.x * tiled.map.tileWidth * scale, position.y * tiled.map.tileHeight * scale, tiled.map.tileWidth * scale, tiled.map.tileHeight * scale);
   }
 
-  t.Tile getTile({String layerName, Int2 position}) {
+  t.Tile getTile({String layerName, Int2 position, bool nullIfEmpty: true}) {
     if (tiled == null || !tiled.loaded() || position == null) {
       return null;
     }
@@ -362,10 +362,22 @@ class TiledMap extends BaseComponent {
         return null;
       }
       t.Tile tile = row[position.x];
+      if (tile.isEmpty) {
+        return null;
+      }
+
       return tile;
     }
 
     return null;
+  }
+
+  t.Tile getTileFromWorldPosition({String layerName, Vector2 worldPosition, Int2 tileOffset, bool nullIfEmpty: true}) {
+    Int2 position = worldToTileSpace(worldPosition);
+    if (tileOffset != null) {
+      position = position + tileOffset;
+    }
+    return getTile(layerName: layerName, position: position, nullIfEmpty: nullIfEmpty);
   }
 
   Rect tileRect(t.Tile tile) {

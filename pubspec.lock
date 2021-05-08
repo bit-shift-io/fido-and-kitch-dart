@@ -130,13 +130,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
-  oxygen:
-    dependency: "direct main"
-    description:
-      name: oxygen
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
   path:
     dependency: "direct main"
     description:

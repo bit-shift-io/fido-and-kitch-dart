@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:tiled/tiled.dart';
+import 'package:yaml/yaml.dart';
 
 import 'player.dart';
 import 'utils.dart';
@@ -19,16 +20,20 @@ class PlayerState {
   PlayerState(this.player, this.name) {
     // assign state data from yml to data field
     dynamic statesData = player.data['states'];
-    data = statesData.nodes.firstWhere((s) => s['name'] == name);
+    data = statesData.nodes.firstWhere((s) => s['name'] == name, orElse: () => null);
   }
 
   void enter() {
+    //YamlMap m;
     // by default try to play animation with the same name as the state
-    player.setAnimation(name);
+    final animationName = data?.nodes['animationName'] ?? name;
+    player.setAnimation(animationName);
   }
 
   void exit() {}
   void update(double dt) {}
+
+  bool canTransition() => true; // override to help know if we can transition to other states
 }
 
 
@@ -37,8 +42,29 @@ class Idle extends PlayerState {
 
   @override
   void update(double dt) {
-    if (player.getMovementDirection() != 0.0) {
+    InputState state = player.getInputState();
+
+    player.applyMovement(dt, gravity: true);
+
+    if (player.velocity.y > 0.0) {
+      player.setState('Fall');
+      return;
+    }
+
+    if (state.dir.x != 0.0) {
       player.setState('Walk');
+      return;
+    }
+
+    if (state.dir.y != 0.0) {
+      if (player.states['Ladder'].canTransition()) {
+        player.setState('Ladder');
+      }
+    }
+
+    if (state.use) {
+      player.setState('Use');
+      return;
     }
   }
 }
@@ -49,60 +75,17 @@ class Walk extends PlayerState {
 
   @override
   void update(double dt) {
-    Vector2 moveVec = Vector2(player.getMovementDirection(), player.velocity.y);
-    //Vector2 moveVec = Vector2(0, player.getMovementDirection());
-    /*
-    if (moveVec.x == 0.0) {
-      player.setState('Idle');
+    player.applyMovement(dt, gravity: true, movementSpeed: data['movementSpeed']);
+
+    if (player.velocity.y > 0.0) {
+      player.setState('Fall');
       return;
-    }*/
-
-    // are we falling or did we hit an object?
-    
-    
-    moveVec.y += 9.8 * dt;
-
-    // perform collision detection
-    TiledMap map = player.gameRef.map;
-    Int2 tileCoords = map.worldToTileSpace(player.position);
-    if (tileCoords != null) {
-      Rect playerRect = player.toRect();
-
-      //player.gameRef.debug.drawRect(playerRect, Colors.yellow, PaintingStyle.fill);
-      
-
-      Int2 tileCoordBelow = tileCoords + Int2(0, 1);
-
-      //Rect belowTileRect = map.rectFromTilePostion(tileCoordBelow);
-      //player.gameRef.debug.drawRect(belowTileRect, Colors.purple, PaintingStyle.fill);
-      
-      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'Ground');
-      if (tileBelow != null && !tileBelow.isEmpty) {
-        Rect tileRect = map.tileRect(tileBelow);
-
-        double playerBottom = playerRect.bottom;
-        double tileTop = tileRect.top;
-        double playerDistToTile = tileTop - playerBottom;
-
-        moveVec.y = min(moveVec.y, playerDistToTile);
-
-        player.gameRef.debug.drawRect(tileRect, Colors.blue, PaintingStyle.fill);
-      }
-/*
-      // TODO: get the tile to the left or right
-      Int2 tileCoordNextTo = tileCoords + Int2(moveVec.x as int, 0);
-      Tile tileNextTo = map.getTile(position: tileCoordNextTo, layerName: 'Foreground');
-      if (tileNextTo != null && !tileNextTo.isEmpty) {
-        Rect tileRect = map.tileRect(tileNextTo);
-
-        player.gameRef.debug.drawRect(tileRect, Colors.green, PaintingStyle.fill);
-      }*/
     }
 
-    moveVec.x *= data['movementSpeed'] * dt;
-
-    player.velocity = moveVec;
-    player.move(moveVec);
+    if (player.velocity.x == 0.0) {
+      player.setState('Idle');
+      return;
+    }
   }
 }
 
@@ -111,12 +94,78 @@ class Fall extends PlayerState {
   Fall(Player player, String name) : super(player, name);
 
   @override
-  void update(double dt) {}
+  void update(double dt) {
+    player.applyMovement(dt);
+    
+    if (player.velocity.y == 0.0) {
+      player.setState('Idle');
+    }
+
+    // TODO: how hard did we hit the ground? DEAD?!
+  }
 }
 
 
 class Dead extends PlayerState {
   Dead(Player player, String name) : super(player, name);
+
+  @override
+  void update(double dt) {}
+}
+
+class Teleport extends PlayerState {
+  Teleport(Player player, String name) : super(player, name);
+
+  @override
+  void update(double dt) {}
+}
+
+class Ladder extends PlayerState {
+  Ladder(Player player, String name) : super(player, name);
+
+  bool canTransition() {
+    TiledMap map = player.gameRef.map;
+    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'Ladders');
+    return ladderTile != null;
+  }
+
+  @override
+  void update(double dt) {
+    InputState state = player.getInputState();
+    
+    TiledMap map = player.gameRef.map;
+    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'Ladders');
+    if (ladderTile != null) {
+      print("we can have a ladder!");
+
+      Rect ladderTileRect = map.tileRect(ladderTile);
+      player.gameRef.debug.drawRect(ladderTileRect, Colors.pink, PaintingStyle.fill);
+    
+      Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'Ladders');
+      if (nextLadderTile != null) {
+        print("there is a ladder in the direction we are moving.... okay!");
+
+        Rect nextLadderTileRect = map.tileRect(nextLadderTile);
+        player.gameRef.debug.drawRect(nextLadderTileRect, Colors.brown, PaintingStyle.fill);
+
+      }
+    }
+
+    player.applyMovement(dt, gravity: false, movementSpeed: data['movementSpeed']);
+
+    // TODO: fell off the ladder?
+  }
+}
+
+class Elevator extends PlayerState {
+  Elevator(Player player, String name) : super(player, name);
+
+  @override
+  void update(double dt) {}
+}
+
+class Use extends PlayerState {
+  Use(Player player, String name) : super(player, name);
 
   @override
   void update(double dt) {}

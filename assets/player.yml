@@ -20,6 +20,15 @@ animations:
 states:
   - name: Idle
   - name: Walk
-    movementSpeed: 200
+    movementSpeed: 100
   - name: Fall
   - name: Dead
+  - name: Ladder
+    animationName: Walk
+    movementSpeed: 50
+  - name: Elevator
+    animationName: Walk
+  - name: Use
+    animationName: Walk
+  - name: Teleport
+    animationName: Walk

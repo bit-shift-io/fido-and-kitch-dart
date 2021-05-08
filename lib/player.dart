@@ -1,8 +1,19 @@
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:fido_and_kitch/tiled_map.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
+import 'package:tiled/tiled.dart';
 import 'game.dart';
 import 'player_states.dart';
 import 'utils.dart';
 import 'input_action.dart';
+
+class InputState {
+  Vector2 dir = Vector2(0, 0);
+  bool use = false;
+}
 
 class Player extends PositionComponent with HasGameRef<MyGame> {
 
@@ -65,12 +76,18 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
 
     addInputAction('move_left', InputAction(keyLabel: 'ArrowLeft'));
     addInputAction('move_right', InputAction(keyLabel: 'ArrowRight'));
+    addInputAction('move_up', InputAction(keyLabel: 'ArrowUp'));
+    addInputAction('move_down', InputAction(keyLabel: 'ArrowDown'));
+    addInputAction('use', InputAction(keyLabel: 'e'));
 
     // setup states
     addState(Idle(this, 'Idle'));
     addState(Walk(this, 'Walk'));
     addState(Fall(this, 'Fall'));
     addState(Dead(this, 'Dead'));
+    addState(Ladder(this, 'Ladder'));
+    addState(Teleport(this, 'Teleport'));
+    addState(Elevator(this, 'Elevator'));
 
     setState('Idle');
   }
@@ -99,6 +116,64 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     super.update(dt);
   }
 
+  void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0}) {
+    InputState state = getInputState();
+    Vector2 moveVec = Vector2(state.dir.x, velocity.y);
+    
+    if (gravity) {
+      moveVec.y += 9.8 * dt;
+    }
+
+    moveVec = detectCollision(moveVec);
+
+    moveVec.x *= movementSpeed * dt;
+
+    velocity = moveVec;
+    move(moveVec);
+  }
+
+  Vector2 detectCollision(Vector2 moveVec) {
+
+    // perform collision detection
+    TiledMap map = gameRef.map;
+    Int2 tileCoords = map.worldToTileSpace(position);
+    if (tileCoords != null) {
+      Rect playerRect = toRect();
+
+      //player.gameRef.debug.drawRect(playerRect, Colors.yellow, PaintingStyle.fill);
+      
+
+      Int2 tileCoordBelow = tileCoords + Int2(0, 1);
+
+      //Rect belowTileRect = map.rectFromTilePostion(tileCoordBelow);
+      //player.gameRef.debug.drawRect(belowTileRect, Colors.purple, PaintingStyle.fill);
+      
+      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'Ground');
+      if (tileBelow != null && !tileBelow.isEmpty) {
+        Rect tileRect = map.tileRect(tileBelow);
+
+        double playerBottom = playerRect.bottom;
+        double tileTop = tileRect.top;
+        double playerDistToTile = tileTop - playerBottom;
+
+        moveVec.y = min(moveVec.y, playerDistToTile);
+
+        gameRef.debug.drawRect(tileRect, Colors.blue, PaintingStyle.fill);
+      }
+/*
+      // TODO: get the tile to the left or right
+      Int2 tileCoordNextTo = tileCoords + Int2(moveVec.x as int, 0);
+      Tile tileNextTo = map.getTile(position: tileCoordNextTo, layerName: 'Foreground');
+      if (tileNextTo != null && !tileNextTo.isEmpty) {
+        Rect tileRect = map.tileRect(tileNextTo);
+
+        player.gameRef.debug.drawRect(tileRect, Colors.green, PaintingStyle.fill);
+      }*/
+    }
+
+    return moveVec;
+  }
+
   void onKeyEvent(e) {
     for (var a in inputActions.values) {
       a.onKeyEvent(e);
@@ -110,16 +185,24 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     this.y = y;
   }
 
-  double getMovementDirection() {
-    double m = 0.0;
+  InputState getInputState() {
+    InputState state = InputState();
+
     if (inputActions['move_left']?.isKeyDown ?? false) {
-      m = -1.0;
+      state.dir.x = -1.0;
     }
     if (inputActions['move_right']?.isKeyDown ?? false) {
-      m = 1.0;
+      state.dir.x = 1.0;
     }
 
-    return m;
+    if (inputActions['move_up']?.isKeyDown ?? false) {
+      state.dir.y = -1.0;
+    }
+    if (inputActions['move_down']?.isKeyDown ?? false) {
+      state.dir.y = 1.0;
+    }
+
+    return state;
   }
 
   void move(Vector2 offset) {
