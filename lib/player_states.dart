@@ -26,7 +26,7 @@ class PlayerState {
   void enter() {
     //YamlMap m;
     // by default try to play animation with the same name as the state
-    final animationName = data?.nodes['animationName'] ?? name;
+    final animationName = data?.nodes['animationName']?.value ?? name;
     player.setAnimation(animationName);
   }
 
@@ -126,34 +126,66 @@ class Ladder extends PlayerState {
   bool canTransition() {
     TiledMap map = player.gameRef.map;
     Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'Ladders');
-    return ladderTile != null;
+    if (ladderTile != null) {
+      return true;
+    }
+
+    // if moving down, is there a ladder below us?
+    InputState state = player.getInputState();
+    if (state.dir.y > 0) {
+      Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'Ladders');
+      if (nextLadderTile != null) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @override
   void update(double dt) {
+
+    // TODO:
+    // a few issues here:
+    // 1. when moving down, we can move down through the floor. Shouldn't be able to go down here
+    // 2. when moving up, we push out above the ladder. Shouldn't be able to leave the ground
+    // 3. sliding off the side of a ladder allows the player to run in the air for a bit?!
+    
     InputState state = player.getInputState();
     
     TiledMap map = player.gameRef.map;
     Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'Ladders');
+
     if (ladderTile != null) {
-      print("we can have a ladder!");
-
       Rect ladderTileRect = map.tileRect(ladderTile);
-      player.gameRef.debug.drawRect(ladderTileRect, Colors.pink, PaintingStyle.fill);
-    
-      Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'Ladders');
-      if (nextLadderTile != null) {
-        print("there is a ladder in the direction we are moving.... okay!");
+      player.gameRef.debug.drawRect(ladderTileRect, Colors.pink, PaintingStyle.stroke);
+    }
 
-        Rect nextLadderTileRect = map.tileRect(nextLadderTile);
-        player.gameRef.debug.drawRect(nextLadderTileRect, Colors.brown, PaintingStyle.fill);
-
+    // moving down
+    if (state.dir.y > 0) {
+      if (ladderTile == null) {
+        // is there a tile below us?
+        Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'Ladders');
+        if (nextLadderTile == null) {
+          // hit the ground
+          player.setState('Fall');
+          return;
+        }
+      }
+    }
+    // moving up
+    else {
+      if (ladderTile == null) {
+        Tile prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'Ladders');
+        if (prevLadderTile == null) {
+          // can't go any higher
+          player.setState('Fall');
+          return;
+        }
       }
     }
 
-    player.applyMovement(dt, gravity: false, movementSpeed: data['movementSpeed']);
-
-    // TODO: fell off the ladder?
+    player.applyMovement(dt, gravity: false, collisionDetection: false, movementSpeed: data['movementSpeed']);
   }
 }
 

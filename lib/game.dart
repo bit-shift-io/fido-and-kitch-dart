@@ -14,6 +14,8 @@ import 'package:flame/keyboard.dart';
 //import 'package:flame/viewport.dart';
 //import 'package:flutter/material.dart';
 
+//import 'package:flame_forge2d/forge2d_game.dart';
+
 
 import 'package:fido_and_kitch/player.dart';
 import 'package:tiled/tiled.dart';
@@ -55,7 +57,7 @@ class Square extends PositionComponent with HasGameRef<MyGame> {
 }
 */
 
-class MyGame extends BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
+class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
   final double squareSize = 20;
   bool running = true;
 

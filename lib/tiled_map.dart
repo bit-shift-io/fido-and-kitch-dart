@@ -327,7 +327,7 @@ class TiledMap extends BaseComponent {
       return null;
     }
     
-    double gridX = (position.x - tiled.map.tileWidth) / (tiled.map.tileWidth * scale);
+    double gridX = (position.x - (tiled.map.tileWidth * scale) + (tiled.map.tileWidth * 0.5)) / (tiled.map.tileWidth * scale);
     double gridY = (position.y - (tiled.map.tileHeight * scale)) / (tiled.map.tileHeight * scale);
 
     int x = gridX.round();

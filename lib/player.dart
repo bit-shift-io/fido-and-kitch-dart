@@ -100,6 +100,9 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     if (currentAnimation != null) {
       addChild(currentAnimation);
     }
+    else {
+      print("Couldn't finad animation $animationName");
+    }
   }
 
   @override
@@ -116,15 +119,20 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     super.update(dt);
   }
 
-  void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0}) {
+  void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0, bool collisionDetection: true}) {
     InputState state = getInputState();
     Vector2 moveVec = Vector2(state.dir.x, velocity.y);
     
     if (gravity) {
       moveVec.y += 9.8 * dt;
     }
+    else {
+      moveVec.y = movementSpeed * dt * state.dir.y;
+    }
 
-    moveVec = detectCollision(moveVec);
+    if (collisionDetection) {
+      moveVec = detectCollision(moveVec);
+    }
 
     moveVec.x *= movementSpeed * dt;
 
