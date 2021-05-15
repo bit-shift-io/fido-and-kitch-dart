@@ -31,7 +31,7 @@ Future<List<Sprite>> spritesFromFilenames(List<String> fileNames) async {
   return sprites;
 }
 
-SpriteAnimationComponent animationComponentFromSprites(List<Sprite> sprites, {double stepTime, bool loop = true}) {
+SpriteAnimationComponent animationComponentFromSprites(List<Sprite> sprites, {double stepTime, bool loop = true, bool reversed = false}) {
   double width = sprites[0].image.width as double;
   double height = sprites[0].image.height as double;
   SpriteAnimationComponent comp = SpriteAnimationComponent(size: Vector2(width, height), 
@@ -41,6 +41,9 @@ SpriteAnimationComponent animationComponentFromSprites(List<Sprite> sprites, {do
     )
   );
 
+  if (reversed) {
+    comp.animation = comp.animation.reversed();
+  }
   return comp;
 }
 

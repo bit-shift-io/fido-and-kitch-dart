@@ -17,6 +17,17 @@ animations:
     stepTime: 0.2
     loop: false
     frames: 10
+  - name: TeleportFrom
+    imageName: Dead
+    stepTime: 0.2
+    loop: false
+    frames: 10
+  - name: TeleportTo
+    imageName: Dead
+    stepTime: 0.2
+    loop: false
+    frames: 10
+    reversed: true
 states:
   - name: Idle
   - name: Walk
@@ -31,4 +42,5 @@ states:
   - name: Use
     animationName: Walk
   - name: Teleport
-    animationName: Walk
+    fromAnimationName: TeleportFrom
+    toAnimationName: TeleportTo 

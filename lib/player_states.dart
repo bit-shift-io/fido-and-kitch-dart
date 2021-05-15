@@ -33,7 +33,18 @@ class PlayerState {
   void exit() {}
   void update(double dt) {}
 
+  // immutable
   bool canTransition() => true; // override to help know if we can transition to other states
+  
+  // mutable
+  bool tryTransition() {
+    if (canTransition()) {
+      player.setState(name);
+      return true;
+    }
+
+    return false;
+  }
 }
 
 
@@ -57,8 +68,8 @@ class Idle extends PlayerState {
     }
 
     if (state.dir.y != 0.0) {
-      if (player.states['Ladder'].canTransition()) {
-        player.setState('Ladder');
+      if (player.states['Ladder'].tryTransition()) {
+        return;
       }
     }
 
@@ -86,6 +97,10 @@ class Walk extends PlayerState {
       player.setState('Idle');
       return;
     }
+
+    if (player.states['Teleport'].tryTransition()) {
+      return;
+    }
   }
 }
 
@@ -101,6 +116,10 @@ class Fall extends PlayerState {
       player.setState('Idle');
     }
 
+    if (player.states['Teleport'].tryTransition()) {
+      return;
+    }
+
     // TODO: how hard did we hit the ground? DEAD?!
   }
 }
@@ -113,11 +132,94 @@ class Dead extends PlayerState {
   void update(double dt) {}
 }
 
+enum TeleportState {
+  None,
+  PlayingFromAnim,
+  FinishedFromAnim,
+  PlayingToAnim,
+  FinishedToAnim
+}
+
 class Teleport extends PlayerState {
+  TmxObject from;
+  TmxObject to;
+  TeleportState state = TeleportState.None;
+
   Teleport(Player player, String name) : super(player, name);
 
+  TmxObject getTeleportObjectUnderPlayer() {
+    TiledMap map = player.gameRef.map;
+    return map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'Teleporters');
+  }
+
+  bool canTransition() {
+    TmxObject teleporter = getTeleportObjectUnderPlayer();
+    if (teleporter == null) {
+      return false;
+    }
+
+    if (teleporter == from) {
+      return false;
+    }
+
+    if (teleporter == to) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool tryTransition() {
+    // if player moved off of the teleporter,
+    // clear the tile
+    TmxObject teleporter = getTeleportObjectUnderPlayer();
+    if (teleporter == null) {
+      from = null;
+      to = null;
+    }
+
+    return super.tryTransition();
+  }
+
+  void enter() {
+    state = TeleportState.PlayingFromAnim;
+
+    TiledMap map = player.gameRef.map;
+    from = map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'Teleporters');
+    to = map.getObjectByName(layerName: 'Teleporters', name: from.properties['to']);
+
+    final animationName = data?.nodes['fromAnimationName']?.value;
+    player.setAnimation(animationName, onComplete: onFromAnimationComplete);
+  }
+
+  void onFromAnimationComplete() {
+    state = TeleportState.FinishedFromAnim;
+  }
+
+  void onToAnimationComplete() {
+    state = TeleportState.FinishedToAnim;
+  }
+
   @override
-  void update(double dt) {}
+  void update(double dt) {
+    switch (state) {
+      case TeleportState.FinishedFromAnim:
+        state = TeleportState.PlayingToAnim;
+        final animationName = data?.nodes['toAnimationName']?.value;
+        player.setAnimation(animationName, onComplete: onToAnimationComplete);
+        player.position = Vector2(to.x, to.y);
+        break;
+
+      case TeleportState.FinishedToAnim:
+        state = TeleportState.None;
+        player.setState('Idle');
+        break;
+
+      default:
+        break;
+    }
+  }
+
 }
 
 class Ladder extends PlayerState {

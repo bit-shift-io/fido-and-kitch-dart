@@ -71,7 +71,8 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     String dir = data['directory'];
     var anims = data['animations'];
     for (var a in anims) {
-      addAnimation(a['name'], animationComponentFromSprites(await spritesFromFilenames(anim(dir, a['name'], a['frames'])), stepTime: a['stepTime'], loop: a['loop']));
+      final imageName = a['imageName'] ?? a['name'];
+      addAnimation(a['name'], animationComponentFromSprites(await spritesFromFilenames(anim(dir, imageName, a['frames'])), stepTime: a['stepTime'], loop: a['loop'] ?? true, reversed: a['reversed'] ?? false));
     }
 
     addInputAction('move_left', InputAction(keyLabel: 'ArrowLeft'));
@@ -92,13 +93,15 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     setState('Idle');
   }
 
-  void setAnimation(animationName) {
+  void setAnimation(animationName, {OnCompleteSpriteAnimation onComplete = null}) {
     if (currentAnimation != null) {
       removeChild(currentAnimation);
     }
     currentAnimation = animations[animationName];
     if (currentAnimation != null) {
       addChild(currentAnimation);
+      currentAnimation.animation.reset();
+      currentAnimation.animation.onComplete = onComplete;
     }
     else {
       print("Couldn't finad animation $animationName");

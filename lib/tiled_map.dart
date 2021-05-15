@@ -242,7 +242,10 @@ class TiledMap extends BaseComponent {
 
     await tiled.future;
 
-    _addCoinsInMap();
+    // TODO: add this to a yaml file?
+    // TODO: get some teleporter sprite/animation
+    _addObjects(layerName: 'AnimatedCoins', imageName: 'coins.png');
+    _addObjects(layerName: 'Teleporters', imageName: 'coins.png');
   }
 
   /// This returns an object group fetch by name from a given layer.
@@ -257,8 +260,8 @@ class TiledMap extends BaseComponent {
           .firstWhere((objectGroup) => objectGroup.name == name);
   }
 
-  void _addCoinsInMap() {
-    final t.ObjectGroup objGroup = getObjectGroupFromLayer("AnimatedCoins");
+  void _addObjects({layerName, imageName}) {
+    final t.ObjectGroup objGroup = getObjectGroupFromLayer(layerName);
     if (objGroup == null) {
       return;
     }
@@ -267,7 +270,7 @@ class TiledMap extends BaseComponent {
       final comp = SpriteAnimationComponent(
         size: Vector2(20.0, 20.0),
         animation: await SpriteAnimation.load(
-          'coins.png',
+          imageName,
           SpriteAnimationData.sequenced(amount: 8,
             stepTime: 0.2,
             textureSize: Vector2(20, 20)
@@ -342,6 +345,53 @@ class TiledMap extends BaseComponent {
     }
 
     return Rect.fromLTWH(position.x * tiled.map.tileWidth * scale, position.y * tiled.map.tileHeight * scale, tiled.map.tileWidth * scale, tiled.map.tileHeight * scale);
+  }
+
+  t.TmxObject getObjectByName({String layerName, String name}) {
+    for (var layer in tiled.map.objectGroups.where((layer) => layer.name == layerName)) {
+      final object = layer.tmxObjects.firstWhere((obj) {
+        return obj.name == name;
+      }, orElse: () => null);
+
+      if (object != null) {
+        return object;
+      }
+    }
+    return null;
+  }
+
+  t.TmxObject getObjectFromWorldPosition({String layerName, Vector2 worldPosition, Int2 tileOffset, bool nullIfEmpty: true}) {
+    Int2 position = worldToTileSpace(worldPosition);
+    if (tileOffset != null) {
+      position = position + tileOffset;
+    }
+
+    return getObjectFromPosition(layerName: layerName, position: position, nullIfEmpty: nullIfEmpty);
+  }
+
+  t.TmxObject getObjectFromPosition({String layerName, Int2 position, bool nullIfEmpty: true}) {
+    if (tiled == null || !tiled.loaded() || position == null) {
+      return null;
+    }
+
+    if (position.y < 0 || position.x < 0) {
+      return null;
+    }
+
+    for (var layer in tiled.map.objectGroups.where((layer) => layer.name == layerName)) {
+      final object = layer.tmxObjects.firstWhere((obj) {
+        // TODO: we can cache this at load time?
+        Int2 objTileSpace = worldToTileSpace(Vector2(obj.x, obj.y));
+        bool isAtPos = objTileSpace.x == position.x && objTileSpace.y == position.y;
+        return isAtPos;
+      }, orElse: () => null);
+
+      if (object != null) {
+        return object;
+      }
+    }
+
+    return null;
   }
 
   t.Tile getTile({String layerName, Int2 position, bool nullIfEmpty: true}) {
