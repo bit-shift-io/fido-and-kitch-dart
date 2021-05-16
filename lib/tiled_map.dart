@@ -235,17 +235,54 @@ class Tiled {
 class TiledMap extends BaseComponent {
   Tiled tiled;
   double scale;
+  dynamic data;
 
   Future load(String fileName) async {
+    data = await loadYamlFromFile('map.yml');
+
+    var objectLayers = data['objectLayers'];
+    for (var o in objectLayers) {
+      final layerName = o['layerName'];
+      final imageName = o['imageName'];
+
+      print(imageName);
+      // something wrong here, its looking in assets/assets/images/coins ?!
+      Image image = await Flame.images.load(imageName);
+
+      print("test");
+    }
+
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
     scale = 1.0;
 
     await tiled.future;
 
+    
+
+    //var objectLayers = data['objectLayers'];
+    for (var o in objectLayers) {
+      final layerName = o['layerName'];
+      final imageName = o['imageName'];
+
+      print(imageName);
+      // something wrong here, its looking in assets/assets/images/coins ?!
+      Image image = await Flame.images.load(imageName);
+
+      final t.ObjectGroup objGroup = getObjectGroupFromLayer(layerName);
+
+      for (final tmxObj in objGroup.tmxObjects) {
+        SpriteAnimationComponent comp = animationComponentFromSpriteSheet(image, amount: o['amount'], stepTime: o['stepTime'], loop: o['loop'] ?? true, reversed: o['reversed'] ?? false);
+        comp.x = tmxObj.x.toDouble();
+        comp.y = tmxObj.y.toDouble();
+        addChild(comp);
+      }
+      //_addObjects(layerName: layerName, animationComponentFromSpriteSheet(image, amount: o['amount'], stepTime: o['stepTime'], loop: o['loop'] ?? true, reversed: o['reversed'] ?? false));
+    }
+
     // TODO: add this to a yaml file?
     // TODO: get some teleporter sprite/animation
-    _addObjects(layerName: 'AnimatedCoins', imageName: 'coins.png');
-    _addObjects(layerName: 'Teleporters', imageName: 'coins.png');
+    //_addObjects(layerName: 'Coins', imageName: 'coins.png');
+    //_addObjects(layerName: 'Teleporters', imageName: 'coins.png');
   }
 
   /// This returns an object group fetch by name from a given layer.
@@ -259,14 +296,16 @@ class TiledMap extends BaseComponent {
       return tiled.map.objectGroups
           .firstWhere((objectGroup) => objectGroup.name == name);
   }
-
-  void _addObjects({layerName, imageName}) {
+/*
+  void _addObjects({layerName, Component component}) {
     final t.ObjectGroup objGroup = getObjectGroupFromLayer(layerName);
     if (objGroup == null) {
       return;
     }
     
     objGroup.tmxObjects.forEach((t.TmxObject obj) async {
+
+      component
       final comp = SpriteAnimationComponent(
         size: Vector2(20.0, 20.0),
         animation: await SpriteAnimation.load(
@@ -282,7 +321,7 @@ class TiledMap extends BaseComponent {
       addChild(comp);
     });
   }
-
+*/
   List<t.Tile> rectIntersectingTiles(Rect r) {
     if (tiled == null || !tiled.loaded()) {
       print('Map still loading!');

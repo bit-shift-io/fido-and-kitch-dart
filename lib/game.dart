@@ -4,6 +4,7 @@ import 'dart:math';
 //import 'dart:ui';
 
 import 'package:fido_and_kitch/tiled_map.dart';
+import 'package:flame/flame.dart';
 //import 'package:flame/anchor.dart';
 import 'package:flame/gestures.dart';
 //import 'package:flame/components/component.dart';
@@ -66,6 +67,13 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
   Debug debug;
 
   Future<void> onLoad() async {
+
+    // TODO: fix this not working in the map load,
+    // will it work here?
+    // some issue with pathing, I suspect something is changing the root base path
+    // somehow....
+    final image = await Flame.images.load("coins");
+
     map = TiledMap();
     add(map);
 

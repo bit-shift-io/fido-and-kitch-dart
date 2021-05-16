@@ -47,6 +47,29 @@ SpriteAnimationComponent animationComponentFromSprites(List<Sprite> sprites, {do
   return comp;
 }
 
+SpriteAnimationComponent animationComponentFromSpriteSheet(Image image, {int amount, double stepTime, bool loop = true, bool reversed = false}) {
+  double width = image.width as double;
+  double height = image.height as double;
+
+  final animation = SpriteAnimation.fromFrameData(image, 
+    SpriteAnimationData.sequenced(amount: amount,
+            stepTime: stepTime,
+            textureSize: Vector2(width, height),
+            loop: loop
+          )
+  );
+
+  final comp = SpriteAnimationComponent(
+          size: Vector2(width, height),
+          animation: animation
+      );
+
+  if (reversed) {
+    comp.animation = comp.animation.reversed();
+  }
+  return comp;
+}
+
 dynamic loadYamlFromFile(String fileName) async {
   final data = await s.rootBundle.loadString(fileName);
   final mapData = loadYaml(data);

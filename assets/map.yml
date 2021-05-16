@@ -1,0 +1,6 @@
+objectLayers:
+  - layerName: Coins
+    imageName: coins
+    stepTime: 0.2
+    loop: true
+    frames: 8

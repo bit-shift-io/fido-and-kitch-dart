@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="12">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="14">
  <tileset firstgid="1" source="../generic_platformer_tiles.tsx"/>
  <layer id="4" name="Sky" width="20" height="20">
   <data encoding="base64">
@@ -25,7 +25,11 @@
   <object id="1" name="Player1" x="110.176" y="494.262"/>
   <object id="2" name="Player2" x="47.4369" y="495.792"/>
  </objectgroup>
- <objectgroup id="6" name="AnimatedCoins">
+ <objectgroup id="10" name="Keys">
+  <object id="12" name="key_1" x="302.984" y="174.445"/>
+  <object id="13" name="key_2" x="433.053" y="174.445"/>
+ </objectgroup>
+ <objectgroup id="6" name="Coins">
   <object id="3" x="206.58" y="175.976">
    <ellipse/>
   </object>
