@@ -243,57 +243,41 @@ class TiledMap extends BaseComponent {
   dynamic data;
 
   Future load(String fileName) async {
-    data = await loadYamlFromFile('assets/map.yml');
-
-/*
-    var objectLayers = data['objectLayers'];
-    for (var o in objectLayers) {
-      final layerName = o['layerName'];
-      final imageName = o['imageName'];
-
-      print(imageName);
-      // something wrong here, its looking in assets/assets/images/coins ?!
-      //Image image = await Flame.images.load(imageName);
-
-      Factory f = Factory();
-      f.createFromYaml(layerName);
-
-      print("test");
-    }
-    */
+    // this yaml file contains global data across all maps
+    const mapYamlFile = 'assets/map.yml';
+    data = await loadYamlFromFile(mapYamlFile);
+    final mapDir = p.dirname(mapYamlFile);
 
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
     scale = 1.0;
-
     await tiled.future;
 
-    /*
+    // iterate over all objectGroups in the map
+    // do a look up to get data from map.yaml
+    // this will then allow us to look up which components to spawn
+    Factory f = Factory();
+    for (final objectGroup in tiled.map.objectGroups) {
+      final objectGroupName = objectGroup.name;
+      final objectGroupsData = data['objectGroups'];
+      final objectGroupData = yamlFirstWhere(objectGroupsData, (o) => o['name'] == objectGroupName); //objectGroupsData[objectGroupName];
+      if (objectGroupData == null) {
+        continue;
+      }
 
-    //var objectLayers = data['objectLayers'];
-    for (var o in objectLayers) {
-      final layerName = o['layerName'];
-      final imageName = o['imageName'];
+      final componentFile = objectGroupData['componentFile'];
 
-      print(imageName);
-      // something wrong here, its looking in assets/assets/images/coins ?!
-      Image image = await Flame.images.load(imageName);
+      for (final tmxObj in objectGroup.tmxObjects) {
+        final tmxObjName = tmxObj.name;
 
-      final t.ObjectGroup objGroup = getObjectGroupFromLayer(layerName);
-
-      for (final tmxObj in objGroup.tmxObjects) {
-        SpriteAnimationComponent comp = animationComponentFromSpriteSheet(image, amount: o['amount'], stepTime: o['stepTime'], loop: o['loop'] ?? true, reversed: o['reversed'] ?? false);
+        PositionComponent comp = await f.createFromYaml<PositionComponent>("$mapDir/$componentFile");
+        if (comp == null) {
+          break; // this layer is not a prop layer!
+        }
         comp.x = tmxObj.x.toDouble();
         comp.y = tmxObj.y.toDouble();
-        addChild(comp);
+        addChild(comp); // or add to game?
       }
-      //_addObjects(layerName: layerName, animationComponentFromSpriteSheet(image, amount: o['amount'], stepTime: o['stepTime'], loop: o['loop'] ?? true, reversed: o['reversed'] ?? false));
     }
-    */
-
-    // TODO: add this to a yaml file?
-    // TODO: get some teleporter sprite/animation
-    //_addObjects(layerName: 'Coins', imageName: 'coins.png');
-    //_addObjects(layerName: 'Teleporters', imageName: 'coins.png');
   }
 
   /// This returns an object group fetch by name from a given layer.

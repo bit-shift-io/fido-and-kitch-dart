@@ -77,6 +77,17 @@ dynamic loadYamlFromFile(String fileName) async {
   return mapData;
 }
 
+dynamic yamlFirstWhere(dynamic yaml, Function where) {
+  for (var y in yaml) {
+    final r = where(y);
+    if (r == true) {
+      return y;
+    }
+  }
+
+  return null;
+}
+
 List<String> anim(dir, aninName, numImages) {
   return List<String>.generate(numImages, (index) => '$dir/$aninName (${index + 1}).png');
 }

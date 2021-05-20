@@ -1,6 +1,5 @@
-objectLayers:
-  - layerName: Coins
-    imageName: coins
-    stepTime: 0.2
-    loop: true
-    frames: 8
+objectGroups:
+  - name: Coins
+    componentFile: coin.yml
+  - name: Teleporters
+    componentFile: teleporter.yml

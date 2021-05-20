@@ -1,0 +1,3 @@
+component: SpriteComponent
+image: teleporter_1.png
+size: [20, 20]

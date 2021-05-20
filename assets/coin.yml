@@ -1,6 +1,6 @@
 component: SpriteAnimationComponent
-type: SpriteSheet
-imageName: coins
+image: coins.png
+textureSize: [20, 20]
 stepTime: 0.2
 loop: true
 frames: 8

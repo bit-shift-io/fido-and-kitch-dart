@@ -69,6 +69,8 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
   Future<void> load() async {
     data = await loadYamlFromFile('assets/player.yml');
     String dir = data['directory'];
+
+    // replace this with using spriteAnimationComponentFromYaml
     var anims = data['animations'];
     for (var a in anims) {
       final imageName = a['imageName'] ?? a['name'];
