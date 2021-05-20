@@ -11,6 +11,7 @@ import 'package:tiled/tiled.dart' as t;
 import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 
+import 'factory.dart';
 import 'utils.dart';
 
 /// Tiled represents all flips and rotation using three possible flips: horizontal, vertical and diagonal.
@@ -240,6 +241,7 @@ class TiledMap extends BaseComponent {
   Future load(String fileName) async {
     data = await loadYamlFromFile('map.yml');
 
+/*
     var objectLayers = data['objectLayers'];
     for (var o in objectLayers) {
       final layerName = o['layerName'];
@@ -247,17 +249,21 @@ class TiledMap extends BaseComponent {
 
       print(imageName);
       // something wrong here, its looking in assets/assets/images/coins ?!
-      Image image = await Flame.images.load(imageName);
+      //Image image = await Flame.images.load(imageName);
+
+      Factory f = Factory();
+      f.createFromYaml(layerName);
 
       print("test");
     }
+    */
 
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
     scale = 1.0;
 
     await tiled.future;
 
-    
+    /*
 
     //var objectLayers = data['objectLayers'];
     for (var o in objectLayers) {
@@ -278,6 +284,7 @@ class TiledMap extends BaseComponent {
       }
       //_addObjects(layerName: layerName, animationComponentFromSpriteSheet(image, amount: o['amount'], stepTime: o['stepTime'], loop: o['loop'] ?? true, reversed: o['reversed'] ?? false));
     }
+    */
 
     // TODO: add this to a yaml file?
     // TODO: get some teleporter sprite/animation

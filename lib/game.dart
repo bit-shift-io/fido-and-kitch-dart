@@ -72,7 +72,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     // will it work here?
     // some issue with pathing, I suspect something is changing the root base path
     // somehow....
-    final image = await Flame.images.load("coins");
+    //final image = await Flame.images.load("coins");
 
     map = TiledMap();
     add(map);

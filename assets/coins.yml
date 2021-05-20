@@ -1,0 +1,6 @@
+component: SpriteAnimationComponent
+type: SpriteSheet
+imageName: coins
+stepTime: 0.2
+loop: true
+frames: 8
