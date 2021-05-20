@@ -86,7 +86,7 @@ class Walk extends PlayerState {
 
   @override
   void update(double dt) {
-    player.applyMovement(dt, gravity: true, movementSpeed: data['movementSpeed']);
+    player.applyMovement(dt, gravity: true, movementSpeed: data['movementSpeed'].toDouble());
 
     if (player.velocity.y > 0.0) {
       player.setState('Fall');
@@ -287,7 +287,7 @@ class Ladder extends PlayerState {
       }
     }
 
-    player.applyMovement(dt, gravity: false, collisionDetection: false, movementSpeed: data['movementSpeed']);
+    player.applyMovement(dt, gravity: false, collisionDetection: false, movementSpeed: data['movementSpeed'].toDouble());
   }
 }
 

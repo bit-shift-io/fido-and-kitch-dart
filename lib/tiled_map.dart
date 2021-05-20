@@ -96,7 +96,7 @@ class Tiled {
   bool _loaded = false;
   Size destTileSize;
 
-  String mapBasePath = 'assets/tiles/';
+  //String mapBasePath = 'assets/tiles/';
 
   static Paint paint = Paint()..color = Colors.white;
 
@@ -119,14 +119,17 @@ class Tiled {
   String getTilesetImagePath(t.Tileset tileset, t.Image tmxImage) {
     // the image filepath if relstive to the tileset path
     // the tileset path is relative to the map
+    final mapDir = p.dirname(filename);
     final tilesetDir = p.dirname(tileset.source);
-    final imagePath = p.normalize('$mapBasePath$tilesetDir/${tmxImage.source}');
+    final imagePath = p.normalize('$mapDir/$tilesetDir/${tmxImage.source}');
     final imagePathInImages = imagePath.replaceAll('assets/images/', '');
     return imagePathInImages;
   }
 
   Future<t.TileMap> _loadMap() {
-    return Flame.bundle.loadString('$mapBasePath$filename').then((contents) async {
+    return Flame.bundle.loadString('$filename').then((contents) async {
+
+      final mapDir = p.dirname(filename);
 
       // here we need to parse the XML and extract external tileset filenames
       // then we need to load them as TsxProvider.getSource is no async
@@ -143,7 +146,8 @@ class Tiled {
 
       final tilesetMap = Map<String, String>();
       await Future.forEach(tilesetFilenames, (String tsxFilename) async {
-        String contents = await Flame.bundle.loadString('$mapBasePath$tsxFilename');
+        final normalized = p.normalize('$mapDir/$tsxFilename');
+        String contents = await Flame.bundle.loadString(normalized);
         tilesetMap[tsxFilename] = contents;
       });
 
@@ -239,7 +243,7 @@ class TiledMap extends BaseComponent {
   dynamic data;
 
   Future load(String fileName) async {
-    data = await loadYamlFromFile('map.yml');
+    data = await loadYamlFromFile('assets/map.yml');
 
 /*
     var objectLayers = data['objectLayers'];
@@ -368,7 +372,9 @@ class TiledMap extends BaseComponent {
   @override
   void render(Canvas c) {
     super.render(c);
-    tiled.render(c);
+    if (tiled != null) {
+      tiled.render(c);
+    }
   }
 
   Int2 worldToTileSpace(Vector2 position) {

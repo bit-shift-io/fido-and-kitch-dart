@@ -87,7 +87,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     add(debug);
  
 
-    map.load('map_2.tmx').then(onMapLoad);  
+    map.load('assets/tiles/map_2.tmx').then(onMapLoad);  
   }
 
   void onMapLoad(value) {
