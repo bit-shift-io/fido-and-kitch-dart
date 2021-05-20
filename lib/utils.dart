@@ -91,3 +91,11 @@ dynamic yamlFirstWhere(dynamic yaml, Function where) {
 List<String> anim(dir, aninName, numImages) {
   return List<String>.generate(numImages, (index) => '$dir/$aninName (${index + 1}).png');
 }
+
+extension AddChildren on BaseComponent {
+  void addChildren(List<Component> children) async {
+    for (final c in children) {
+      this.addChild(c);
+    }
+  }
+}

@@ -19,12 +19,12 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
 
   dynamic data;
 
-  Map<String, SpriteAnimationComponent> animations = Map();
+  Map<String, SpriteAnimationComponent> animations = Map(); // TODO: replace with SwitchComponent
   SpriteAnimationComponent currentAnimation;
 
   Map<String, InputAction> inputActions = Map();
 
-  Map<String, PlayerState> states = Map();
+  Map<String, PlayerState> states = Map(); // TODO: replace with SwitchComponent
   PlayerState currentState;
 
   Vector2 velocity = Vector2(0, 0);

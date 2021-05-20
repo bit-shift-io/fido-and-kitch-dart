@@ -2,6 +2,8 @@
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 
+import 'position_component.dart';
+import 'switch_component.dart';
 import 'utils.dart';
 
 typedef Future<T> CreateComponentFromYaml<T>(dynamic yaml);
@@ -76,6 +78,30 @@ Future<SpriteComponent> spriteComponentFromYaml(dynamic yaml) async {
   return new SpriteComponent.fromImage(image, size: size);
 }
 
+Future<SwitchComponent> switchComponentFromYaml(dynamic yaml) async {
+  final comp = new SwitchComponent();
+  // TODO: add components
+
+  final children = yaml['components'];
+  for (final c in children) {
+    Component child = await Factory().createFromYaml<Component>(c);
+    comp.addComponent(c['name'], child);
+  }
+
+  final activeComponent = yaml['activeComponent'];
+  comp.setActiveComponent(activeComponent);
+
+  // TODO: support random initial component
+
+  return comp;
+}
+
+Future<PosComponent> positionComponentFromYaml(dynamic yaml) async {
+  final comp = new PosComponent();
+  comp.addChildren(await Factory().createFromYamlArray(yaml['children']));
+  return comp;
+}
+
 class Factory {
 
   static final Factory _singleton = Factory._internal();
@@ -88,11 +114,17 @@ class Factory {
 
   Map<String, CreateComponentFromYaml> fromYamlMap = {
     'SpriteAnimationComponent': spriteAnimationComponentFromYaml,
-    'SpriteComponent': spriteComponentFromYaml
+    'SpriteComponent': spriteComponentFromYaml,
+    'SwitchComponent': switchComponentFromYaml,
+    'PositionComponent': positionComponentFromYaml
   };
 
-  Future<T> createFromYaml<T>(String fileName) async {
+  Future<T> createFromYamlFile<T>(String fileName) async {
     final yaml = await loadYamlFromFile(fileName);
+    return createFromYaml<T>(yaml);
+  }
+
+  Future<T> createFromYaml<T>(dynamic yaml) async {
     String componentName = yaml['component'];
     final creator = fromYamlMap[componentName];
     if (creator == null) {
@@ -100,4 +132,18 @@ class Factory {
     }
     return await creator(yaml);
   }
+
+  Future<List<Component>> createFromYamlArray(dynamic yaml) async {
+    List<Component> array = [];
+    if (yaml == null) {
+      return array;
+    }
+
+    for (final c in yaml) {
+      Component child = await createFromYaml<Component>(c);
+      array.add(child);
+    }
+    return array;
+  }
+
 }

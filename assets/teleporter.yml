@@ -1,3 +1,13 @@
-component: SpriteComponent
-image: teleporter_1.png
-size: [20, 20]
+component: PositionComponent
+children:
+  - component: SwitchComponent
+    activeComponent: Teleporter2
+    components:
+      - name: Teleporter1
+        component: SpriteComponent
+        image: teleporter_1.png
+        size: [20, 20]
+      - name: Teleporter2
+        component: SpriteComponent
+        image: teleporter_2.png
+        size: [20, 20]

@@ -269,7 +269,7 @@ class TiledMap extends BaseComponent {
       for (final tmxObj in objectGroup.tmxObjects) {
         final tmxObjName = tmxObj.name;
 
-        PositionComponent comp = await f.createFromYaml<PositionComponent>("$mapDir/$componentFile");
+        PositionComponent comp = await f.createFromYamlFile<PositionComponent>("$mapDir/$componentFile");
         if (comp == null) {
           break; // this layer is not a prop layer!
         }
