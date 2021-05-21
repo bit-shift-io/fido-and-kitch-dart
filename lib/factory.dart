@@ -2,6 +2,9 @@
 import 'package:flame/components.dart';
 import 'components/sprite_animation_component.dart';
 import 'components/sprite_component.dart';
+import 'components/entity.dart';
+import 'components/pickup.dart';
+import 'components/usable.dart';
 import 'player.dart';
 import 'components/position_component.dart';
 import 'components/switch_component.dart';
@@ -24,7 +27,10 @@ class Factory {
     'SpriteComponent': spriteComponentFromYaml,
     'SwitchComponent': switchComponentFromYaml,
     'PositionComponent': positionComponentFromYaml,
-    'Player': playerComponentFromYaml
+    'Entity': entityComponentFromYaml,
+    'Player': playerComponentFromYaml,
+    'Pickup': pickupComponentFromYaml,
+    'Usable': usableComponentFromYaml
   };
 
   void registerComponentFromYaml(String name, CreateComponentFromYaml creator) {

@@ -1,4 +1,5 @@
-component: PositionComponent
+component: Entity
+entityList: Pickups
 children:
   - component: SwitchComponent
     activeComponent: Key1

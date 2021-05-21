@@ -1,4 +1,5 @@
 component: Player
+entityList: Players
 name: Kitch
 debugMode: true
 children:

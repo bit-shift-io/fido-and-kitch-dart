@@ -1,4 +1,5 @@
-component: PositionComponent
+component: Entity
+entityList: Teleporters
 children:
   - component: SwitchComponent
     activeComponent: Teleporter2

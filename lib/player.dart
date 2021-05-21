@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:fido_and_kitch/components/entity.dart';
+
 import 'components/switch_component.dart';
 import 'tiled_map.dart';
 import 'package:flame/components.dart';
@@ -19,7 +21,7 @@ class InputState {
   bool use = false;
 }
 
-class Player extends PositionComponent with HasGameRef<MyGame>, HasName {
+class Player extends Entity {
   dynamic data;
   SwitchComponent animations;
 
@@ -62,6 +64,8 @@ class Player extends PositionComponent with HasGameRef<MyGame>, HasName {
   }
 
   Future<void> fromYaml(dynamic yaml) async {
+    super.fromYaml(yaml);
+    
     data = yaml;
     debugMode = yaml['debugMode'] ?? false;
 
@@ -121,6 +125,7 @@ class Player extends PositionComponent with HasGameRef<MyGame>, HasName {
     super.update(dt);
   }
 
+  // move this to a player movement component?
   void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0, bool collisionDetection: true}) {
     InputState state = getInputState();
     Vector2 moveVec = Vector2(state.dir.x, velocity.y);
@@ -195,6 +200,7 @@ class Player extends PositionComponent with HasGameRef<MyGame>, HasName {
     this.y = y;
   }
 
+  // move to a player input component
   InputState getInputState() {
     InputState state = InputState();
 

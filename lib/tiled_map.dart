@@ -12,6 +12,7 @@ import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 
 import 'factory.dart';
+import 'game.dart';
 import 'utils/number.dart';
 import 'utils/yaml.dart';
 
@@ -238,7 +239,7 @@ class Tiled {
 }
 
 
-class TiledMap extends BaseComponent {
+class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   Tiled tiled;
   double scale;
   dynamic data;
@@ -276,7 +277,7 @@ class TiledMap extends BaseComponent {
         }
         comp.x = tmxObj.x.toDouble();
         comp.y = tmxObj.y.toDouble();
-        addChild(comp); // or add to game?
+        gameRef.add(comp);
       }
     }
   }

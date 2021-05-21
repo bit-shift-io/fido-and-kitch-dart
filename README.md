@@ -28,3 +28,9 @@ Here are a list of assets we use in the game and their source of origin.
 ## Todo List
 
 * flutter pub add flame_tiled - https://pub.dev/packages/flame_tiled/install - version of flame I am using is too new?
+
+## Architecture
+
+Components are building blocks.
+Entities are root level items that are made up of components.
+Entities should interact with one another and each entity can interact with its own components, but no entity should know about another entities components.

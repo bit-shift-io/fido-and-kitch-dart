@@ -1,6 +1,9 @@
-component: SpriteAnimationComponent
-image: coins.png
-textureSize: [20, 20]
-stepTime: 0.2
-loop: true
-frames: 8
+component: Entity
+entityList: Pickups
+children:
+  - component: SpriteAnimationComponent
+    image: coins.png
+    textureSize: [20, 20]
+    stepTime: 0.2
+    loop: true
+    frames: 8
