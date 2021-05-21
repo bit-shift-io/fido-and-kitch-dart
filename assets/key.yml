@@ -1,0 +1,13 @@
+component: PositionComponent
+children:
+  - component: SwitchComponent
+    activeComponent: Key1
+    components:
+      - name: Key1
+        component: SpriteComponent
+        image: key_1.png
+        size: [20, 20]
+      - name: Key2
+        component: SpriteComponent
+        image: key_2.png
+        size: [20, 20]

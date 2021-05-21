@@ -3,3 +3,5 @@ objectGroups:
     componentFile: coin.yml
   - name: Teleporters
     componentFile: teleporter.yml
+  - name: Keys
+    componentFile: key.yml
