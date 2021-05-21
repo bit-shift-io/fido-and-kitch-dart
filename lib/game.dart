@@ -1,62 +1,16 @@
-
-//import 'dart:math' as math;
 import 'dart:math';
-//import 'dart:ui';
-
 import 'package:fido_and_kitch/tiled_map.dart';
-import 'package:flame/flame.dart';
-//import 'package:flame/anchor.dart';
 import 'package:flame/gestures.dart';
-//import 'package:flame/components/component.dart';
-//import 'package:flame/components/mixins/has_game_ref.dart';
 import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
-//import 'package:flame/palette.dart';
-//import 'package:flame/viewport.dart';
-//import 'package:flutter/material.dart';
 
 //import 'package:flame_forge2d/forge2d_game.dart';
-
 
 import 'package:fido_and_kitch/player.dart';
 import 'package:tiled/tiled.dart';
 
 import 'debug.dart';
-import 'utils.dart';
-
-/*
-class Palette {
-  static const PaletteEntry white = BasicPalette.white;
-  static const PaletteEntry red = PaletteEntry(Color(0xFFFF0000));
-  static const PaletteEntry blue = PaletteEntry(Color(0xFF0000FF));
-}
-
-class Square extends PositionComponent with HasGameRef<MyGame> {
-  static const SPEED = 0.25;
-
-  @override
-  void render(Canvas c) {
-    prepareCanvas(c);
-
-    c.drawRect(Rect.fromLTWH(0, 0, width, height), Palette.white.paint);
-    c.drawRect(const Rect.fromLTWH(0, 0, 3, 3), Palette.red.paint);
-    c.drawRect(Rect.fromLTWH(width / 2, height / 2, 3, 3), Palette.blue.paint);
-  }
-
-  @override
-  void update(double t) {
-    super.update(t);
-    angle += SPEED * t;
-    angle %= 2 * math.pi;
-  }
-
-  @override
-  void onMount() {
-    width = height = gameRef.squareSize;
-    anchor = Anchor.center;
-  }
-}
-*/
+import 'factory.dart';
 
 class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
   final double squareSize = 20;
@@ -67,17 +21,10 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
   Debug debug;
 
   Future<void> onLoad() async {
-
-    // TODO: fix this not working in the map load,
-    // will it work here?
-    // some issue with pathing, I suspect something is changing the root base path
-    // somehow....
-    //final image = await Flame.images.load("coins");
-
     map = TiledMap();
     add(map);
 
-    Player p = Player();
+    Player p = await Factory().createFromYamlFile<Player>('assets/player.yml');
     players.add(p);
     add(p
       ..x = 200

@@ -1,16 +1,12 @@
-
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:tiled/tiled.dart';
-import 'package:yaml/yaml.dart';
 
 import 'player.dart';
-import 'utils.dart';
-//import 'game.dart';
 import 'tiled_map.dart';
+import 'utils/number.dart';
 
 class PlayerState {
   Player player;

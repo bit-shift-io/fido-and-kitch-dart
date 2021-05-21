@@ -1,33 +1,47 @@
+component: Player
 name: Kitch
-directory: cat
-animations:
-  - name: Idle
-    stepTime: 0.2
-    loop: true
-    frames: 10
-  - name: Walk
-    stepTime: 0.2
-    loop: true
-    frames: 10
-  - name: Fall
-    stepTime: 0.2
-    loop: true
-    frames: 8
-  - name: Dead
-    stepTime: 0.2
-    loop: false
-    frames: 10
-  - name: TeleportFrom
-    imageName: Dead
-    stepTime: 0.2
-    loop: false
-    frames: 10
-  - name: TeleportTo
-    imageName: Dead
-    stepTime: 0.2
-    loop: false
-    frames: 10
-    reversed: true
+debugMode: true
+children:
+    - component: SwitchComponent
+      name: Animations
+      components:
+        - component: SpriteAnimationComponent
+          name: Idle
+          images: cat/Idle (${i+1}).png
+          stepTime: 0.2
+          loop: true
+          frames: 10
+        - component: SpriteAnimationComponent
+          name: Walk
+          images: cat/Walk (${i+1}).png
+          stepTime: 0.2
+          loop: true
+          frames: 10
+        - component: SpriteAnimationComponent
+          name: Fall
+          images: cat/Fall (${i+1}).png
+          stepTime: 0.2
+          loop: true
+          frames: 8
+        - component: SpriteAnimationComponent
+          name: Dead
+          images: cat/Dead (${i+1}).png
+          stepTime: 0.2
+          loop: false
+          frames: 10
+        - component: SpriteAnimationComponent
+          name: TeleportFrom
+          images: cat/Dead (${i+1}).png
+          stepTime: 0.2
+          loop: false
+          frames: 10
+        - component: SpriteAnimationComponent
+          name: TeleportTo
+          images: cat/Dead (${i+1}).png
+          stepTime: 0.2
+          loop: false
+          frames: 10
+          reversed: true
 states:
   - name: Idle
   - name: Walk

@@ -42,7 +42,7 @@ class GameWrapperState extends State<GameWrapper> {
   }
 
   void preload() async {
-    // TODO: format these into proper paths... do we load all or let the game.yaml determine what dirs to preload?
+    // TODO: format these into proper paths... do we load all or let the game.yml determine what dirs to preload?
     /*
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);

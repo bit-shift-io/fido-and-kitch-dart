@@ -1,30 +1,31 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:fido_and_kitch/tiled_map.dart';
+import 'components/switch_component.dart';
+import 'tiled_map.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:tiled/tiled.dart';
+import 'components/mixins.dart';
+import 'components/extensions.dart';
+import 'factory.dart';
 import 'game.dart';
 import 'player_states.dart';
-import 'utils.dart';
 import 'input_action.dart';
+import 'utils/number.dart';
 
 class InputState {
   Vector2 dir = Vector2(0, 0);
   bool use = false;
 }
 
-class Player extends PositionComponent with HasGameRef<MyGame> {
-
+class Player extends PositionComponent with HasGameRef<MyGame>, HasName {
   dynamic data;
-
-  Map<String, SpriteAnimationComponent> animations = Map(); // TODO: replace with SwitchComponent
-  SpriteAnimationComponent currentAnimation;
+  SwitchComponent animations;
 
   Map<String, InputAction> inputActions = Map();
 
-  Map<String, PlayerState> states = Map(); // TODO: replace with SwitchComponent
+  Map<String, PlayerState> states = Map(); // TODO: replace with SwitchComponent or StateMachineComponent
   PlayerState currentState;
 
   Vector2 velocity = Vector2(0, 0);
@@ -35,16 +36,10 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     width = 32.0;
     height = 32.0;
     anchor = Anchor.bottomCenter;
-    debugMode = true;
-    load();
   }
 
   addState(PlayerState state) {
     states[state.name] = state;
-  }
-
-  addAnimation(String name, SpriteAnimationComponent animationComponent) {
-    animations[name] = animationComponent;
   }
 
   addInputAction(String name, InputAction action) {
@@ -66,15 +61,17 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     currentState = nextState;
   }
 
-  Future<void> load() async {
-    data = await loadYamlFromFile('assets/player.yml');
-    String dir = data['directory'];
+  Future<void> fromYaml(dynamic yaml) async {
+    data = yaml;
+    debugMode = yaml['debugMode'] ?? false;
 
-    // replace this with using spriteAnimationComponentFromYaml
-    var anims = data['animations'];
-    for (var a in anims) {
-      final imageName = a['imageName'] ?? a['name'];
-      addAnimation(a['name'], animationComponentFromSprites(await spritesFromFilenames(anim(dir, imageName, a['frames'])), stepTime: a['stepTime'], loop: a['loop'] ?? true, reversed: a['reversed'] ?? false));
+    // add child components
+    addChildren(await Factory().createFromYamlArray(yaml['children']));
+
+    // pull out any named components we need
+    animations = findFirstChild<SwitchComponent>('Animations');
+    if (animations == null) {
+      print("Couldn't find SwitchComponend named 'Animations'");
     }
 
     addInputAction('move_left', InputAction(keyLabel: 'ArrowLeft'));
@@ -95,13 +92,18 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     setState('Idle');
   }
 
-  void setAnimation(animationName, {OnCompleteSpriteAnimation onComplete = null}) {
-    if (currentAnimation != null) {
-      removeChild(currentAnimation);
+  void setAnimation(animationName, {OnCompleteSpriteAnimation onComplete}) {
+    if (animations == null) {
+      return;
     }
-    currentAnimation = animations[animationName];
+
+    animations.setActiveComponent(animationName);
+
+    var currentAnimation = animations.activeComponent as SpriteAnimationComponent;
     if (currentAnimation != null) {
-      addChild(currentAnimation);
+      currentAnimation.width = width;
+      currentAnimation.height = height;
+
       currentAnimation.animation.reset();
       currentAnimation.animation.onComplete = onComplete;
     }
@@ -114,11 +116,6 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
   void update(double dt) {
     if (currentState != null) {
       currentState.update(dt);
-    }
-
-    if (currentAnimation != null) {
-      currentAnimation.width = width;
-      currentAnimation.height = height;
     }
 
     super.update(dt);
@@ -222,4 +219,10 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
     x += offset.x;
     y += offset.y;
   }
+}
+
+Future<Player> playerComponentFromYaml(dynamic yaml) async {
+  final comp = new Player();
+  await comp.fromYaml(yaml);
+  return comp;
 }

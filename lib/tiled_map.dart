@@ -12,7 +12,8 @@ import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 
 import 'factory.dart';
-import 'utils.dart';
+import 'utils/number.dart';
+import 'utils/yaml.dart';
 
 /// Tiled represents all flips and rotation using three possible flips: horizontal, vertical and diagonal.
 /// This class converts that representation to a simpler one, that uses one angle (with pi/2 steps) and two flips (H or V).
@@ -267,7 +268,7 @@ class TiledMap extends BaseComponent {
       final componentFile = objectGroupData['componentFile'];
 
       for (final tmxObj in objectGroup.tmxObjects) {
-        final tmxObjName = tmxObj.name;
+        //final tmxObjName = tmxObj.name;
 
         PositionComponent comp = await f.createFromYamlFile<PositionComponent>("$mapDir/$componentFile");
         if (comp == null) {
@@ -416,7 +417,7 @@ class TiledMap extends BaseComponent {
 
     for (var layer in tiled.map.objectGroups.where((layer) => layer.name == layerName)) {
       final object = layer.tmxObjects.firstWhere((obj) {
-        // TODO: we can cache this at load time?
+        // we can cache this at load time? only if performance is an issue
         Int2 objTileSpace = worldToTileSpace(Vector2(obj.x, obj.y));
         bool isAtPos = objTileSpace.x == position.x && objTileSpace.y == position.y;
         return isAtPos;
