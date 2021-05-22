@@ -46,13 +46,19 @@ class Factory {
   }
 
   Future<T> createFromYaml<T>(dynamic yaml) async {
-    String componentName = yaml['component'];
-    final creator = fromYamlMap[componentName];
-    if (creator == null) {
+    try {
+      String componentName = yaml['component'];
+      final creator = fromYamlMap[componentName];
+      if (creator == null) {
+        print('No creator found for $componentName');
+        return null;
+      }
+      print("\tcreating component: $componentName with name ${yaml['name']}");
+      return await creator(yaml);
+    } catch(e) {
+      print(e);
       return null;
     }
-    print("\tcreating component: $componentName");
-    return await creator(yaml);
   }
 
   Future<List<Component>> createFromYamlArray(dynamic yaml) async {
@@ -63,7 +69,9 @@ class Factory {
 
     for (final c in yaml) {
       Component child = await createFromYaml<Component>(c);
-      array.add(child);
+      if (child != null) {
+        array.add(child);
+      }
     }
     return array;
   }

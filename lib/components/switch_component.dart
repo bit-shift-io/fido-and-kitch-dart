@@ -29,7 +29,9 @@ class SwitchComponent extends BaseComponent with HasName {
     final children = yaml['components'];
     for (final c in children) {
       Component child = await Factory().createFromYaml<Component>(c);
-      addComponent(c['name'], child);
+      if (child != null) {
+        addComponent(c['name'], child);
+      }
     }
 
     final activeComponent = yaml['activeComponent'];

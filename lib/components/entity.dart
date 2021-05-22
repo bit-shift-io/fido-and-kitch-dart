@@ -11,7 +11,7 @@ class Entity extends PositionComponent with c.HasGameRef<MyGame> {
   String entityList; // TODO: replace with a list, an entity might want to be in multiple lists
 
   Future<void> fromYaml(dynamic yaml) async {
-    super.fromYaml(yaml);
+    await super.fromYaml(yaml);
     entityList = yaml['entityList'];
   }
 

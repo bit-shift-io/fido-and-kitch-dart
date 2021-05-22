@@ -66,14 +66,10 @@ class Player extends Entity {
   }
 
   Future<void> fromYaml(dynamic yaml) async {
-    super.fromYaml(yaml);
+    await super.fromYaml(yaml);
     
     data = yaml;
     debugMode = yaml['debugMode'] ?? false;
-
-    // TODO: something wrong here, Animations component isn't loading?!?!
-    // add child components
-    //addChildren(await Factory().createFromYamlArray(yaml['children']));
 
     // pull out any named components we need
     animations = findFirstChild<SwitchComponent>('Animations');
