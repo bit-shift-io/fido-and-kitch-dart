@@ -18,7 +18,25 @@ extension AddChildren on BaseComponent {
         }
       }
     }
+    return null;
+  }
 
+  List<T> findChidrenByClass<T>() {
+    List<T> found = [];
+    for (final c in children) {
+      if (c is T) {
+        found.add(c as T);
+      }
+    }
+    return found;
+  }
+
+  T findFirstChildByClass<T>() {
+    for (final c in children) {
+      if (c is T) {
+        return c as T;
+      }
+    }
     return null;
   }
 }

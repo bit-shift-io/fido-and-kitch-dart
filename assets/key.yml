@@ -12,3 +12,5 @@ children:
         component: SpriteComponent
         image: key_2.png
         size: [20, 20]
+  - component: PickupComponent
+    itemName: Key1

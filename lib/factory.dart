@@ -1,10 +1,11 @@
 
 import 'package:flame/components.dart';
+import 'components/inventory_component.dart';
 import 'components/sprite_animation_component.dart';
 import 'components/sprite_component.dart';
 import 'components/entity.dart';
-import 'components/pickup.dart';
-import 'components/usable.dart';
+import 'components/pickup_component.dart';
+import 'components/usable_component.dart';
 import 'player.dart';
 import 'components/position_component.dart';
 import 'components/switch_component.dart';
@@ -29,8 +30,9 @@ class Factory {
     'PositionComponent': positionComponentFromYaml,
     'Entity': entityComponentFromYaml,
     'Player': playerComponentFromYaml,
-    'Pickup': pickupComponentFromYaml,
-    'Usable': usableComponentFromYaml
+    'PickupComponent': pickupComponentFromYaml,
+    'UsableComponent': usableComponentFromYaml,
+    'InventoryComponent': inventoryComponentFromYaml
   };
 
   void registerComponentFromYaml(String name, CreateComponentFromYaml creator) {
@@ -39,6 +41,7 @@ class Factory {
 
   Future<T> createFromYamlFile<T>(String fileName) async {
     final yaml = await loadYamlFromFile(fileName);
+    print("creating entity: $fileName");
     return createFromYaml<T>(yaml);
   }
 
@@ -48,6 +51,7 @@ class Factory {
     if (creator == null) {
       return null;
     }
+    print("\tcreating component: $componentName");
     return await creator(yaml);
   }
 

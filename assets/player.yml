@@ -3,6 +3,8 @@ entityList: Players
 name: Kitch
 debugMode: true
 children:
+    - component: InventoryComponent
+      name: Inventory
     - component: SwitchComponent
       name: Animations
       components:

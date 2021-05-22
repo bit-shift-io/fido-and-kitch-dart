@@ -7,3 +7,5 @@ children:
     stepTime: 0.2
     loop: true
     frames: 8
+  - component: PickupComponent
+    itemName: Coin

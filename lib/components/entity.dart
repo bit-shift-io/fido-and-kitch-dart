@@ -13,15 +13,22 @@ class Entity extends PositionComponent with c.HasGameRef<MyGame> {
   Future<void> fromYaml(dynamic yaml) async {
     super.fromYaml(yaml);
     entityList = yaml['entityList'];
-    addChildren(await Factory().createFromYamlArray(yaml['children']));
   }
 
+  addToEntityLists(MyGame ref) {
+    ref.addEntity(this, entityList);
+  }
+
+  removeFromEntityLists(MyGame ref) {
+    ref.removeEntity(this, entityList);
+  }
+/*
   set gameRef(MyGame ref) {
     //if ((!hasGameRef && ref != null) || (hasGameRef && gameRef != ref)) {
-      ref.addEntity(this, entityList);
+      addToEntityLists(ref);
     //}
     super.gameRef = ref;
-  }
+  }*/
 }
 
 Future<Entity> entityComponentFromYaml(dynamic yaml) async {

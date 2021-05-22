@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:fido_and_kitch/components/entity.dart';
+import 'package:fido_and_kitch/components/inventory_component.dart';
 
 import 'components/switch_component.dart';
 import 'tiled_map.dart';
@@ -27,6 +28,7 @@ class Player extends Entity {
 
   Map<String, InputAction> inputActions = Map();
 
+  // ECS sample: https://github.com/Unity-Technologies/EntityComponentSystemSamples/tree/master/ECSSamples/Assets/Use%20Case%20Samples/1.%20State%20Machine%20AI
   Map<String, PlayerState> states = Map(); // TODO: replace with SwitchComponent or StateMachineComponent
   PlayerState currentState;
 
@@ -69,8 +71,9 @@ class Player extends Entity {
     data = yaml;
     debugMode = yaml['debugMode'] ?? false;
 
+    // TODO: something wrong here, Animations component isn't loading?!?!
     // add child components
-    addChildren(await Factory().createFromYamlArray(yaml['children']));
+    //addChildren(await Factory().createFromYamlArray(yaml['children']));
 
     // pull out any named components we need
     animations = findFirstChild<SwitchComponent>('Animations');

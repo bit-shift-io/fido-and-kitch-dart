@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:async';
 import 'dart:ui';
+import 'package:fido_and_kitch/components/entity.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/widgets.dart' hide Animation, Image;
@@ -277,6 +278,11 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
         }
         comp.x = tmxObj.x.toDouble();
         comp.y = tmxObj.y.toDouble();
+        
+        Entity e = comp as Entity;
+        if (e != null) {
+          e.addToEntityLists(gameRef);
+        }
         gameRef.add(comp);
       }
     }

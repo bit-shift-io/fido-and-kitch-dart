@@ -34,6 +34,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     add(map);
 
     Player p = await Factory().createFromYamlFile<Player>('assets/player.yml');
+    p.addToEntityLists(this);
     add(p);
     //addEntity(p, p.entityList);
 
@@ -50,17 +51,25 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     map.load('assets/tiles/map_2.tmx').then(onMapLoad);  
   }
 
-  addSystem(System system) {
+  void addSystem(System system) {
     systems.add(system);
     add(system);
   }
 
-  addEntity(Component entity, String listName) {
+  void addEntity(Component entity, String listName) {
     if (!entityLists.containsKey(listName)) {
       entityLists[listName] = [];
     }
 
     entityLists[listName].add(entity);
+  }
+
+  void removeEntity(Component entity, String listName) {
+    if (!entityLists.containsKey(listName)) {
+      return;
+    }
+
+    entityLists[listName].remove(entity);
   }
 
   List<T> getEntities<T>(String listName) {
