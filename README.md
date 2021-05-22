@@ -24,6 +24,7 @@ Here are a list of assets we use in the game and their source of origin.
 * Platformer tiles - https://opengameart.org/content/generic-platformer-tiles
 * Keys - https://opengameart.org/content/key-icons
 * Teleporter - https://opengameart.org/content/4-summoning-circles
+* Cage - https://opengameart.org/content/cage
 
 ## Todo List
 

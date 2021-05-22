@@ -12,9 +12,14 @@ class SpriteComponent extends c.SpriteComponent with HasName {
     String imageFilename = yaml['image'];
     final image = await Flame.images.load(imageFilename);
 
+    Vector2 srcPosition = vector2FromYaml(yaml['srcPosition']);
+    Vector2 srcSize = vector2FromYaml(yaml['srcSize']);
+
     sprite = c.Sprite(
-          image
-        );
+      image,
+      srcPosition: srcPosition,
+      srcSize: srcSize
+    );
 
     this.size = size;
   }

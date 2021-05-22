@@ -1,0 +1,21 @@
+component: Entity
+entityList: Usable
+children:
+  - component: UsableComponent
+    requiresItem: Key1
+  - component: SwitchComponent
+    name: State
+    activeComponent: Closed
+    components:
+      - name: Closed
+        component: SpriteComponent
+        image: cage.png
+        size: [40, 40]
+        srcPosition: [0, 0]
+        srcSize: [720, 360]
+      - name: Open
+        component: SpriteComponent
+        image: cage.png
+        size: [40, 40]
+        srcPosition: [0, 360]
+        srcSize: [720, 360]
