@@ -1,3 +1,4 @@
+import 'package:fido_and_kitch/utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 import 'package:flame/game.dart';
 
@@ -10,6 +11,8 @@ class PositionComponent extends c.PositionComponent with HasName {
 
   Future<void> fromYaml(dynamic yaml) async {
     name = yaml['name'];
+    size = vector2FromYaml(yaml['size']) ?? this.size;
+    position = vector2FromYaml(yaml['position']) ?? this.position;
     addChildren(await Factory().createFromYamlArray(yaml['children']));
   }
 }

@@ -2,6 +2,7 @@ component: Player
 entityList: Players
 name: Kitch
 debugMode: true
+size: [32, 32]
 children:
     - component: SwitchComponent
       name: Animations
@@ -43,6 +44,12 @@ children:
           loop: false
           frames: 10
           reversed: true
+        - component: SpriteAnimationComponent
+          name: Use
+          images: cat/Fall (${i+1}).png
+          stepTime: 0.2
+          loop: false
+          frames: 8
     - component: InventoryComponent
       name: Inventory
 states:
@@ -57,7 +64,7 @@ states:
   - name: Elevator
     animationName: Walk
   - name: Use
-    animationName: Walk
+    animationName: Use
   - name: Teleport
     fromAnimationName: TeleportFrom
     toAnimationName: TeleportTo 

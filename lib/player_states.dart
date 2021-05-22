@@ -1,9 +1,14 @@
 import 'dart:ui';
 
+import 'package:fido_and_kitch/components/inventory_component.dart';
+import 'package:fido_and_kitch/components/switch_component.dart';
+import 'package:fido_and_kitch/components/usable_component.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:tiled/tiled.dart';
 
+import 'components/extensions.dart';
+import 'components/entity.dart';
 import 'player.dart';
 import 'tiled_map.dart';
 import 'utils/number.dart';
@@ -70,8 +75,9 @@ class Idle extends PlayerState {
     }
 
     if (state.use) {
-      player.setState('Use');
-      return;
+      if (player.states['Use'].tryTransition()) {
+        return;
+      }
     }
   }
 }
@@ -295,8 +301,65 @@ class Elevator extends PlayerState {
 }
 
 class Use extends PlayerState {
+  Entity usableEntity;
+  bool animationComplete;
+
   Use(Player player, String name) : super(player, name);
 
+  Entity getUsableUnderPlayer() {
+    // is there a usable the player can activate?
+    List<Entity> usables = player.gameRef.getEntities<Entity>('Usable');
+    final playerRect = player.toRect();
+    for (final usable in usables) {
+      final usableRect = usable.toRect();
+      if (playerRect.overlaps(usableRect)) {
+        return usable;
+      }
+    }
+
+    return null;
+  }
+
+  UsableComponent getUsableComponent(Entity entity) {
+    if (entity == null) {
+      return null;
+    }
+
+    List<UsableComponent> usableComponents = entity.findChidrenByClass<UsableComponent>();
+    for (final usable in usableComponents) {
+      InventoryComponent playerInventory = player.findFirstChildByClass<InventoryComponent>();
+      if (playerInventory.hasItem(usable.requiredItem, count: usable.requiredItemCount)) {
+        return usable;
+      }
+    }
+
+    return null;
+  }
+
+  bool canTransition() {
+    return getUsableComponent(getUsableUnderPlayer()) != null;
+  }
+
+  void enter() {
+    usableEntity = getUsableUnderPlayer();
+    UsableComponent usableComponent = getUsableComponent(usableEntity);
+    
+    animationComplete = false;
+    final animationName = usableComponent.playerAnimationOnUse ?? data?.nodes['animationName']?.value ?? name;
+    player.setAnimation(animationName, onComplete: onAnimationComplete);
+  }
+
+  void onAnimationComplete() {
+    animationComplete = true;
+  }
+
   @override
-  void update(double dt) {}
+  void update(double dt) {
+    if (animationComplete) {
+      player.setState('Idle');
+      // trigger the use state - how do we make this generic?
+      SwitchComponent switchComponent = usableEntity.findFirstChild<SwitchComponent>('State');
+      switchComponent.setActiveComponent('Open');
+    }
+  }
 }

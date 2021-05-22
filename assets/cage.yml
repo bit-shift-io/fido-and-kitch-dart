@@ -1,8 +1,9 @@
 component: Entity
 entityList: Usable
+size: [32, 32]
 children:
   - component: UsableComponent
-    requiresItem: Key1
+    requiredItem: Key1
   - component: SwitchComponent
     name: State
     activeComponent: Closed

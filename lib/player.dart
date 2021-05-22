@@ -35,10 +35,6 @@ class Player extends Entity {
   Vector2 velocity = Vector2(0, 0);
 
   Player() : super() {
-    x = 0.0;
-    y = 0.0;
-    width = 32.0;
-    height = 32.0;
     anchor = Anchor.bottomCenter;
   }
 
@@ -91,6 +87,7 @@ class Player extends Entity {
     addState(Ladder(this, 'Ladder'));
     addState(Teleport(this, 'Teleport'));
     addState(Elevator(this, 'Elevator'));
+    addState(Use(this, 'Use'));
 
     setState('Idle');
   }
@@ -215,6 +212,10 @@ class Player extends Entity {
     }
     if (inputActions['move_down']?.isKeyDown ?? false) {
       state.dir.y = 1.0;
+    }
+
+    if (inputActions['use']?.isKeyDown ?? false) {
+      state.use = true;
     }
 
     return state;

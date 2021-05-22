@@ -1,5 +1,6 @@
 component: Entity
 entityList: Pickups
+size: [32, 32]
 children:
   - component: SpriteAnimationComponent
     image: coins.png
