@@ -4,6 +4,13 @@ size: [32, 32]
 children:
   - component: UsableComponent
     requiredItem: Key1
+    children:
+        - component: ScriptComponent
+          name: OnUse
+          script: >
+              print('dart value:', props)
+              props['foo'] = 'bar'
+              return props
   - component: SwitchComponent
     name: State
     activeComponent: Closed

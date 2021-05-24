@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fido_and_kitch/components/inventory_component.dart';
+import 'package:fido_and_kitch/components/script_component.dart';
 import 'package:fido_and_kitch/components/switch_component.dart';
 import 'package:fido_and_kitch/components/usable_component.dart';
 import 'package:flame/extensions.dart';
@@ -358,8 +359,18 @@ class Use extends PlayerState {
     if (animationComplete) {
       player.setState('Idle');
       // trigger the use state - how do we make this generic?
+      UsableComponent usableComponent = getUsableComponent(usableEntity);
+      ScriptComponent onUseScript = usableComponent.findFirstChild<ScriptComponent>('OnUse');
+      if (onUseScript != null) {
+        onUseScript.eval({
+          'greeting': 'helllo world!',
+          'entity': usableEntity
+        });
+      }
+      /*
       SwitchComponent switchComponent = usableEntity.findFirstChild<SwitchComponent>('State');
       switchComponent.setActiveComponent('Open');
+      */
     }
   }
 }

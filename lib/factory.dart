@@ -1,4 +1,5 @@
 
+import 'package:fido_and_kitch/components/script_component.dart';
 import 'package:flame/components.dart';
 import 'components/inventory_component.dart';
 import 'components/sprite_animation_component.dart';
@@ -32,7 +33,8 @@ class Factory {
     'Player': playerComponentFromYaml,
     'PickupComponent': pickupComponentFromYaml,
     'UsableComponent': usableComponentFromYaml,
-    'InventoryComponent': inventoryComponentFromYaml
+    'InventoryComponent': inventoryComponentFromYaml,
+    'ScriptComponent': scriptComponentFromYaml,
   };
 
   void registerComponentFromYaml(String name, CreateComponentFromYaml creator) {
