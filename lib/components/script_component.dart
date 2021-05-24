@@ -15,6 +15,8 @@ class ScriptComponent extends BaseComponent with HasName {
   }
 
   dynamic eval(dynamic props) async {
+    // TODO: https://github.com/hetu-script/hetu-script-autobinding
+    // to auto bind entity and entity accessors
     var hetu = Hetu();
     await hetu.init(externalFunctions: {
       'fn_props': () {
