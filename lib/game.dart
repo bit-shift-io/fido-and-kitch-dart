@@ -48,7 +48,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     add(debug);
  
 
-    map.load('assets/tiles/map_2.tmx').then(onMapLoad);  
+    map.load('assets/maps/sandbox.tmx').then(onMapLoad);  
   }
 
   void addSystem(System system) {
@@ -89,10 +89,9 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     Vector2 mapSize = map.mapPixelSize();
     viewport = FixedResolutionViewport(mapSize);
 
-    ObjectGroup spawns = map.getObjectGroupFromLayer("Spawn");
-
-    for (int i = 0; i < min(players.length, spawns.tmxObjects.length); ++i) {
-      TmxObject spawn = spawns.tmxObjects[i];
+    List<TmxObject> spawns = map.findObjectsByType("spawn");
+    for (int i = 0; i < min(players.length, spawns.length); ++i) {
+      TmxObject spawn = spawns[i];
       Player p = players[i];
       p.spawn(x: spawn.x.toDouble(), y: spawn.y.toDouble());
     }

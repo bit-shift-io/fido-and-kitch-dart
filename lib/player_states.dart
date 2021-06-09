@@ -152,7 +152,7 @@ class Teleport extends PlayerState {
 
   TmxObject getTeleportObjectUnderPlayer() {
     TiledMap map = player.gameRef.map;
-    return map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'Teleporters');
+    return map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
   }
 
   bool canTransition() {
@@ -188,8 +188,8 @@ class Teleport extends PlayerState {
     state = TeleportState.PlayingFromAnim;
 
     TiledMap map = player.gameRef.map;
-    from = map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'Teleporters');
-    to = map.getObjectByName(layerName: 'Teleporters', name: from.properties['to']);
+    from = map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
+    to = map.getObjectByName(layerName: 'teleporters', name: from.properties['target']); /// TODO: FIXME! Get from collision contact or teleporters entity list
 
     final animationName = data?.nodes['fromAnimationName']?.value;
     player.setAnimation(animationName, onComplete: onFromAnimationComplete);
@@ -230,7 +230,7 @@ class Ladder extends PlayerState {
 
   bool canTransition() {
     TiledMap map = player.gameRef.map;
-    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'Ladders');
+    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
     if (ladderTile != null) {
       return true;
     }
@@ -238,7 +238,7 @@ class Ladder extends PlayerState {
     // if moving down, is there a ladder below us?
     InputState state = player.getInputState();
     if (state.dir.y > 0) {
-      Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'Ladders');
+      Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
       if (nextLadderTile != null) {
         return true;
       }
@@ -259,7 +259,7 @@ class Ladder extends PlayerState {
     InputState state = player.getInputState();
     
     TiledMap map = player.gameRef.map;
-    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'Ladders');
+    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
 
     if (ladderTile != null) {
       Rect ladderTileRect = map.tileRect(ladderTile);
@@ -270,7 +270,7 @@ class Ladder extends PlayerState {
     if (state.dir.y > 0) {
       if (ladderTile == null) {
         // is there a tile below us?
-        Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'Ladders');
+        Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
         if (nextLadderTile == null) {
           // hit the ground
           player.setState('Fall');
@@ -281,7 +281,7 @@ class Ladder extends PlayerState {
     // moving up
     else {
       if (ladderTile == null) {
-        Tile prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'Ladders');
+        Tile prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
         if (prevLadderTile == null) {
           // can't go any higher
           player.setState('Fall');

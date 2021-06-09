@@ -61,7 +61,8 @@ flutter:
 
   assets:
     - assets/
-    - assets/tiles/
+    - assets/maps/
+    - assets/maps/templates/
     - assets/images/
     - assets/images/cat/
     - assets/images/dog/

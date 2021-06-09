@@ -159,7 +159,7 @@ class Player extends Entity {
       //Rect belowTileRect = map.rectFromTilePostion(tileCoordBelow);
       //player.gameRef.debug.drawRect(belowTileRect, Colors.purple, PaintingStyle.fill);
       
-      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'Ground');
+      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'ground');
       if (tileBelow != null && !tileBelow.isEmpty) {
         Rect tileRect = map.tileRect(tileBelow);
 
@@ -174,7 +174,7 @@ class Player extends Entity {
 /*
       // TODO: get the tile to the left or right
       Int2 tileCoordNextTo = tileCoords + Int2(moveVec.x as int, 0);
-      Tile tileNextTo = map.getTile(position: tileCoordNextTo, layerName: 'Foreground');
+      Tile tileNextTo = map.getTile(position: tileCoordNextTo, layerName: 'foreground');
       if (tileNextTo != null && !tileNextTo.isEmpty) {
         Rect tileRect = map.tileRect(tileNextTo);
 

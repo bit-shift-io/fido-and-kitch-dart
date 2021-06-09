@@ -243,13 +243,13 @@ class Tiled {
 class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   Tiled tiled;
   double scale;
-  dynamic data;
+  //dynamic data;
 
   Future load(String fileName) async {
     // this yaml file contains global data across all maps
-    const mapYamlFile = 'assets/map.yml';
-    data = await loadYamlFromFile(mapYamlFile);
-    final mapDir = p.dirname(mapYamlFile);
+    //const mapYamlFile = 'assets/map.yml';
+    //data = await loadYamlFromFile(mapYamlFile);
+    //final mapDir = p.dirname(mapYamlFile);
 
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
     scale = 1.0;
@@ -260,30 +260,33 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     // this will then allow us to look up which components to spawn
     Factory f = Factory();
     for (final objectGroup in tiled.map.objectGroups) {
-      final objectGroupName = objectGroup.name;
-      final objectGroupsData = data['objectGroups'];
-      final objectGroupData = yamlFirstWhere(objectGroupsData, (o) => o['name'] == objectGroupName); //objectGroupsData[objectGroupName];
-      if (objectGroupData == null) {
-        continue;
-      }
-
-      final componentFile = objectGroupData['componentFile'];
-
       for (final tmxObj in objectGroup.tmxObjects) {
-        //final tmxObjName = tmxObj.name;
 
-        PositionComponent comp = await f.createFromYamlFile<PositionComponent>("$mapDir/$componentFile");
-        if (comp == null) {
-          break; // this layer is not a prop layer!
+        try {
+          //final tmxObjName = tmxObj.name;
+
+          // attempt to load the entity using the type field
+          final type = tmxObj.type;
+          if (type == null) {
+            continue;
+          }
+
+          PositionComponent comp = await f.createFromYamlFile<PositionComponent>("assets/$type.yml");
+          if (comp == null) {
+            continue;
+          }
+          comp.x = tmxObj.x.toDouble();
+          comp.y = tmxObj.y.toDouble();
+          
+          Entity e = comp as Entity;
+          if (e != null) {
+            e.addToEntityLists(gameRef);
+          }
+          gameRef.add(comp);
+        } catch (e) {
+          // this is not an entity
+          //print(e);
         }
-        comp.x = tmxObj.x.toDouble();
-        comp.y = tmxObj.y.toDouble();
-        
-        Entity e = comp as Entity;
-        if (e != null) {
-          e.addToEntityLists(gameRef);
-        }
-        gameRef.add(comp);
       }
     }
   }
@@ -298,6 +301,18 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
 
       return tiled.map.objectGroups
           .firstWhere((objectGroup) => objectGroup.name == name);
+  }
+
+  List<t.TmxObject> findObjectsByType(String type) {
+    List<t.TmxObject> objs = [];
+    for (final objectGroup in tiled.map.objectGroups) {
+      for (final tmxObj in objectGroup.tmxObjects) {
+        if (tmxObj.type == type) {
+          objs.add(tmxObj);
+        }
+      }
+    }
+    return objs;
   }
 /*
   void _addObjects({layerName, Component component}) {
