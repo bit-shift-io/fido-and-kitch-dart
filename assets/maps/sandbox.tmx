@@ -39,7 +39,7 @@
     <property name="color" value="red"/>
    </properties>
   </object>
-  <object id="21" name="S" type="switch" x="236.672" y="173.352">
+  <object id="21" name="S" type="switch" x="236.672" y="143.206">
    <properties>
     <property name="target" type="object" value="20"/>
    </properties>

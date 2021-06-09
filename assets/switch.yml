@@ -1,0 +1,28 @@
+component: Entity
+entityList: Usable
+size: [32, 32]
+children:
+  - component: UsableComponent
+    children:
+        - component: ScriptComponent
+          name: OnUse
+          script: >
+              print('dart value:', props)
+              props['foo'] = 'bar'
+              return props
+  - component: SwitchComponent
+    name: State
+    activeComponent: Closed
+    components:
+      - name: Closed
+        component: SpriteComponent
+        image: switch.png
+        size: [32, 32]
+        srcPosition: [0, 0]
+        srcSize: [160, 160]
+      - name: Open
+        component: SpriteComponent
+        image: switch.png
+        size: [32, 32]
+        srcPosition: [160, 160]
+        srcSize: [160, 160]

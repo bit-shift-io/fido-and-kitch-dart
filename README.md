@@ -39,3 +39,4 @@ Here are a list of assets we use in the game and their source of origin.
 * Keys - https://opengameart.org/content/key-icons
 * Teleporter - https://opengameart.org/content/4-summoning-circles
 * Cage - https://opengameart.org/content/cage
+* Switch/lever - https://forums.tigsource.com/index.php?topic=59695.0
