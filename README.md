@@ -1,6 +1,6 @@
 # Fido and Kitch
 
-Lurid Land made with Flutter and Flame.
+Fido and Kitch is a puzzle platformer. It features local couch coop with bit sized puzzles. Think Lurid Land made with Flutter and Flame.
 
 ## Install
 
@@ -25,6 +25,13 @@ https://www.mapeditor.org/
 Looking for things to do, look here: https://github.com/bit-shift-io/fido-and-kitch/projects
 
 ## Architecture
+
+ECS without ECS. The goal of ECS is to improve performance by improving CPU cache hits by keeping components coherent within memory and operating on all
+components in a linear fashion.
+This type of architecture doesn't fit with the traditional hierachy of data, updating and rendering provided by most traditional engines (including flame).
+For this reason we use a hybrid approach:
+Pools of components to maintain coherancy and try to improve CPU caching. Updating is done based on component type, similar to ECS systems.
+We leave rendering in the hierachical way flame expects.
 
 Components are building blocks.
 Entities are root level items that are made up of components.
