@@ -9,16 +9,16 @@ class UsableComponent extends PositionComponent {
   int requiredItemCount;
   String playerAnimationOnUse;
 
-  Future<void> fromYaml(dynamic yaml) async {
-    addChildren(await Factory().createFromYamlArray(yaml['children']));
+  Future<void> fromData(dynamic yaml) async {
+    addChildren(await Factory().createFromDataArray(yaml['children']));
     requiredItem = yaml['requiredItem'];
     requiredItemCount = yaml['requiredItemCount'] ?? 1;
     playerAnimationOnUse = yaml['playerAnimationOnUse'];
   }
 }
 
-Future<UsableComponent> usableComponentFromYaml(dynamic yaml) async {
+Future<UsableComponent> usableComponentFromData(dynamic yaml) async {
   final comp = new UsableComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

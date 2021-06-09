@@ -19,7 +19,7 @@ dynamic yamlFirstWhere(dynamic yaml, Function where) {
   return null;
 }
 
-Vector2 vector2FromYaml(dynamic yaml) {
+Vector2 vector2FromData(dynamic yaml) {
   if (yaml == null) {
     return null;
   }

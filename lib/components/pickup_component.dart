@@ -5,15 +5,15 @@ class PickupComponent extends PositionComponent with HasName {
   String itemName;
   int itemCount;
 
-  Future<void> fromYaml(dynamic yaml) async {
+  Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     itemName = yaml['itemName'];
     itemCount = yaml['itemCount'] ?? 1;
   }
 }
 
-Future<PickupComponent> pickupComponentFromYaml(dynamic yaml) async {
+Future<PickupComponent> pickupComponentFromData(dynamic yaml) async {
   final comp = new PickupComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

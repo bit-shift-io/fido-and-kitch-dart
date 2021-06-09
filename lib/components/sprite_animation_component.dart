@@ -8,7 +8,7 @@ import '../utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 
 class SpriteAnimationComponent extends c.SpriteAnimationComponent with HasName {
-  Future<void> fromYaml(dynamic yaml) async {
+  Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     String image = yaml['image'];
     dynamic images = yaml['images'];
@@ -16,8 +16,8 @@ class SpriteAnimationComponent extends c.SpriteAnimationComponent with HasName {
     bool loop = yaml['loop'];
     bool reversed = yaml['reversed'] ?? false;
     int frames = yaml['frames'];
-    Vector2 textureSize = vector2FromYaml(yaml['textureSize']);
-    Vector2 size = vector2FromYaml(yaml['size']);
+    Vector2 textureSize = vector2FromData(yaml['textureSize']);
+    Vector2 size = vector2FromData(yaml['size']);
 
     // if no size given, infer from textureSize
     if (size == null) {
@@ -74,8 +74,8 @@ class SpriteAnimationComponent extends c.SpriteAnimationComponent with HasName {
   }
 }
 
-Future<SpriteAnimationComponent> spriteAnimationComponentFromYaml(dynamic yaml) async {
+Future<SpriteAnimationComponent> spriteAnimationComponentFromData(dynamic yaml) async {
   SpriteAnimationComponent comp = new SpriteAnimationComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

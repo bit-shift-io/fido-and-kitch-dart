@@ -24,11 +24,11 @@ class SwitchComponent extends BaseComponent with HasName {
     }
   }
 
-  Future<void> fromYaml(dynamic yaml) async {
+  Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     final children = yaml['components'];
     for (final c in children) {
-      Component child = await Factory().createFromYaml<Component>(c);
+      Component child = await Factory().createFromData<Component>(c);
       if (child != null) {
         addComponent(c['name'], child);
       }
@@ -41,8 +41,8 @@ class SwitchComponent extends BaseComponent with HasName {
   }
 }
 
-Future<SwitchComponent> switchComponentFromYaml(dynamic yaml) async {
+Future<SwitchComponent> switchComponentFromData(dynamic yaml) async {
   final comp = new SwitchComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

@@ -8,9 +8,9 @@ import 'extensions.dart';
 class ScriptComponent extends BaseComponent with HasName {
   String script;
 
-  Future<void> fromYaml(dynamic yaml) async {
+  Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
-    addChildren(await Factory().createFromYamlArray(yaml['children']));
+    addChildren(await Factory().createFromDataArray(yaml['children']));
     script = yaml['script'];
   }
 
@@ -40,8 +40,8 @@ class ScriptComponent extends BaseComponent with HasName {
   }
 }
 
-Future<ScriptComponent> scriptComponentFromYaml(dynamic yaml) async {
+Future<ScriptComponent> scriptComponentFromData(dynamic yaml) async {
   final comp = new ScriptComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

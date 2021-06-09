@@ -10,8 +10,8 @@ import '../game.dart';
 class Entity extends PositionComponent with c.HasGameRef<MyGame> {
   String entityList; // TODO: replace with a list, an entity might want to be in multiple lists
 
-  Future<void> fromYaml(dynamic yaml) async {
-    await super.fromYaml(yaml);
+  Future<void> fromData(dynamic yaml) async {
+    await super.fromData(yaml);
     entityList = yaml['entityList'];
   }
 
@@ -31,8 +31,8 @@ class Entity extends PositionComponent with c.HasGameRef<MyGame> {
   }*/
 }
 
-Future<Entity> entityComponentFromYaml(dynamic yaml) async {
+Future<Entity> entityComponentFromData(dynamic yaml) async {
   final comp = new Entity();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

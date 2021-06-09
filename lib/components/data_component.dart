@@ -6,14 +6,14 @@ import 'package:flame/components.dart';
 class DataComponent extends Component with HasName {
   dynamic data;
 
-  Future<void> fromYaml(dynamic yaml) async {
+  Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     data = yaml;
   }
 }
 
-Future<DataComponent> pickupComponentFromYaml(dynamic yaml) async {
+Future<DataComponent> pickupComponentFromData(dynamic yaml) async {
   final comp = new DataComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

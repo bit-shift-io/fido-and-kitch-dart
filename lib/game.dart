@@ -33,7 +33,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     map = TiledMap();
     add(map);
 
-    Player p = await Factory().createFromYamlFile<Player>('assets/player.yml');
+    Player p = await Factory().createFromFile<Player>('assets/player.yml');
     p.addToEntityLists(this);
     add(p);
     //addEntity(p, p.entityList);

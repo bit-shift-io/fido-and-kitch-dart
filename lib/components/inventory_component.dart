@@ -16,13 +16,13 @@ class InventoryComponent extends Component with HasName {
     items[name] = (items[name] ?? 0) - count;
   }
 
-  Future<void> fromYaml(dynamic yaml) async {
+  Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
   }
 }
 
-Future<InventoryComponent> inventoryComponentFromYaml(dynamic yaml) async {
+Future<InventoryComponent> inventoryComponentFromData(dynamic yaml) async {
   final comp = new InventoryComponent();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

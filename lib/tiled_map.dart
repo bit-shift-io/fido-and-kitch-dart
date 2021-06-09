@@ -271,7 +271,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
             continue;
           }
 
-          PositionComponent comp = await f.createFromYamlFile<PositionComponent>("assets/$type.yml");
+          PositionComponent comp = await f.createFromFile<PositionComponent>("assets/$type.yml");
           if (comp == null) {
             continue;
           }

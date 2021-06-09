@@ -61,8 +61,8 @@ class Player extends Entity {
     currentState = nextState;
   }
 
-  Future<void> fromYaml(dynamic yaml) async {
-    await super.fromYaml(yaml);
+  Future<void> fromData(dynamic yaml) async {
+    await super.fromData(yaml);
     
     data = yaml;
     debugMode = yaml['debugMode'] ?? false;
@@ -227,8 +227,8 @@ class Player extends Entity {
   }
 }
 
-Future<Player> playerComponentFromYaml(dynamic yaml) async {
+Future<Player> playerComponentFromData(dynamic yaml) async {
   final comp = new Player();
-  await comp.fromYaml(yaml);
+  await comp.fromData(yaml);
   return comp;
 }

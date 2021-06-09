@@ -12,7 +12,7 @@ import 'components/position_component.dart';
 import 'components/switch_component.dart';
 import 'utils/yaml.dart';
 
-typedef Future<T> CreateComponentFromYaml<T>(dynamic yaml);
+typedef Future<T> CreateComponentFromData<T>(dynamic yaml);
 
 class Factory {
 
@@ -24,33 +24,33 @@ class Factory {
 
   Factory._internal();
 
-  Map<String, CreateComponentFromYaml> fromYamlMap = {
-    'SpriteAnimationComponent': spriteAnimationComponentFromYaml,
-    'SpriteComponent': spriteComponentFromYaml,
-    'SwitchComponent': switchComponentFromYaml,
-    'PositionComponent': positionComponentFromYaml,
-    'Entity': entityComponentFromYaml,
-    'Player': playerComponentFromYaml,
-    'PickupComponent': pickupComponentFromYaml,
-    'UsableComponent': usableComponentFromYaml,
-    'InventoryComponent': inventoryComponentFromYaml,
-    'ScriptComponent': scriptComponentFromYaml,
+  Map<String, CreateComponentFromData> fromDataMap = {
+    'SpriteAnimationComponent': spriteAnimationComponentFromData,
+    'SpriteComponent': spriteComponentFromData,
+    'SwitchComponent': switchComponentFromData,
+    'PositionComponent': positionComponentFromData,
+    'Entity': entityComponentFromData,
+    'Player': playerComponentFromData,
+    'PickupComponent': pickupComponentFromData,
+    'UsableComponent': usableComponentFromData,
+    'InventoryComponent': inventoryComponentFromData,
+    'ScriptComponent': scriptComponentFromData,
   };
 
-  void registerComponentFromYaml(String name, CreateComponentFromYaml creator) {
-    fromYamlMap[name] = creator;
+  void registerComponentFromData(String name, CreateComponentFromData creator) {
+    fromDataMap[name] = creator;
   }
 
-  Future<T> createFromYamlFile<T>(String fileName) async {
+  Future<T> createFromFile<T>(String fileName) async {
     final yaml = await loadYamlFromFile(fileName);
     print("creating entity: $fileName");
-    return createFromYaml<T>(yaml);
+    return createFromData<T>(yaml);
   }
 
-  Future<T> createFromYaml<T>(dynamic yaml) async {
+  Future<T> createFromData<T>(dynamic yaml) async {
     try {
       String componentName = yaml['component'];
-      final creator = fromYamlMap[componentName];
+      final creator = fromDataMap[componentName];
       if (creator == null) {
         print('No creator found for $componentName');
         return null;
@@ -63,14 +63,14 @@ class Factory {
     }
   }
 
-  Future<List<Component>> createFromYamlArray(dynamic yaml) async {
+  Future<List<Component>> createFromDataArray(dynamic yaml) async {
     List<Component> array = [];
     if (yaml == null) {
       return array;
     }
 
     for (final c in yaml) {
-      Component child = await createFromYaml<Component>(c);
+      Component child = await createFromData<Component>(c);
       if (child != null) {
         array.add(child);
       }
