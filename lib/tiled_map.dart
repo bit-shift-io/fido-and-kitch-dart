@@ -271,7 +271,12 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
             continue;
           }
 
-          PositionComponent comp = await f.createFromFile<PositionComponent>("assets/$type.yml");
+          String filename = "assets/$type.yml";
+          Map<String, dynamic> substitutions = tmxObj.properties;
+          substitutions['type'] = type;
+          substitutions['filename'] = filename;
+          substitutions['name'] = tmxObj.name;
+          PositionComponent comp = await f.createFromFile<PositionComponent>(filename, substitutions: substitutions);
           if (comp == null) {
             continue;
           }

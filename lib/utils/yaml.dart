@@ -2,9 +2,16 @@ import 'package:flame/game.dart';
 import "package:flutter/services.dart" as s;
 import "package:yaml/yaml.dart";
 
-dynamic loadYamlFromFile(String fileName) async {
-  final data = await s.rootBundle.loadString(fileName);
-  final mapData = loadYaml(data);
+dynamic loadYamlFromFile(String fileName, { Map<String, dynamic> substitutions }) async {
+  String fileContents = await s.rootBundle.loadString(fileName);
+  if (substitutions != null) {
+    substitutions.forEach((key, value) { 
+      String keyStr = '\${$key}';
+      String valueStr = value;
+      fileContents = fileContents.replaceAll(keyStr, valueStr);
+    });
+  }
+  final mapData = loadYaml(fileContents);
   return mapData;
 }
 

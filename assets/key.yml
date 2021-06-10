@@ -2,16 +2,8 @@ component: Entity
 entityList: Pickups
 size: [32, 32]
 children:
-  - component: SwitchComponent
-    activeComponent: Key1
-    components:
-      - name: Key1
-        component: SpriteComponent
-        image: key_1.png
-        size: [20, 20]
-      - name: Key2
-        component: SpriteComponent
-        image: key_2.png
-        size: [20, 20]
+  - component: SpriteComponent
+    image: key_${color}.png
+    size: [20, 20]
   - component: PickupComponent
-    itemName: Key1
+    itemName: key_${color}

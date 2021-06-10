@@ -41,8 +41,8 @@ class Factory {
     fromDataMap[name] = creator;
   }
 
-  Future<T> createFromFile<T>(String fileName) async {
-    final yaml = await loadYamlFromFile(fileName);
+  Future<T> createFromFile<T>(String fileName, { Map<String, dynamic> substitutions }) async {
+    final yaml = await loadYamlFromFile(fileName, substitutions: substitutions);
     print("creating entity: $fileName");
     return createFromData<T>(yaml);
   }

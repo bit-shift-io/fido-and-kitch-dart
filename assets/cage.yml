@@ -3,7 +3,7 @@ entityList: Usable
 size: [32, 32]
 children:
   - component: UsableComponent
-    requiredItem: Key1
+    requiredItem: key_${color}
     children:
         - component: ScriptComponent
           name: OnUse
