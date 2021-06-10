@@ -276,14 +276,21 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
           substitutions['type'] = type;
           substitutions['filename'] = filename;
           substitutions['name'] = tmxObj.name;
+          //substitutions['x'] = tmxObj.x;
+          //substitutions['y'] = tmxObj.y;
           PositionComponent comp = await f.createFromFile<PositionComponent>(filename, substitutions: substitutions);
           if (comp == null) {
             continue;
           }
+
+          Component tmxObjectComponent = await f.createFromData({'component': 'TmxObjectComponent', 'object': tmxObj});
+          comp.addChild(tmxObjectComponent);
+
           comp.x = tmxObj.x.toDouble();
           comp.y = tmxObj.y.toDouble();
           
           Entity e = comp as Entity;
+          
           if (e != null) {
             e.addToEntityLists(gameRef);
           }

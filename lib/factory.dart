@@ -6,6 +6,7 @@ import 'components/sprite_animation_component.dart';
 import 'components/sprite_component.dart';
 import 'components/entity.dart';
 import 'components/pickup_component.dart';
+import 'components/tmxobject_component.dart';
 import 'components/usable_component.dart';
 import 'player.dart';
 import 'components/position_component.dart';
@@ -35,6 +36,7 @@ class Factory {
     'UsableComponent': usableComponentFromData,
     'InventoryComponent': inventoryComponentFromData,
     'ScriptComponent': scriptComponentFromData,
+    'TmxObjectComponent': tmxObjectComponentFromData,
   };
 
   void registerComponentFromData(String name, CreateComponentFromData creator) {
