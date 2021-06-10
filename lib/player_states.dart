@@ -326,7 +326,7 @@ class Use extends PlayerState {
       return null;
     }
 
-    List<UsableComponent> usableComponents = entity.findChidrenByClass<UsableComponent>();
+    List<UsableComponent> usableComponents = entity.findChildrenByClass<UsableComponent>();
     for (final usable in usableComponents) {
       InventoryComponent playerInventory = player.findFirstChildByClass<InventoryComponent>();
       if (usable.requiredItem == null || playerInventory.hasItem(usable.requiredItem, count: usable.requiredItemCount)) {

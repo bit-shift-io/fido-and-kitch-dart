@@ -283,7 +283,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
             continue;
           }
 
-          Component tmxObjectComponent = await f.createFromData({'component': 'TmxObjectComponent', 'object': tmxObj});
+          Component tmxObjectComponent = await f.createFromData({'component': 'TmxObjectComponent', 'name': 'TmxObject', 'object': tmxObj});
           comp.addChild(tmxObjectComponent);
 
           comp.x = tmxObj.x.toDouble();

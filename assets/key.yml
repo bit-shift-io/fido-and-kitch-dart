@@ -1,3 +1,12 @@
+#
+# Key
+#
+# key inventory item
+#
+# substitutions:
+#   color = red, green, blue - the colour of the key to load
+#
+
 component: Entity
 entityList: Pickups
 size: [32, 32]

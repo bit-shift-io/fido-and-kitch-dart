@@ -1,3 +1,13 @@
+#
+# Cage
+#
+# A trap that needs to be activated
+#
+# substitutions:
+#   color - what colour variation to use
+#   requiredItem - what item is required to trigger the cage?
+#
+
 component: Entity
 entityList: Usable
 size: [32, 32]

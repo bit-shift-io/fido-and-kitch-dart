@@ -26,7 +26,7 @@ class PickupSystem extends System with HasGameRef<MyGame> {
 
           InventoryComponent playerInventory = player.findFirstChildByClass<InventoryComponent>();
           if (playerInventory != null) {
-            List<PickupComponent> pickupComponents = pickup.findChidrenByClass<PickupComponent>();
+            List<PickupComponent> pickupComponents = pickup.findChildrenByClass<PickupComponent>();
             for (final pc in pickupComponents) {
               print('Player picked up ${pc.itemName}');
               playerInventory.addItem(pc.itemName, count: pc.itemCount);

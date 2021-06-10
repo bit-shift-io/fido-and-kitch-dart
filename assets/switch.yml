@@ -1,3 +1,12 @@
+#
+# Switch
+#
+# on/off device
+#
+# substitutions:
+#   once = 1 - once triggered can't be used again
+#
+
 component: Entity
 entityList: Usable
 size: [32, 32]
@@ -7,9 +16,21 @@ children:
         - component: ScriptComponent
           name: OnUse
           script: >
-              print('dart value:', props)
-              props['foo'] = 'bar'
-              return props
+              var e = props['entity']
+              var c = findFirstChild(e, 'State')
+              var activeC = getActiveComponent(c)
+              var n = getName(activeC)
+              if (n == 'Closed') {
+                //if ('${once}' == '1') {
+                //  print('Switch has already been triggered')
+                //  return
+                //}
+                print('Switch set to open')
+                setActiveComponent(c, 'Open')
+              } else {
+                print('Switch set to closed')
+                setActiveComponent(c, 'Closed')
+              }
   - component: SwitchComponent
     name: State
     activeComponent: Closed

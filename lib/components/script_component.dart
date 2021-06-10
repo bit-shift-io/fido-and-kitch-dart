@@ -1,3 +1,4 @@
+import 'package:fido_and_kitch/components/switch_component.dart';
 import 'package:flame/components.dart';
 import 'package:hetu_script/hetu_script.dart';
 
@@ -22,9 +23,37 @@ class ScriptComponent extends BaseComponent with HasName {
       'fn_props': () {
         return props;
       },
+      'findFirstChild': (Component c, String name) {
+        if (c is BaseComponent) {
+          BaseComponent b = c as BaseComponent;
+          return b.findFirstChild<Component>(name);
+        }
+        return null;
+      },
+      'setActiveComponent': (SwitchComponent s, String name) {
+        s.setActiveComponent(name);
+      },
+      'getActiveComponent': (SwitchComponent s) {
+        return s.activeComponent;
+      },
+      'getName': (Component c) {
+        if (c is HasName) {
+          HasName n = c as HasName;
+          return n.name;
+        }
+
+        return null;
+      }
     });
+
+    // TODO: automate the external fn list here:
+    // TODO: automate expand the props to be an argument so we done need to do: props['entitiy'] we can just use entity
     String fullscript = '''
       external fun fn_props
+      external fun findFirstChild
+      external fun setActiveComponent
+      external fun getActiveComponent
+      external fun getName
       fun main(props) {
         ${this.script}
       }
