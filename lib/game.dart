@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:fido_and_kitch/systems/pickup_system.dart';
-import 'package:fido_and_kitch/tiled_map.dart';
+import 'systems/pickup_system.dart';
+import 'tiled_map.dart';
 import 'package:flame/components.dart';
 import 'package:flame/gestures.dart';
 import 'package:flame/game.dart';
@@ -8,8 +8,8 @@ import 'package:flame/keyboard.dart';
 
 //import 'package:flame_forge2d/forge2d_game.dart';
 
-import 'package:fido_and_kitch/player.dart';
-import 'package:tiled/tiled.dart';
+import 'player.dart';
+import 'package:tiled/tiled.dart' as t;
 
 import 'components/system.dart';
 import 'debug.dart';
@@ -89,9 +89,9 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     Vector2 mapSize = map.mapPixelSize();
     viewport = FixedResolutionViewport(mapSize);
 
-    List<TmxObject> spawns = map.findObjectsByType("spawn");
+    List<t.TmxObject> spawns = map.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
-      TmxObject spawn = spawns[i];
+      t.TmxObject spawn = spawns[i];
       Player p = players[i];
       p.spawn(x: spawn.x.toDouble(), y: spawn.y.toDouble());
     }

@@ -7,6 +7,7 @@ import '../game.dart';
 
 // root entity
 // which will add itself to the appropriate world entity list
+//@HTBinding()
 class Entity extends PositionComponent with c.HasGameRef<MyGame> {
   String entityList; // TODO: replace with a list, an entity might want to be in multiple lists
 
