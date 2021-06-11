@@ -83,16 +83,20 @@ class TsxProv extends t.TsxProvider {
   
   TsxProv(this.tilesetMap);
 
-  String getSource(String key) {
+  Parser getSource(String key) {
     final str = tilesetMap[key];
-    return str;
+    final node = XmlDocument.parse(str).rootElement;
+    return t.XmlParser(node);
+
+    //final str = tilesetMap[key];
+    //return str;
   }
 }
 
 /// This component renders a tile map based on a TMX file from Tiled.
 class Tiled {
   String filename;
-  t.TileMap map;
+  t.TiledMap map;
   Image image;
   Map<String, SpriteBatch> batches = <String, SpriteBatch>{};
   Future future;
@@ -119,7 +123,7 @@ class Tiled {
     _loaded = true;
   }
 
-  String getTilesetImagePath(t.Tileset tileset, t.Image tmxImage) {
+  String getTilesetImagePath(t.Tileset tileset, t.TiledImage tmxImage) {
     // the image filepath if relstive to the tileset path
     // the tileset path is relative to the map
     final mapDir = p.dirname(filename);
@@ -129,7 +133,7 @@ class Tiled {
     return imagePathInImages;
   }
 
-  Future<t.TileMap> _loadMap() {
+  Future<t.TiledMap> _loadMap() {
     return Flame.bundle.loadString('$filename').then((contents) async {
 
       final mapDir = p.dirname(filename);
@@ -154,12 +158,11 @@ class Tiled {
         tilesetMap[tsxFilename] = contents;
       });
 
-      final parser = t.TileMapParser();
-      return parser.parse(contents, tsx: TsxProv(tilesetMap));
+      return t.TileMapParser.parseTmx(contents, tsx: TsxProv(tilesetMap));
     });
   }
 
-  Future<Map<String, SpriteBatch>> _loadImages(t.TileMap map) async {
+  Future<Map<String, SpriteBatch>> _loadImages(t.TiledMap map) async {
     final Map<String, SpriteBatch> result = {};
     await Future.forEach(map.tilesets, (tileset) async {
       await Future.forEach(tileset.images, (tmxImage) async {
@@ -178,10 +181,13 @@ class Tiled {
     _drawTiles(map);
   }
 
-  void _drawTiles(t.TileMap map) {
+  void _drawTiles(t.TiledMap map) {
+    t.Layer l;
     map.layers.where((layer) => layer.visible).forEach((layer) {
-      layer.tiles.forEach((tileRow) {
-        tileRow.forEach((tile) {
+      (layer as t.TileLayer).tileData.forEach((tileRow) {
+        tileRow.forEach((gid) {
+
+          /*
           if (tile.gid == 0) {
             return;
           }
@@ -211,7 +217,7 @@ class Tiled {
             ),
             rotation: flips.angle * math.pi / 2,
             scale: tileSize.width / tile.width,
-          );
+          );*/
         });
       });
     });
@@ -228,7 +234,7 @@ class Tiled {
       batch.render(c);
     });
   }
-
+/*
   /// This returns an object group fetch by name from a given layer.
   /// Use this to add custom behaviour to special objects and groups.
   Future<t.ObjectGroup> getObjectGroupFromLayer(String name) {
@@ -236,7 +242,7 @@ class Tiled {
       return map.objectGroups
           .firstWhere((objectGroup) => objectGroup.name == name);
     });
-  }
+  }*/
 }
 
 
@@ -259,8 +265,8 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     // do a look up to get data from map.yaml
     // this will then allow us to look up which components to spawn
     Factory f = Factory();
-    for (final objectGroup in tiled.map.objectGroups) {
-      for (final tmxObj in objectGroup.tmxObjects) {
+    for (final objectGroup in getObjectGroupLayers()) {
+      for (final tmxObj in objectGroup.objects) {
 
         try {
           //final tmxObjName = tmxObj.name;
@@ -272,7 +278,14 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
           }
 
           String filename = "assets/$type.yml";
-          Map<String, dynamic> substitutions = tmxObj.properties;
+          List<t.Property> properties = tmxObj.properties;
+          Map<String, dynamic> substitutions = {};
+          properties.forEach((p) {
+            if (p.type == t.PropertyType.object) {
+              // TODO: resolve object
+            }
+            substitutions[p.name] = p.value;
+          });
           substitutions['type'] = type;
           substitutions['filename'] = filename;
           substitutions['name'] = tmxObj.name;
@@ -283,7 +296,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
             continue;
           }
 
-          Component tmxObjectComponent = await f.createFromData({'component': 'TmxObjectComponent', 'name': 'TmxObject', 'object': tmxObj});
+          Component tmxObjectComponent = await f.createFromData({'component': 'TiledObjectComponent', 'name': 'TiledObject', 'object': tmxObj});
           comp.addChild(tmxObjectComponent);
 
           comp.x = tmxObj.x.toDouble();
@@ -303,6 +316,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     }
   }
 
+/*
   /// This returns an object group fetch by name from a given layer.
   /// Use this to add custom behaviour to special objects and groups.
   t.ObjectGroup getObjectGroupFromLayer(String name) {
@@ -313,12 +327,12 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
 
       return tiled.map.objectGroups
           .firstWhere((objectGroup) => objectGroup.name == name);
-  }
+  }*/
 
-  List<t.TmxObject> findObjectsByType(String type) {
-    List<t.TmxObject> objs = [];
-    for (final objectGroup in tiled.map.objectGroups) {
-      for (final tmxObj in objectGroup.tmxObjects) {
+  List<t.TiledObject> findObjectsByType(String type) {
+    List<t.TiledObject> objs = [];
+    for (final objectGroup in getObjectGroupLayers()) {
+      for (final tmxObj in objectGroup.objects) {
         if (tmxObj.type == type) {
           objs.add(tmxObj);
         }
@@ -333,7 +347,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
       return;
     }
     
-    objGroup.tmxObjects.forEach((t.TmxObject obj) async {
+    objGroup.tmxObjects.forEach((t.TiledObject obj) async {
 
       component
       final comp = SpriteAnimationComponent(
@@ -352,6 +366,8 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     });
   }
 */
+
+/*
   List<t.Tile> rectIntersectingTiles(Rect r) {
     if (tiled == null || !tiled.loaded()) {
       print('Map still loading!');
@@ -387,7 +403,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
 
     return intersectingTiles;
   }
-
+*/
   @override
   void render(Canvas c) {
     super.render(c);
@@ -409,7 +425,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
 
     return Int2(x, y);
   }
-
+/*
   Rect rectFromTilePostion(Int2 position) {
     if (tiled == null || !tiled.loaded()) {
       return null;
@@ -417,10 +433,10 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
 
     return Rect.fromLTWH(position.x * tiled.map.tileWidth * scale, position.y * tiled.map.tileHeight * scale, tiled.map.tileWidth * scale, tiled.map.tileHeight * scale);
   }
-
-  t.TmxObject getObjectByName({String layerName, String name}) {
-    for (var layer in tiled.map.objectGroups.where((layer) => layer.name == layerName)) {
-      final object = layer.tmxObjects.firstWhere((obj) {
+*/
+  t.TiledObject getObjectByName({String layerName, String name}) {
+    for (var layer in getObjectGroupLayers().where((layer) => layer.name == layerName)) {
+      final object = layer.objects.firstWhere((obj) {
         return obj.name == name;
       }, orElse: () => null);
 
@@ -431,7 +447,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return null;
   }
 
-  t.TmxObject getObjectFromWorldPosition({String layerName, Vector2 worldPosition, Int2 tileOffset, bool nullIfEmpty: true}) {
+  t.TiledObject getObjectFromWorldPosition({String layerName, Vector2 worldPosition, Int2 tileOffset, bool nullIfEmpty: true}) {
     Int2 position = worldToTileSpace(worldPosition);
     if (tileOffset != null) {
       position = position + tileOffset;
@@ -440,7 +456,27 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return getObjectFromPosition(layerName: layerName, position: position, nullIfEmpty: nullIfEmpty);
   }
 
-  t.TmxObject getObjectFromPosition({String layerName, Int2 position, bool nullIfEmpty: true}) {
+  List<t.ObjectGroup> getObjectGroupLayers() {
+    return tiled.map.layers.map<t.ObjectGroup>((l) {
+      if (l.type == t.LayerType.objectGroup) {
+        return l as t.ObjectGroup;
+      }
+
+      return null;
+    });
+  }
+
+  List<t.TileLayer> getTileLayerLayers() {
+    return tiled.map.layers.map<t.TileLayer>((l) {
+      if (l.type == t.LayerType.tileLayer) {
+        return l as t.TileLayer;
+      }
+
+      return null;
+    });
+  }
+
+  t.TiledObject getObjectFromPosition({String layerName, Int2 position, bool nullIfEmpty: true}) {
     if (tiled == null || !tiled.loaded() || position == null) {
       return null;
     }
@@ -449,8 +485,8 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
       return null;
     }
 
-    for (var layer in tiled.map.objectGroups.where((layer) => layer.name == layerName)) {
-      final object = layer.tmxObjects.firstWhere((obj) {
+    for (var layer in getObjectGroupLayers().where((layer) => layer.name == layerName)) {
+      final object = layer.objects.firstWhere((obj) {
         // we can cache this at load time? only if performance is an issue
         Int2 objTileSpace = worldToTileSpace(Vector2(obj.x, obj.y));
         bool isAtPos = objTileSpace.x == position.x && objTileSpace.y == position.y;
@@ -474,15 +510,16 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
       return null;
     }
 
-    for (var layer in tiled.map.layers.where((layer) => layer.name == layerName)) {
-      if (position.y >= layer.tiles.length) {
+    for (var layer in getTileLayerLayers().where((layer) => layer.name == layerName)) {
+      if (position.y >= layer.tileData.length) {
         return null;
       }
-      List<t.Tile> row = layer.tiles[position.y];
+      List<t.Gid> row = layer.tileData[position.y];
       if (position.x >= row.length) {
         return null;
       }
-      t.Tile tile = row[position.x];
+      t.Gid gid = row[position.x];
+      t.Tile tile = tiled.map.tileByGid(gid.tile);
       if (tile.isEmpty) {
         return null;
       }
@@ -502,7 +539,10 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   }
 
   Rect tileRect(t.Tile tile) {
-    return rectFromTilePostion(Int2(tile.x, tile.y));
+    final tileset = tiled.map.tilesetByTileGId(tile.localId);
+    final rect = tileset.computeDrawRect(tile);
+    return Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
+    //return rectFromTilePostion(Int2(tile.x, tile.y));
   }
 
   Int2 mapTileSize() {

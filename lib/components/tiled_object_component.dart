@@ -2,8 +2,8 @@ import 'package:tiled/tiled.dart' as t;
 import 'mixins.dart';
 import 'package:flame/components.dart';
 
-class TmxObjectComponent extends Component with HasName {
-  t.TmxObject object;
+class TiledObjectComponent extends Component with HasName {
+  t.TiledObject object;
 
   Future<void> fromData(dynamic data) async {
     name = data['name'];
@@ -12,8 +12,8 @@ class TmxObjectComponent extends Component with HasName {
 }
 
 
-Future<TmxObjectComponent> tmxObjectComponentFromData(dynamic data) async {
-  final comp = new TmxObjectComponent();
+Future<TiledObjectComponent> tiledObjectComponentFromData(dynamic data) async {
+  final comp = new TiledObjectComponent();
   await comp.fromData(data);
   return comp;
 }

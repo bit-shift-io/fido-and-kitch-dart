@@ -94,9 +94,9 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     Vector2 mapSize = map.mapPixelSize();
     viewport = FixedResolutionViewport(mapSize);
 
-    List<t.TmxObject> spawns = map.findObjectsByType("spawn");
+    List<t.TiledObject> spawns = map.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
-      t.TmxObject spawn = spawns[i];
+      t.TiledObject spawn = spawns[i];
       Player p = players[i];
       p.spawn(x: spawn.x.toDouble(), y: spawn.y.toDouble());
     }
