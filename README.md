@@ -4,9 +4,9 @@ Fido and Kitch is a puzzle platformer. It features local couch coop with bit siz
 
 ## Install
 
-Not sure this is right but:
+Run:
 
-    flutter create .
+    ./install.sh
 
 ## Develop
 
