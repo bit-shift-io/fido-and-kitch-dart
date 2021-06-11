@@ -363,7 +363,6 @@ class Use extends PlayerState {
       ScriptComponent onUseScript = usableComponent.findFirstChild<ScriptComponent>('OnUse');
       if (onUseScript != null) {
         onUseScript.eval({
-          'greeting': 'helllo world!',
           'entity': usableEntity
         });
       }

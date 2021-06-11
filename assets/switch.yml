@@ -16,10 +16,10 @@ children:
         - component: ScriptComponent
           name: OnUse
           script: >
-              var e = props['entity']
-              var c = findFirstChild(e, 'State')
+              var c = findFirstChild(entity, 'State')
               var activeC = getActiveComponent(c)
               var n = getName(activeC)
+              //var t = ${target}
               if (n == 'Closed') {
                 //if ('${once}' == '1') {
                 //  print('Switch has already been triggered')

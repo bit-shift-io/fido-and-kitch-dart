@@ -47,7 +47,7 @@ children:
         - component: SpriteAnimationComponent
           name: Use
           images: cat/Fall (${i+1}).png
-          stepTime: 0.2
+          stepTime: 0.1
           loop: false
           frames: 8
     - component: InventoryComponent

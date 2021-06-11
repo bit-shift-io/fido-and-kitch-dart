@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:fido_and_kitch/hetu_script.dart';
+
 import 'systems/pickup_system.dart';
 import 'tiled_map.dart';
 import 'package:flame/components.dart';
@@ -27,6 +29,9 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
   Debug debug;
 
   Future<void> onLoad() async {
+    // register anything needed here
+    //await HetuScript().init();
+
     // load these from yaml?
     addSystem(new PickupSystem());
     
