@@ -83,7 +83,7 @@ class TsxProv extends t.TsxProvider {
   
   TsxProv(this.tilesetMap);
 
-  Parser getSource(String key) {
+  t.Parser getSource(String key) {
     final str = tilesetMap[key];
     final node = XmlDocument.parse(str).rootElement;
     return t.XmlParser(node);
