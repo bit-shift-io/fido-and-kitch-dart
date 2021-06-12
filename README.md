@@ -8,6 +8,18 @@ Run:
 
     ./install.sh
 
+For now there are some additional steps required:
+
+In hetu-script-autobbinding/pubspec.yaml add the dependency:
+
+    meta: <=1.3.0
+
+then build hetu-script-autobbinding/build.sh
+
+To generate the autobindings run:
+
+    ./script-generate.sh
+
 ## Develop
 
 Via console:

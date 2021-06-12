@@ -4,7 +4,7 @@ import '../factory.dart';
 import 'mixins.dart';
 import 'extensions.dart';
 
-class UsableComponent extends PositionComponent {
+class Usable extends PositionComponent {
   String requiredItem;
   int requiredItemCount;
   String playerAnimationOnUse;
@@ -17,8 +17,8 @@ class UsableComponent extends PositionComponent {
   }
 }
 
-Future<UsableComponent> usableComponentFromData(dynamic yaml) async {
-  final comp = new UsableComponent();
+Future<Usable> usableComponentFromData(dynamic yaml) async {
+  final comp = new Usable();
   await comp.fromData(yaml);
   return comp;
 }

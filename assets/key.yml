@@ -11,8 +11,8 @@ component: Entity
 entityList: Pickups
 size: [32, 32]
 children:
-  - component: SpriteComponent
+  - component: Sprite
     image: key_${color}.png
     size: [20, 20]
-  - component: PickupComponent
+  - component: Pickup
     itemName: key_${color}

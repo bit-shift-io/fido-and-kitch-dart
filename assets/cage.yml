@@ -12,27 +12,27 @@ component: Entity
 entityList: Usable
 size: [32, 32]
 children:
-  - component: UsableComponent
+  - component: Usable
     requiredItem: key_${color}
     children:
-        - component: ScriptComponent
+        - component: Script
           name: OnUse
           script: >
               print('dart value:', props)
               props['foo'] = 'bar'
               return props
-  - component: SwitchComponent
+  - component: Switch
     name: State
     activeComponent: Closed
     components:
       - name: Closed
-        component: SpriteComponent
+        component: Sprite
         image: cage.png
         size: [40, 40]
         srcPosition: [0, 0]
         srcSize: [720, 360]
       - name: Open
-        component: SpriteComponent
+        component: Sprite
         image: cage.png
         size: [40, 40]
         srcPosition: [0, 360]

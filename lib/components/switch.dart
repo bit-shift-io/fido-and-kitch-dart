@@ -3,11 +3,13 @@ import 'package:flame/components.dart';
 
 import '../factory.dart';
 import 'mixins.dart';
+import '../utils/script.dart';
 
 //
 // A list of components with only 1 active at once
 //
-class SwitchComponent extends BaseComponent with HasName {
+@HTBinding()
+class Switch extends BaseComponent with HasName {
   Map<String, Component> components = Map();
 
   Component activeComponent;
@@ -41,8 +43,8 @@ class SwitchComponent extends BaseComponent with HasName {
   }
 }
 
-Future<SwitchComponent> switchComponentFromData(dynamic yaml) async {
-  final comp = new SwitchComponent();
+Future<Switch> switchComponentFromData(dynamic yaml) async {
+  final comp = new Switch();
   await comp.fromData(yaml);
   return comp;
 }

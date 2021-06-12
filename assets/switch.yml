@@ -11,9 +11,9 @@ component: Entity
 entityList: Usable
 size: [32, 32]
 children:
-  - component: UsableComponent
+  - component: Usable
     children:
-        - component: ScriptComponent
+        - component: Script
           name: OnUse
           script: >
               var c = findFirstChild(entity, 'State')
@@ -31,18 +31,18 @@ children:
                 print('Switch set to closed')
                 setActiveComponent(c, 'Closed')
               }
-  - component: SwitchComponent
+  - component: Switch
     name: State
     activeComponent: Closed
     components:
       - name: Closed
-        component: SpriteComponent
+        component: Sprite
         image: switch.png
         size: [32, 32]
         srcPosition: [0, 0]
         srcSize: [160, 160]
       - name: Open
-        component: SpriteComponent
+        component: Sprite
         image: switch.png
         size: [32, 32]
         srcPosition: [160, 160]

@@ -5,7 +5,7 @@ import 'mixins.dart';
 import '../utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 
-class SpriteComponent extends c.SpriteComponent with HasName {
+class Sprite extends c.SpriteComponent with HasName {
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     Vector2 size = vector2FromData(yaml['size']);
@@ -25,8 +25,8 @@ class SpriteComponent extends c.SpriteComponent with HasName {
   }
 }
 
-Future<SpriteComponent> spriteComponentFromData(dynamic yaml) async {
-  SpriteComponent comp = new SpriteComponent();
+Future<Sprite> spriteComponentFromData(dynamic yaml) async {
+  Sprite comp = new Sprite();
   await comp.fromData(yaml);
   return comp;
 }

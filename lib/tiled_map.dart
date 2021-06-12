@@ -296,7 +296,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
             continue;
           }
 
-          Component tmxObjectComponent = await f.createFromData({'component': 'TiledObjectComponent', 'name': 'TiledObject', 'object': tmxObj});
+          Component tmxObjectComponent = await f.createFromData({'component': 'TiledObject', 'name': 'TiledObject', 'object': tmxObj});
           comp.addChild(tmxObjectComponent);
 
           comp.x = tmxObj.x.toDouble();
@@ -350,7 +350,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     objGroup.tmxObjects.forEach((t.TiledObject obj) async {
 
       component
-      final comp = SpriteAnimationComponent(
+      final comp = SpriteAnimation(
         size: Vector2(20.0, 20.0),
         animation: await SpriteAnimation.load(
           imageName,

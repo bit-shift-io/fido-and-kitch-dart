@@ -1,7 +1,7 @@
 import 'package:fido_and_kitch/components/mixins.dart';
 import 'package:flame/components.dart';
 
-class PickupComponent extends PositionComponent with HasName {
+class Pickup extends PositionComponent with HasName {
   String itemName;
   int itemCount;
 
@@ -12,8 +12,8 @@ class PickupComponent extends PositionComponent with HasName {
   }
 }
 
-Future<PickupComponent> pickupComponentFromData(dynamic yaml) async {
-  final comp = new PickupComponent();
+Future<Pickup> pickupComponentFromData(dynamic yaml) async {
+  final comp = new Pickup();
   await comp.fromData(yaml);
   return comp;
 }

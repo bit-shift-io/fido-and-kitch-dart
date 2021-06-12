@@ -7,7 +7,7 @@ import 'mixins.dart';
 import '../utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 
-class SpriteAnimationComponent extends c.SpriteAnimationComponent with HasName {
+class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     String image = yaml['image'];
@@ -70,12 +70,12 @@ class SpriteAnimationComponent extends c.SpriteAnimationComponent with HasName {
 
     this.animation = animation;
     this.size = size;
-    //return new SpriteAnimationComponent(size: size, animation: animation);
+    //return new SpriteAnimation(size: size, animation: animation);
   }
 }
 
-Future<SpriteAnimationComponent> spriteAnimationComponentFromData(dynamic yaml) async {
-  SpriteAnimationComponent comp = new SpriteAnimationComponent();
+Future<SpriteAnimation> spriteAnimationComponentFromData(dynamic yaml) async {
+  SpriteAnimation comp = new SpriteAnimation();
   await comp.fromData(yaml);
   return comp;
 }

@@ -3,7 +3,7 @@ import 'package:hetu_script/hetu_script.dart';
 
 import 'components/mixins.dart';
 import 'components/extensions.dart';
-import 'components/switch_component.dart';
+import 'components/switch.dart';
 
 class HetuScript {
 
@@ -23,10 +23,10 @@ class HetuScript {
         }
         return null;
       },
-      'setActiveComponent': (SwitchComponent s, String name) {
+      'setActiveComponent': (Switch s, String name) {
         s.setActiveComponent(name);
       },
-      'getActiveComponent': (SwitchComponent s) {
+      'getActiveComponent': (Switch s) {
         return s.activeComponent;
       },
       'getName': (Component c) {

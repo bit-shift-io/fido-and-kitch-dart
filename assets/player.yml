@@ -4,53 +4,53 @@ name: Kitch
 debugMode: true
 size: [32, 32]
 children:
-    - component: SwitchComponent
+    - component: Switch
       name: Animations
       components:
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: Idle
           images: cat/Idle (${i+1}).png
           stepTime: 0.2
           loop: true
           frames: 10
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: Walk
           images: cat/Walk (${i+1}).png
           stepTime: 0.2
           loop: true
           frames: 10
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: Fall
           images: cat/Fall (${i+1}).png
           stepTime: 0.2
           loop: true
           frames: 8
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: Dead
           images: cat/Dead (${i+1}).png
           stepTime: 0.2
           loop: false
           frames: 10
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: TeleportFrom
           images: cat/Dead (${i+1}).png
           stepTime: 0.2
           loop: false
           frames: 10
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: TeleportTo
           images: cat/Dead (${i+1}).png
           stepTime: 0.2
           loop: false
           frames: 10
           reversed: true
-        - component: SpriteAnimationComponent
+        - component: SpriteAnimation
           name: Use
           images: cat/Fall (${i+1}).png
           stepTime: 0.1
           loop: false
           frames: 8
-    - component: InventoryComponent
+    - component: Inventory
       name: Inventory
 states:
   - name: Idle

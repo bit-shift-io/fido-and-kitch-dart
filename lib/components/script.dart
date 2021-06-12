@@ -1,12 +1,12 @@
-import 'switch_component.dart';
+import 'switch.dart';
 import 'package:flame/components.dart';
 
 import '../factory.dart';
 import '../hetu_script.dart';
 import 'mixins.dart';
-import 'extensions.dart';
+import '../components/extensions.dart';
 
-class ScriptComponent extends BaseComponent with HasName {
+class Script extends BaseComponent with HasName {
   String script;
 
   Future<void> fromData(dynamic yaml) async {
@@ -34,10 +34,10 @@ class ScriptComponent extends BaseComponent with HasName {
         }
         return null;
       },
-      'setActiveComponent': (SwitchComponent s, String name) {
+      'setActiveComponent': (Switch s, String name) {
         s.setActiveComponent(name);
       },
-      'getActiveComponent': (SwitchComponent s) {
+      'getActiveComponent': (Switch s) {
         return s.activeComponent;
       },
       'getName': (Component c) {
@@ -74,8 +74,8 @@ class ScriptComponent extends BaseComponent with HasName {
   }
 }
 
-Future<ScriptComponent> scriptComponentFromData(dynamic yaml) async {
-  final comp = new ScriptComponent();
+Future<Script> scriptComponentFromData(dynamic yaml) async {
+  final comp = new Script();
   await comp.fromData(yaml);
   return comp;
 }

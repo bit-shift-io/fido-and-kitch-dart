@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:fido_and_kitch/components/entity.dart';
-import 'package:fido_and_kitch/components/inventory_component.dart';
-
-import 'components/switch_component.dart';
+import 'components/entity.dart';
+import 'components/inventory.dart';
+import 'components/sprite_animation.dart';
+import 'components/switch.dart';
 import 'tiled_map.dart';
-import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
+import 'package:flame/components.dart' hide SpriteAnimation;
+import 'package:flutter/material.dart' hide Switch;
 import 'package:tiled/tiled.dart' as t;
 import 'components/mixins.dart';
 import 'components/extensions.dart';
@@ -24,12 +24,12 @@ class InputState {
 
 class Player extends Entity {
   dynamic data;
-  SwitchComponent animations;
+  Switch animations;
 
   Map<String, InputAction> inputActions = Map();
 
   // ECS sample: https://github.com/Unity-Technologies/EntityComponentSystemSamples/tree/master/ECSSamples/Assets/Use%20Case%20Samples/1.%20State%20Machine%20AI
-  Map<String, PlayerState> states = Map(); // TODO: replace with SwitchComponent or StateMachineComponent
+  Map<String, PlayerState> states = Map(); // TODO: replace with Switch or StateMachineComponent
   PlayerState currentState;
 
   Vector2 velocity = Vector2(0, 0);
@@ -68,7 +68,7 @@ class Player extends Entity {
     debugMode = yaml['debugMode'] ?? false;
 
     // pull out any named components we need
-    animations = findFirstChild<SwitchComponent>('Animations');
+    animations = findFirstChild<Switch>('Animations');
     if (animations == null) {
       print("Couldn't find SwitchComponend named 'Animations'");
     }
@@ -99,7 +99,7 @@ class Player extends Entity {
 
     animations.setActiveComponent(animationName);
 
-    var currentAnimation = animations.activeComponent as SpriteAnimationComponent;
+    var currentAnimation = animations.activeComponent as SpriteAnimation;
     if (currentAnimation != null) {
       currentAnimation.width = width;
       currentAnimation.height = height;

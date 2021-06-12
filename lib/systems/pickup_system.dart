@@ -1,8 +1,8 @@
 
 
 import 'package:fido_and_kitch/components/entity.dart';
-import 'package:fido_and_kitch/components/inventory_component.dart';
-import 'package:fido_and_kitch/components/pickup_component.dart';
+import 'package:fido_and_kitch/components/inventory.dart';
+import 'package:fido_and_kitch/components/pickup.dart';
 import 'package:flame/components.dart';
 
 import '../components/extensions.dart';
@@ -24,9 +24,9 @@ class PickupSystem extends System with HasGameRef<MyGame> {
           gameRef.remove(pickup);
           pickup.removeFromEntityLists(gameRef);
 
-          InventoryComponent playerInventory = player.findFirstChildByClass<InventoryComponent>();
+          Inventory playerInventory = player.findFirstChildByClass<Inventory>();
           if (playerInventory != null) {
-            List<PickupComponent> pickupComponents = pickup.findChildrenByClass<PickupComponent>();
+            List<Pickup> pickupComponents = pickup.findChildrenByClass<Pickup>();
             for (final pc in pickupComponents) {
               print('Player picked up ${pc.itemName}');
               playerInventory.addItem(pc.itemName, count: pc.itemCount);

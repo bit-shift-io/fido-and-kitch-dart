@@ -2,11 +2,11 @@ component: Entity
 entityList: Pickups
 size: [32, 32]
 children:
-  - component: SpriteAnimationComponent
+  - component: SpriteAnimation
     image: coins.png
     textureSize: [20, 20]
     stepTime: 0.2
     loop: true
     frames: 8
-  - component: PickupComponent
+  - component: Pickup
     itemName: Coin

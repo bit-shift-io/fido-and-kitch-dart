@@ -1,16 +1,16 @@
 
-import 'package:fido_and_kitch/components/script_component.dart';
+import 'package:fido_and_kitch/components/script.dart';
 import 'package:flame/components.dart';
-import 'components/inventory_component.dart';
-import 'components/sprite_animation_component.dart';
-import 'components/sprite_component.dart';
+import 'components/inventory.dart';
+import 'components/sprite_animation.dart';
+import 'components/sprite.dart';
 import 'components/entity.dart';
-import 'components/pickup_component.dart';
-import 'components/tiled_object_component.dart';
-import 'components/usable_component.dart';
+import 'components/pickup.dart';
+import 'components/tiled_object.dart';
+import 'components/usable.dart';
 import 'player.dart';
-import 'components/position_component.dart';
-import 'components/switch_component.dart';
+import 'components/position.dart';
+import 'components/switch.dart';
 import 'utils/yaml.dart';
 
 typedef Future<T> CreateComponentFromData<T>(dynamic yaml);
@@ -26,17 +26,17 @@ class Factory {
   Factory._internal();
 
   Map<String, CreateComponentFromData> fromDataMap = {
-    'SpriteAnimationComponent': spriteAnimationComponentFromData,
-    'SpriteComponent': spriteComponentFromData,
-    'SwitchComponent': switchComponentFromData,
+    'SpriteAnimation': spriteAnimationComponentFromData,
+    'Sprite': spriteComponentFromData,
+    'Switch': switchComponentFromData,
     'PositionComponent': positionComponentFromData,
     'Entity': entityComponentFromData,
     'Player': playerComponentFromData,
-    'PickupComponent': pickupComponentFromData,
-    'UsableComponent': usableComponentFromData,
-    'InventoryComponent': inventoryComponentFromData,
-    'ScriptComponent': scriptComponentFromData,
-    'TiledObjectComponent': tiledObjectComponentFromData,
+    'Pickup': pickupComponentFromData,
+    'Usable': usableComponentFromData,
+    'Inventory': inventoryComponentFromData,
+    'Script': scriptComponentFromData,
+    'TiledObject': tiledObjectComponentFromData,
   };
 
   void registerComponentFromData(String name, CreateComponentFromData creator) {

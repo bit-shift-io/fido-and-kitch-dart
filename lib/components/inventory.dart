@@ -1,7 +1,9 @@
 import 'package:fido_and_kitch/components/mixins.dart';
 import 'package:flame/components.dart';
+import '../utils/script.dart';
 
-class InventoryComponent extends Component with HasName {
+@HTBinding()
+class Inventory extends Component with HasName {
   Map<String, int> items = Map();
 
   void addItem(String name, {int count = 1}) {
@@ -21,8 +23,8 @@ class InventoryComponent extends Component with HasName {
   }
 }
 
-Future<InventoryComponent> inventoryComponentFromData(dynamic yaml) async {
-  final comp = new InventoryComponent();
+Future<Inventory> inventoryComponentFromData(dynamic yaml) async {
+  final comp = new Inventory();
   await comp.fromData(yaml);
   return comp;
 }
