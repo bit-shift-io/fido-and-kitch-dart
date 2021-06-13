@@ -165,12 +165,24 @@ class Tiled {
   Future<Map<String, SpriteBatch>> _loadImages(t.TiledMap map) async {
     final Map<String, SpriteBatch> result = {};
     await Future.forEach(map.tilesets, (tileset) async {
+      final tmxImage = tileset.image;
+      final imagePath = getTilesetImagePath(tileset, tmxImage);
+      result[tmxImage.source] = await SpriteBatch.load(imagePath);
+        /*
       await Future.forEach(tileset.images, (tmxImage) async {
         final imagePath = getTilesetImagePath(tileset, tmxImage);
         result[tmxImage.source] = await SpriteBatch.load(imagePath);
-      });
+      });*/
     });
     return result;
+  }
+
+  List<t.ObjectGroup> getObjectGroupLayers() {
+    return map.layers.whereType<t.ObjectGroup>().toList();
+  }
+
+  List<t.TileLayer> getTileLayerLayers() {
+    return map.layers.whereType<t.TileLayer>().toList();
   }
 
   /// Generate the sprite batches from the existing tilemap.
@@ -181,11 +193,34 @@ class Tiled {
     _drawTiles(map);
   }
 
+  Rect tileRect(t.Tile tile) {
+    final tileset = map.tilesetByTileGId(tile.localId);
+    final rect = tileset.computeDrawRect(tile);
+    return Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
+    //return rectFromTilePostion(Int2(tile.x, tile.y));
+  }
+
   void _drawTiles(t.TiledMap map) {
     t.Layer l;
-    map.layers.where((layer) => layer.visible).forEach((layer) {
-      (layer as t.TileLayer).tileData.forEach((tileRow) {
+    final tileLayerLayers = getTileLayerLayers();
+    tileLayerLayers.where((layer) => layer.visible).forEach((layer) {
+      int y = 0;
+      layer.tileData.forEach((tileRow) {
+
+        int x = 0;
         tileRow.forEach((gid) {
+          t.Tile tile = map.tileByGid(gid.tile);
+          if (tile.isEmpty) {
+            return;
+          }
+
+          final tileset = map.tilesetByTileGId(tile.localId);
+          final batch = batches[tileset.image.source];
+
+          final rect = tileset.computeDrawRect(tile);
+          final src = Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
+
+          print("qwe");
 
           /*
           if (tile.gid == 0) {
@@ -202,23 +237,40 @@ class Tiled {
             rect.width.toDouble(),
             rect.height.toDouble(),
           );
-
-          final flips = _SimpleFlips.fromFlips(tile.flips);
+*/
+          final flips = _SimpleFlips.fromFlips(gid.flips);
           final Size tileSize = destTileSize ??
-              Size(tile.width.toDouble(), tile.height.toDouble());
+              Size(tileset.tileWidth.toDouble(), tileset.tileHeight.toDouble());
 
           batch.add(
             source: src,
             offset: Vector2(
-              tile.x.toDouble() * tileSize.width +
-                  (tile.flips.horizontally ? tileSize.width : 0),
-              tile.y.toDouble() * tileSize.height +
-                  (tile.flips.vertically ? tileSize.height : 0),
+              x.toDouble() * tileSize.width +
+                  (gid.flips.horizontally ? tileSize.width : 0),
+              y.toDouble() * tileSize.height +
+                  (gid.flips.vertically ? tileSize.height : 0),
             ),
             rotation: flips.angle * math.pi / 2,
-            scale: tileSize.width / tile.width,
+            scale: tileSize.width / tileset.tileWidth.toDouble(),
+          );
+
+          /*
+          batch.add(
+            source: src,
+            offset: Vector2(
+              tile.x.toDouble() * tileSize.width +
+                  (gid.flips.horizontally ? tileSize.width : 0),
+              tile.y.toDouble() * tileSize.height +
+                  (gid.flips.vertically ? tileSize.height : 0),
+            ),
+            rotation: flips.angle * math.pi / 2,
+            scale: tileSize.width / tileset.tileWidth.toDouble(),
           );*/
+
+          ++x;
         });
+
+        ++y;
       });
     });
   }
@@ -457,23 +509,11 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   }
 
   List<t.ObjectGroup> getObjectGroupLayers() {
-    return tiled.map.layers.map<t.ObjectGroup>((l) {
-      if (l.type == t.LayerType.objectGroup) {
-        return l as t.ObjectGroup;
-      }
-
-      return null;
-    });
+    return tiled.getObjectGroupLayers();
   }
 
   List<t.TileLayer> getTileLayerLayers() {
-    return tiled.map.layers.map<t.TileLayer>((l) {
-      if (l.type == t.LayerType.tileLayer) {
-        return l as t.TileLayer;
-      }
-
-      return null;
-    });
+    return tiled.getTileLayerLayers();
   }
 
   t.TiledObject getObjectFromPosition({String layerName, Int2 position, bool nullIfEmpty: true}) {
@@ -539,10 +579,13 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   }
 
   Rect tileRect(t.Tile tile) {
+    return tiled.tileRect(tile);
+/*
     final tileset = tiled.map.tilesetByTileGId(tile.localId);
     final rect = tileset.computeDrawRect(tile);
     return Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
     //return rectFromTilePostion(Int2(tile.x, tile.y));
+    */
   }
 
   Int2 mapTileSize() {
