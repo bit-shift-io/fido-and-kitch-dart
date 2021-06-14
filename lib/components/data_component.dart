@@ -1,3 +1,4 @@
+/*
 import 'mixins.dart';
 import 'package:flame/components.dart';
 
@@ -17,3 +18,4 @@ Future<DataComponent> pickupComponentFromData(dynamic yaml) async {
   await comp.fromData(yaml);
   return comp;
 }
+*/

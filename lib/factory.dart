@@ -43,13 +43,13 @@ class Factory {
     fromDataMap[name] = creator;
   }
 
-  Future<T> createFromFile<T>(String fileName, { Map<String, dynamic> substitutions }) async {
-    final yaml = await loadYamlFromFile(fileName, substitutions: substitutions);
+  Future<T?> createFromFile<T>(String fileName, { Map<String, dynamic>? substitutions }) async {
+    final yaml = await loadYamlFromFile(fileName, substitutions: substitutions!);
     print("creating entity: $fileName");
     return createFromData<T>(yaml);
   }
 
-  Future<T> createFromData<T>(dynamic yaml) async {
+  Future<T?> createFromData<T>(dynamic yaml) async {
     try {
       String componentName = yaml['component'];
       final creator = fromDataMap[componentName];
@@ -72,7 +72,7 @@ class Factory {
     }
 
     for (final c in yaml) {
-      Component child = await createFromData<Component>(c);
+      Component? child = await createFromData<Component>(c);
       if (child != null) {
         array.add(child);
       }

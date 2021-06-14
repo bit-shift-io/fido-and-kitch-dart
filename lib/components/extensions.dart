@@ -9,7 +9,7 @@ extension AddChildren on BaseComponent {
     }
   }
 
-  T findFirstChild<T>(String name) {
+  T? findFirstChild<T>(String name) {
     for (final c in children) {
       if (c is HasName) {
         HasName cname = c as HasName;
@@ -31,7 +31,7 @@ extension AddChildren on BaseComponent {
     return found;
   }
 
-  T findFirstChildByClass<T>() {
+  T? findFirstChildByClass<T>() {
     for (final c in children) {
       if (c is T) {
         return c as T;

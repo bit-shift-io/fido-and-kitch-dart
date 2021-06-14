@@ -7,7 +7,7 @@ import 'mixins.dart';
 import 'extensions.dart';
 
 class Position extends c.PositionComponent with HasName {
-  Vector2 offset;
+  Vector2 offset = Vector2(0, 0);
 
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];

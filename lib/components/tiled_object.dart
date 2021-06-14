@@ -3,7 +3,7 @@ import 'mixins.dart';
 import 'package:flame/components.dart';
 
 class TiledObject extends Component with HasName {
-  t.TiledObject object;
+  t.TiledObject? object;
 
   Future<void> fromData(dynamic data) async {
     name = data['name'];

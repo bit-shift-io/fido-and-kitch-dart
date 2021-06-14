@@ -69,13 +69,13 @@ class Idle extends PlayerState {
     }
 
     if (state.dir.y != 0.0) {
-      if (player.states['Ladder'].tryTransition()) {
+      if (player.states['Ladder']!.tryTransition()) {
         return;
       }
     }
 
     if (state.use) {
-      if (player.states['Use'].tryTransition()) {
+      if (player.states['Use']!.tryTransition()) {
         return;
       }
     }
@@ -100,7 +100,7 @@ class Walk extends PlayerState {
       return;
     }
 
-    if (player.states['Teleport'].tryTransition()) {
+    if (player.states['Teleport']!.tryTransition()) {
       return;
     }
   }
@@ -118,7 +118,7 @@ class Fall extends PlayerState {
       player.setState('Idle');
     }
 
-    if (player.states['Teleport'].tryTransition()) {
+    if (player.states['Teleport']!.tryTransition()) {
       return;
     }
 

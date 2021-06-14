@@ -2,8 +2,8 @@ import 'mixins.dart';
 import 'package:flame/components.dart';
 
 class Pickup extends PositionComponent with HasName {
-  String itemName;
-  int itemCount;
+  String itemName = '';
+  int itemCount = 1;
 
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];

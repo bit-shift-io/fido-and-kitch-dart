@@ -12,17 +12,17 @@ import '../utils/script.dart';
 class Switch extends BaseComponent with HasName {
   Map<String, Component> components = Map();
 
-  Component activeComponent;
+  Component? activeComponent;
 
   void addComponent(String name, Component component) {
     components[name] = component;
   }
 
   void setActiveComponent(String name) {
-    removeChild(activeComponent);
+    removeChild(activeComponent!);
     activeComponent = components[name];
     if (activeComponent != null) {
-      addChild(activeComponent);
+      addChild(activeComponent!);
     }
   }
 
@@ -30,7 +30,7 @@ class Switch extends BaseComponent with HasName {
     name = yaml['name'];
     final children = yaml['components'];
     for (final c in children) {
-      Component child = await Factory().createFromData<Component>(c);
+      Component? child = await Factory().createFromData<Component>(c);
       if (child != null) {
         addComponent(c['name'], child);
       }

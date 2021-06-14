@@ -11,7 +11,7 @@ class Inventory extends Component with HasName {
   }
 
   bool hasItem(String name, {int count = 1}) {
-    return items[name] != null && items[name] >= count;
+    return items[name] != null && items[name]! >= count;
   }
 
   void removeItem(String name, {int count = 1}) {

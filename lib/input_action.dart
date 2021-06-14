@@ -12,9 +12,9 @@ Map<String, LogicalKeyboardKey> keyLookup = {
 class InputAction {
   String keyLabel;
   bool isKeyDown = false;
-  LogicalKeyboardKey logicalKey;
+  LogicalKeyboardKey? logicalKey;
 
-  InputAction({this.keyLabel, this.isKeyDown}) {
+  InputAction({this.keyLabel = '', this.isKeyDown = false}) {
     logicalKey = keyLookup[keyLabel];
   }
 

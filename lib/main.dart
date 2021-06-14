@@ -27,7 +27,7 @@ class GameWrapper extends StatefulWidget {
 
 class GameWrapperState extends State<GameWrapper> {
   bool splashGone = false;
-  MyGame game;
+  MyGame? game;
   final _focusNode = FocusNode();
 
   @override
@@ -91,7 +91,7 @@ class GameWrapperState extends State<GameWrapper> {
       );
     }
 
-    return GameWidget(game: game);
+    return GameWidget<MyGame>(game: game!);
     /*
     return Container(
       color: Colors.white,

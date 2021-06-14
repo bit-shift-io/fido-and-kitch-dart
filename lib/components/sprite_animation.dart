@@ -24,7 +24,7 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
       size = textureSize;
     }
 
-    c.SpriteAnimation animation;
+    c.SpriteAnimation? animation = null;
 
     // spritesheet
     if (image != null) {
@@ -64,7 +64,7 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
       );
     }
 
-    if (reversed) {
+    if (animation != null && reversed) {
       animation = animation.reversed();
     }
 

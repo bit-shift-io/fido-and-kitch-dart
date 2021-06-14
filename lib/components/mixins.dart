@@ -1,8 +1,8 @@
 mixin HasName {
-  String _name;
+  String _name = '';
 
   //@override
-  get name {
+  String get name {
     return _name;
   }
 

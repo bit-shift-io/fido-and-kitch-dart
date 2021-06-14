@@ -24,8 +24,8 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
   List<System> systems = [];
   Map<String, List> entityLists = Map();
 
-  TiledMap map;
-  Debug debug;
+  TiledMap? map;
+  Debug? debug;
 
   Future<void> onLoad() async {
     // register anything needed here
@@ -35,10 +35,10 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     addSystem(new PickupSystem());
     
     map = TiledMap();
-    add(map);
+    add(map!);
 
-    Player p = await Factory().createFromFile<Player>('assets/player.yml');
-    p.addToEntityLists(this);
+    Player? p = await Factory().createFromFile<Player>('assets/player.yml');
+    p!.addToEntityLists(this);
     //addEntity(p, p.entityList);
 
     /*
@@ -48,10 +48,10 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
       */
 
     debug = Debug();
-    add(debug);
+    add(debug!);
  
 
-    map.load('assets/maps/sandbox.tmx').then(onMapLoad);  
+    map!.load('assets/maps/sandbox.tmx').then(onMapLoad);  
   }
 
   void addSystem(System system) {
@@ -64,7 +64,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
       entityLists[listName] = [];
     }
 
-    entityLists[listName].add(entity);
+    entityLists[listName]!.add(entity);
   }
 
   void removeEntity(Component entity, String listName) {
@@ -72,7 +72,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
       return;
     }
 
-    entityLists[listName].remove(entity);
+    entityLists[listName]!.remove(entity);
   }
 
   List<T> getEntities<T>(String listName) {
@@ -89,10 +89,10 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     print('map loaded');
 
     // set the viewport to fit the whole map to the screen
-    Vector2 mapSize = map.mapPixelSize();
+    Vector2 mapSize = map!.mapPixelSize();
     viewport = FixedResolutionViewport(mapSize);
 
-    List<TiledObject> spawns = map.findObjectsByType("spawn");
+    List<TiledObject> spawns = map!.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
       TiledObject spawn = spawns[i];
       Player p = players[i];

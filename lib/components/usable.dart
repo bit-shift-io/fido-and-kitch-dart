@@ -5,9 +5,9 @@ import 'mixins.dart';
 import 'extensions.dart';
 
 class Usable extends PositionComponent {
-  String requiredItem;
-  int requiredItemCount;
-  String playerAnimationOnUse;
+  String requiredItem = '';
+  int requiredItemCount = 1;
+  String? playerAnimationOnUse;
 
   Future<void> fromData(dynamic yaml) async {
     addChildren(await Factory().createFromDataArray(yaml['children']));

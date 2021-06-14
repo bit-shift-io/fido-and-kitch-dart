@@ -7,7 +7,7 @@ import 'mixins.dart';
 import '../components/extensions.dart';
 
 class Script extends BaseComponent with HasName {
-  String script;
+  String script = '';
 
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
