@@ -16,15 +16,15 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
     bool loop = yaml['loop'];
     bool reversed = yaml['reversed'] ?? false;
     int frames = yaml['frames'];
-    Vector2 textureSize = vector2FromData(yaml['textureSize']);
-    Vector2 size = vector2FromData(yaml['size']);
+    Vector2 textureSize = vector2FromData(yaml['textureSize']) ?? Vector2(0, 0);
+    Vector2? size = vector2FromData(yaml['size']);
 
     // if no size given, infer from textureSize
     if (size == null) {
       size = textureSize;
     }
 
-    c.SpriteAnimation? animation = null;
+    c.SpriteAnimation? animation;
 
     // spritesheet
     if (image != null) {

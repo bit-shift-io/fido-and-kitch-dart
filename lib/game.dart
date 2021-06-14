@@ -80,7 +80,7 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
       return [];
     }
 
-    return List<T>.from(entityLists[listName]);
+    return List<T>.from(entityLists[listName]!);
   }
 
   List<Player> get players => getEntities<Player>('Players');

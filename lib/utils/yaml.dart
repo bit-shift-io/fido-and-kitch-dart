@@ -2,7 +2,7 @@ import 'package:flame/game.dart';
 import "package:flutter/services.dart" as s;
 import "package:yaml/yaml.dart";
 
-dynamic loadYamlFromFile(String fileName, { Map<String, dynamic> substitutions }) async {
+dynamic loadYamlFromFile(String fileName, { Map<String, dynamic>? substitutions }) async {
   String fileContents = await s.rootBundle.loadString(fileName);
   if (substitutions != null) {
     substitutions.forEach((key, value) { 
@@ -26,7 +26,7 @@ dynamic yamlFirstWhere(dynamic yaml, Function where) {
   return null;
 }
 
-Vector2 vector2FromData(dynamic yaml) {
+Vector2? vector2FromData(dynamic yaml) {
   if (yaml == null) {
     return null;
   }
