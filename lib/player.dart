@@ -126,6 +126,11 @@ class Player extends Entity {
     InputState state = getInputState();
     Vector2 moveVec = Vector2(state.dir.x, velocity.y);
     
+    // TODO: if moveVec is greater than say half the tile size, break it up
+    // and do multiple collision checks to aacount for low fps
+    // for now we have this to stop extreme issues while debugging:
+    dt = min(dt, 0.033);
+
     if (gravity) {
       moveVec.y += 9.8 * dt;
     }
@@ -133,11 +138,13 @@ class Player extends Entity {
       moveVec.y = movementSpeed * dt * state.dir.y;
     }
 
+    moveVec.x *= movementSpeed * dt;
+
+
     if (collisionDetection) {
       moveVec = detectCollision(moveVec);
     }
 
-    moveVec.x *= movementSpeed * dt;
 
     velocity = moveVec;
     move(moveVec);
@@ -191,9 +198,8 @@ class Player extends Entity {
     }
   }
 
-  void spawn({double x, double y}) {
-    this.x = x;
-    this.y = y;
+  void spawn(Vector2 position) {
+    this.position = position;
   }
 
   // move to a player input component
@@ -222,8 +228,7 @@ class Player extends Entity {
   }
 
   void move(Vector2 offset) {
-    x += offset.x;
-    y += offset.y;
+    position += offset;
   }
 }
 

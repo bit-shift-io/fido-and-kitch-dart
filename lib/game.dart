@@ -40,7 +40,6 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
 
     Player p = await Factory().createFromFile<Player>('assets/player.yml');
     p.addToEntityLists(this);
-    add(p);
     //addEntity(p, p.entityList);
 
     /*
@@ -98,7 +97,8 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
       t.TiledObject spawn = spawns[i];
       Player p = players[i];
-      p.spawn(x: spawn.x.toDouble(), y: spawn.y.toDouble());
+      p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble()));
+      add(p); // add to world to start updating and rendering
     }
   }
 

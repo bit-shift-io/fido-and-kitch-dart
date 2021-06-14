@@ -192,10 +192,25 @@ class Tiled {
     }
     _drawTiles(map);
   }
+/*
+  Int2 getTileXY(t.Tile tile) {
+    final tileset = map.tilesetByTileGId(tile.localId);
 
+    int width = map.width;
+    int x = tile.localId / width;
+    int y = tile.localId % width;
+
+    return Int2(x, y);
+  }
+*/
   Rect tileRect(t.Tile tile) {
     final tileset = map.tilesetByTileGId(tile.localId);
     final rect = tileset.computeDrawRect(tile);
+
+    int width = map.width;
+    int x = tile.localId % width ;
+    int y = (tile.localId.toDouble() / width.toDouble()).toInt();
+    
     return Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
     //return rectFromTilePostion(Int2(tile.x, tile.y));
   }
@@ -214,6 +229,10 @@ class Tiled {
             ++x;
             return;
           }
+/*
+          int x2 = tile.localId % map.width ;
+          int y2 = (tile.localId.toDouble() / map.width.toDouble()).toInt();
+    */
 
           final tileset = map.tilesetByTileGId(gid.tile); //tile.localId);
           final batch = batches[tileset.image.source];
@@ -284,6 +303,11 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
     scale = 1.0;
     await tiled.future;
+
+    await createEntitiesFromObjects();
+  }
+
+  Future createEntitiesFromObjects() async {
 
     // iterate over all objectGroups in the map
     // do a look up to get data from map.yaml
