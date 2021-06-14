@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:async';
 import 'dart:ui';
-import 'package:fido_and_kitch/components/entity.dart';
+import 'components/entity.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/widgets.dart' hide Animation, Image;
@@ -9,6 +9,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:tiled/tiled.dart' as t;
+export 'package:tiled/tiled.dart' show TiledObject, Tile;
 import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 

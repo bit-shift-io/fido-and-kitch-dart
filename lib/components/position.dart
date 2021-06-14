@@ -1,4 +1,4 @@
-import 'package:fido_and_kitch/utils/yaml.dart';
+import '../utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 import 'package:flame/game.dart';
 

@@ -1,8 +1,6 @@
-
-
-import 'package:fido_and_kitch/components/entity.dart';
-import 'package:fido_and_kitch/components/inventory.dart';
-import 'package:fido_and_kitch/components/pickup.dart';
+import '../components/entity.dart';
+import '../components/inventory.dart';
+import '../components/pickup.dart';
 import 'package:flame/components.dart';
 
 import '../components/extensions.dart';

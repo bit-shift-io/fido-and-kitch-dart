@@ -1,4 +1,4 @@
-import 'package:tiled/tiled.dart' as t;
+import '../tiled_map.dart' as t;
 import 'mixins.dart';
 import 'package:flame/components.dart';
 

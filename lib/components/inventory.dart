@@ -1,4 +1,4 @@
-import 'package:fido_and_kitch/components/mixins.dart';
+import 'mixins.dart';
 import 'package:flame/components.dart';
 import '../utils/script.dart';
 

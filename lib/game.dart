@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:fido_and_kitch/hetu_script.dart';
+import 'hetu_script.dart';
 
 import 'systems/pickup_system.dart';
 import 'tiled_map.dart';
@@ -11,7 +11,6 @@ import 'package:flame/keyboard.dart';
 //import 'package:flame_forge2d/forge2d_game.dart';
 
 import 'player.dart';
-import 'package:tiled/tiled.dart' as t;
 
 import 'components/system.dart';
 import 'debug.dart';
@@ -93,9 +92,9 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     Vector2 mapSize = map.mapPixelSize();
     viewport = FixedResolutionViewport(mapSize);
 
-    List<t.TiledObject> spawns = map.findObjectsByType("spawn");
+    List<TiledObject> spawns = map.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
-      t.TiledObject spawn = spawns[i];
+      TiledObject spawn = spawns[i];
       Player p = players[i];
       p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble()));
       add(p); // add to world to start updating and rendering

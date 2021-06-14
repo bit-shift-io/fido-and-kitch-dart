@@ -8,7 +8,6 @@ import 'components/switch.dart';
 import 'tiled_map.dart';
 import 'package:flame/components.dart' hide SpriteAnimation;
 import 'package:flutter/material.dart' hide Switch;
-import 'package:tiled/tiled.dart' as t;
 import 'components/mixins.dart';
 import 'components/extensions.dart';
 import 'factory.dart';
@@ -166,7 +165,7 @@ class Player extends Entity {
       //Rect belowTileRect = map.rectFromTilePostion(tileCoordBelow);
       //player.gameRef.debug.drawRect(belowTileRect, Colors.purple, PaintingStyle.fill);
       
-      t.Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'ground');
+      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'ground');
       if (tileBelow != null && !tileBelow.isEmpty) {
         Rect tileRect = map.tileRect(tileBelow);
 

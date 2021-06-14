@@ -1,4 +1,4 @@
-import 'package:fido_and_kitch/components/mixins.dart';
+import 'mixins.dart';
 import 'package:flame/components.dart';
 
 // Generic way to attach an unknown block of data

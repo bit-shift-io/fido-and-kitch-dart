@@ -1,5 +1,5 @@
 
-import 'package:fido_and_kitch/components/script.dart';
+import 'components/script.dart';
 import 'package:flame/components.dart';
 import 'components/inventory.dart';
 import 'components/sprite_animation.dart';
