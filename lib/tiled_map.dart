@@ -211,61 +211,33 @@ class Tiled {
         tileRow.forEach((gid) {
           t.Tile tile = map.tileByGid(gid.tile);
           if (tile.isEmpty) {
+            ++x;
             return;
           }
 
-          final tileset = map.tilesetByTileGId(tile.localId);
+          final tileset = map.tilesetByTileGId(gid.tile); //tile.localId);
           final batch = batches[tileset.image.source];
 
           final rect = tileset.computeDrawRect(tile);
           final src = Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
 
-          print("qwe");
-
-          /*
-          if (tile.gid == 0) {
-            return;
-          }
-
-          final batch = batches[tile.image.source];
-
-          final rect = tile.computeDrawRect();
-
-          final src = Rect.fromLTWH(
-            rect.left.toDouble(),
-            rect.top.toDouble(),
-            rect.width.toDouble(),
-            rect.height.toDouble(),
-          );
-*/
           final flips = _SimpleFlips.fromFlips(gid.flips);
           final Size tileSize = destTileSize ??
               Size(tileset.tileWidth.toDouble(), tileset.tileHeight.toDouble());
 
-          batch.add(
-            source: src,
-            offset: Vector2(
+          final offset = Vector2(
               x.toDouble() * tileSize.width +
                   (gid.flips.horizontally ? tileSize.width : 0),
               y.toDouble() * tileSize.height +
                   (gid.flips.vertically ? tileSize.height : 0),
-            ),
+            );
+
+          batch.add(
+            source: src,
+            offset: offset,
             rotation: flips.angle * math.pi / 2,
             scale: tileSize.width / tileset.tileWidth.toDouble(),
           );
-
-          /*
-          batch.add(
-            source: src,
-            offset: Vector2(
-              tile.x.toDouble() * tileSize.width +
-                  (gid.flips.horizontally ? tileSize.width : 0),
-              tile.y.toDouble() * tileSize.height +
-                  (gid.flips.vertically ? tileSize.height : 0),
-            ),
-            rotation: flips.angle * math.pi / 2,
-            scale: tileSize.width / tileset.tileWidth.toDouble(),
-          );*/
 
           ++x;
         });
