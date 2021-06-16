@@ -10,7 +10,7 @@ import 'package:flame/components.dart' as c;
 class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
-    String image = yaml['image'];
+    String? image = yaml['image'];
     dynamic images = yaml['images'];
     double stepTime = yaml['stepTime'];
     bool loop = yaml['loop'];

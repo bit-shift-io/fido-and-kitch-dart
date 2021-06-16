@@ -18,8 +18,10 @@ class Switch extends BaseComponent with HasName {
     components[name] = component;
   }
 
-  void setActiveComponent(String name) {
-    removeChild(activeComponent!);
+  void setActiveComponent(String? name) {
+    if (activeComponent != null) {
+      removeChild(activeComponent!);
+    }
     activeComponent = components[name];
     if (activeComponent != null) {
       addChild(activeComponent!);
@@ -36,7 +38,7 @@ class Switch extends BaseComponent with HasName {
       }
     }
 
-    final activeComponent = yaml['activeComponent'];
+    String? activeComponent = yaml['activeComponent'];
     setActiveComponent(activeComponent);
 
     // support random initial component?

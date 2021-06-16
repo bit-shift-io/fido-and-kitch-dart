@@ -1,7 +1,7 @@
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:flame_splash_screen/flame_splash_screen.dart';
+//import 'package:flame_splash_screen/flame_splash_screen.dart';
 
 import 'game.dart';
 
@@ -26,7 +26,7 @@ class GameWrapper extends StatefulWidget {
 }
 
 class GameWrapperState extends State<GameWrapper> {
-  bool splashGone = false;
+  //bool splashGone = false;
   MyGame? game;
   final _focusNode = FocusNode();
 
@@ -35,10 +35,10 @@ class GameWrapperState extends State<GameWrapper> {
     super.initState();
 
     preload();
-
+/*
     if (SKIP_SPLASH) {
       startGame();
-    }
+    }*/
   }
 
   void preload() async {
@@ -59,19 +59,22 @@ class GameWrapperState extends State<GameWrapper> {
   }
 
   void startGame() {
-    if (splashGone) {
+    if (game != null) {
+      // already started
       return;
     }
 
     setState(() {
         game = MyGame();
         _focusNode.requestFocus();
-        splashGone = SKIP_SPLASH ? true : splashGone;
+        //splashGone = SKIP_SPLASH ? true : splashGone;
       });
   }
 
   @override
   Widget build(BuildContext context) {
+    return _buildGame(context);
+    /*
     return splashGone
         ? _buildGame(context)
         : FlameSplashScreen(
@@ -81,8 +84,10 @@ class GameWrapperState extends State<GameWrapper> {
           splashGone = true;
         });
       },
-    );
+    );*/
   }
+
+  
 
   Widget _buildGame(BuildContext context) {
     if (game == null) {

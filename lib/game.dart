@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:flutter/src/services/raw_keyboard.dart';
+
 import 'hetu_script.dart';
 
 import 'systems/pickup_system.dart';
@@ -15,6 +17,13 @@ import 'player.dart';
 import 'components/system.dart';
 import 'debug.dart';
 import 'factory.dart';
+
+class MyGame2 extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
+  @override
+  void onKeyEvent(RawKeyEvent event) {
+    // TODO: implement onKeyEvent
+  }
+}
 
 // this is the world in ECS terms
 class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {

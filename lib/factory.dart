@@ -44,14 +44,14 @@ class Factory {
   }
 
   Future<T?> createFromFile<T>(String fileName, { Map<String, dynamic>? substitutions }) async {
-    final yaml = await loadYamlFromFile(fileName, substitutions: substitutions!);
+    final yaml = await loadYamlFromFile(fileName, substitutions: substitutions);
     print("creating entity: $fileName");
     return createFromData<T>(yaml);
   }
 
   Future<T?> createFromData<T>(dynamic yaml) async {
+    String componentName = yaml['component'];
     try {
-      String componentName = yaml['component'];
       final creator = fromDataMap[componentName];
       if (creator == null) {
         print('No creator found for $componentName');
@@ -60,7 +60,8 @@ class Factory {
       print("\tcreating component: $componentName with name ${yaml['name']}");
       return await creator(yaml);
     } catch(e) {
-      print(e);
+      print("\terror creating component: $componentName with name ${yaml['name']}:");
+      print("\t\t" + e.toString());
       return null;
     }
   }

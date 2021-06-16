@@ -65,7 +65,8 @@ class Player extends Entity {
     // pull out any named components we need
     animations = findFirstChild<Switch>('Animations');
     if (animations == null) {
-      print("Couldn't find SwitchComponend named 'Animations'");
+      print("Couldn't find SwitchComponent named 'Animations'");
+      return;
     }
 
     addInputAction('move_left', InputAction(keyLabel: 'ArrowLeft'));
