@@ -5,7 +5,7 @@ import 'mixins.dart';
 import 'extensions.dart';
 
 class Usable extends PositionComponent {
-  String requiredItem = '';
+  String? requiredItem;
   int requiredItemCount = 1;
   String? playerAnimationOnUse;
 

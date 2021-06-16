@@ -22,7 +22,7 @@ class PickupSystem extends System with HasGameRef<MyGame> {
           gameRef.remove(pickup);
           pickup.removeFromEntityLists(gameRef);
 
-          Inventory playerInventory = player.findFirstChildByClass<Inventory>();
+          Inventory? playerInventory = player.findFirstChildByClass<Inventory>();
           if (playerInventory != null) {
             List<Pickup> pickupComponents = pickup.findChildrenByClass<Pickup>();
             for (final pc in pickupComponents) {

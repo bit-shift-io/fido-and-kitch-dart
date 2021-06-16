@@ -8,12 +8,12 @@ import 'package:flame/components.dart' as c;
 class Sprite extends c.SpriteComponent with HasName {
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
-    Vector2 size = vector2FromData(yaml['size']);
+    Vector2? size = vector2FromData(yaml['size']);
     String imageFilename = yaml['image'];
     final image = await Flame.images.load(imageFilename);
 
-    Vector2 srcPosition = vector2FromData(yaml['srcPosition']);
-    Vector2 srcSize = vector2FromData(yaml['srcSize']);
+    Vector2? srcPosition = vector2FromData(yaml['srcPosition']);
+    Vector2? srcSize = vector2FromData(yaml['srcSize']);
 
     sprite = c.Sprite(
       image,
@@ -21,7 +21,7 @@ class Sprite extends c.SpriteComponent with HasName {
       srcSize: srcSize
     );
 
-    this.size = size;
+    this.size = size ?? this.size;
   }
 }
 

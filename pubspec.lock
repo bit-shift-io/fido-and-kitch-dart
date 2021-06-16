@@ -35,7 +35,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -156,10 +156,12 @@ packages:
   hetu_script:
     dependency: "direct main"
     description:
-      name: hetu_script
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1+3"
+      path: "."
+      ref: app-stable
+      resolved-ref: f9e7315bf01cdecde72cc7e585d759c5a979e33a
+      url: "https://github.com/hetu-script/hetu-script.git"
+    source: git
+    version: "0.1.0+3"
   json_annotation:
     dependency: transitive
     description:
@@ -230,13 +232,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -248,7 +243,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.1"
   stack_trace:
     dependency: transitive
     description:
@@ -283,13 +278,15 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.19"
+    version: "0.3.0"
   tiled:
     dependency: "direct main"
     description:
-      name: tiled
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "65e60de50a06b2388ccf55d9717d8b92a6ddc183"
+      url: "https://github.com/supagu/tiled.dart.git"
+    source: git
     version: "0.7.0"
   typed_data:
     dependency: transitive

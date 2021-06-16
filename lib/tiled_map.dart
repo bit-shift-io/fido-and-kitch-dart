@@ -16,7 +16,6 @@ import 'package:path/path.dart' as p;
 import 'factory.dart';
 import 'game.dart';
 import 'utils/number.dart';
-import 'utils/yaml.dart';
 
 /// Tiled represents all flips and rotation using three possible flips: horizontal, vertical and diagonal.
 /// This class converts that representation to a simpler one, that uses one angle (with pi/2 steps) and two flips (H or V).
@@ -86,7 +85,7 @@ class TsxProv extends t.TsxProvider {
 
   t.Parser getSource(String key) {
     final str = tilesetMap[key];
-    final node = XmlDocument.parse(str).rootElement;
+    final node = XmlDocument.parse(str ?? '').rootElement;
     return t.XmlParser(node);
 
     //final str = tilesetMap[key];
@@ -97,10 +96,10 @@ class TsxProv extends t.TsxProvider {
 /// This component renders a tile map based on a TMX file from Tiled.
 class Tiled {
   String filename;
-  t.TiledMap map;
-  Image image;
+  t.TiledMap? map;
+  Image? image;
   Map<String, SpriteBatch> batches = <String, SpriteBatch>{};
-  Future future;
+  Future? future;
   bool _loaded = false;
   Size destTileSize;
 
@@ -116,19 +115,30 @@ class Tiled {
 
   Future _load() async {
     map = await _loadMap();
+    if (map == null) {
+      return;
+    }
 
-    final imagePath = getTilesetImagePath(map.tilesets[0], map.tilesets[0].image);
+    final imagePath = getTilesetImagePath(map!.tilesets[0], map!.tilesets[0].image);
+    if (imagePath == null) {
+      return;
+    }
+
     image = await Flame.images.load(imagePath);
-    batches = await _loadImages(map);
+    batches = await _loadImages(map!);
     generate();
     _loaded = true;
   }
 
-  String getTilesetImagePath(t.Tileset tileset, t.TiledImage tmxImage) {
+  String? getTilesetImagePath(t.Tileset tileset, t.TiledImage? tmxImage) {
+    if (tmxImage == null || tileset.source == null) {
+      return null;
+    }
+
     // the image filepath if relstive to the tileset path
     // the tileset path is relative to the map
     final mapDir = p.dirname(filename);
-    final tilesetDir = p.dirname(tileset.source);
+    final tilesetDir = p.dirname(tileset.source!);
     final imagePath = p.normalize('$mapDir/$tilesetDir/${tmxImage.source}');
     final imagePathInImages = imagePath.replaceAll('assets/images/', '');
     return imagePathInImages;
@@ -148,7 +158,9 @@ class Tiled {
       xmlElement.children.whereType<XmlElement>().forEach((XmlElement element) {
         if (element.name.local == 'tileset') {
           final tsxFilename = element.getAttribute('source');
-          tilesetFilenames.add(tsxFilename);
+          if (tsxFilename != null) {
+            tilesetFilenames.add(tsxFilename);
+          }
         }
       });
 
@@ -165,10 +177,12 @@ class Tiled {
 
   Future<Map<String, SpriteBatch>> _loadImages(t.TiledMap map) async {
     final Map<String, SpriteBatch> result = {};
-    await Future.forEach(map.tilesets, (tileset) async {
+    await Future.forEach(map.tilesets, (t.Tileset tileset) async {
       final tmxImage = tileset.image;
       final imagePath = getTilesetImagePath(tileset, tmxImage);
-      result[tmxImage.source] = await SpriteBatch.load(imagePath);
+      if (imagePath != null) {
+        result[tmxImage!.source!] = await SpriteBatch.load(imagePath);
+      }
         /*
       await Future.forEach(tileset.images, (tmxImage) async {
         final imagePath = getTilesetImagePath(tileset, tmxImage);
@@ -179,19 +193,19 @@ class Tiled {
   }
 
   List<t.ObjectGroup> getObjectGroupLayers() {
-    return map.layers.whereType<t.ObjectGroup>().toList();
+    return map!.layers.whereType<t.ObjectGroup>().toList();
   }
 
   List<t.TileLayer> getTileLayerLayers() {
-    return map.layers.whereType<t.TileLayer>().toList();
+    return map!.layers.whereType<t.TileLayer>().toList();
   }
 
   /// Generate the sprite batches from the existing tilemap.
   void generate() {
     for (var batch in batches.keys) {
-      batches[batch].clear();
+      batches[batch]!.clear();
     }
-    _drawTiles(map);
+    _drawTiles(map!);
   }
 /*
   Int2 getTileXY(t.Tile tile) {
@@ -204,24 +218,28 @@ class Tiled {
     return Int2(x, y);
   }
 */
-  Rect tileRect(t.Tile tile) {
-    final tileset = map.tilesetByTileGId(tile.localId);
+  Rect? tileRect(t.Tile? tile) {
+    if (tile == null) {
+      return null;
+    }
+
+    final tileset = map!.tilesetByTileGId(tile.localId);
     final rect = tileset.computeDrawRect(tile);
 
-    int width = map.width;
+    int width = map!.width;
     int x = tile.localId % width ;
     int y = (tile.localId.toDouble() / width.toDouble()).toInt();
     
-    return Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
+    return Rect.fromLTRB(rect.left.toDouble(), rect.top.toDouble(), rect.right.toDouble(), rect.bottom.toDouble());
     //return rectFromTilePostion(Int2(tile.x, tile.y));
   }
 
   void _drawTiles(t.TiledMap map) {
     t.Layer l;
     final tileLayerLayers = getTileLayerLayers();
-    tileLayerLayers.where((layer) => layer.visible).forEach((layer) {
+    tileLayerLayers.where((layer) => layer.visible && layer.tileData != null).forEach((layer) {
       int y = 0;
-      layer.tileData.forEach((tileRow) {
+      layer.tileData!.forEach((tileRow) {
 
         int x = 0;
         tileRow.forEach((gid) {
@@ -236,14 +254,13 @@ class Tiled {
     */
 
           final tileset = map.tilesetByTileGId(gid.tile); //tile.localId);
-          final batch = batches[tileset.image.source];
+          final batch = batches[tileset.image!.source];
 
           final rect = tileset.computeDrawRect(tile);
-          final src = Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
+          final src = Rect.fromLTRB(rect.left.toDouble(), rect.top.toDouble(), rect.right.toDouble(), rect.bottom.toDouble());
 
           final flips = _SimpleFlips.fromFlips(gid.flips);
-          final Size tileSize = destTileSize ??
-              Size(tileset.tileWidth.toDouble(), tileset.tileHeight.toDouble());
+          final Size tileSize = Size(tileset.tileWidth!.toDouble(), tileset.tileHeight!.toDouble());
 
           final offset = Vector2(
               x.toDouble() * tileSize.width +
@@ -252,11 +269,11 @@ class Tiled {
                   (gid.flips.vertically ? tileSize.height : 0),
             );
 
-          batch.add(
+          batch!.add(
             source: src,
             offset: offset,
             rotation: flips.angle * math.pi / 2,
-            scale: tileSize.width / tileset.tileWidth.toDouble(),
+            scale: tileSize.width / tileset.tileWidth!.toDouble(),
           );
 
           ++x;
@@ -291,8 +308,8 @@ class Tiled {
 
 
 class TiledMap extends BaseComponent with HasGameRef<MyGame> {
-  Tiled tiled;
-  double scale;
+  Tiled? tiled;
+  double scale = 1.0;
   //dynamic data;
 
   Future load(String fileName) async {
@@ -303,7 +320,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
 
     tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
     scale = 1.0;
-    await tiled.future;
+    await tiled!.future;
 
     await createEntitiesFromObjects();
   }
@@ -340,7 +357,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
           substitutions['name'] = tmxObj.name;
           //substitutions['x'] = tmxObj.x;
           //substitutions['y'] = tmxObj.y;
-          PositionComponent comp = await f.createFromFile<PositionComponent>(filename, substitutions: substitutions);
+          PositionComponent? comp = await f.createFromFile<PositionComponent>(filename, substitutions: substitutions);
           if (comp == null) {
             continue;
           }
@@ -457,17 +474,17 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   void render(Canvas c) {
     super.render(c);
     if (tiled != null) {
-      tiled.render(c);
+      tiled!.render(c);
     }
   }
 
-  Int2 worldToTileSpace(Vector2 position) {
-    if (tiled == null || !tiled.loaded()) {
+  Int2? worldToTileSpace(Vector2 position) {
+    if (tiled == null || !tiled!.loaded()) {
       return null;
     }
     
-    double gridX = (position.x - (tiled.map.tileWidth * scale) + (tiled.map.tileWidth * 0.5)) / (tiled.map.tileWidth * scale);
-    double gridY = (position.y - (tiled.map.tileHeight * scale)) / (tiled.map.tileHeight * scale);
+    double gridX = (position.x - (tiled!.map!.tileWidth * scale) + (tiled!.map!.tileWidth * 0.5)) / (tiled!.map!.tileWidth * scale);
+    double gridY = (position.y - (tiled!.map!.tileHeight * scale)) / (tiled!.map!.tileHeight * scale);
 
     int x = gridX.round();
     int y = gridY.round();
@@ -483,9 +500,9 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return Rect.fromLTWH(position.x * tiled.map.tileWidth * scale, position.y * tiled.map.tileHeight * scale, tiled.map.tileWidth * scale, tiled.map.tileHeight * scale);
   }
 */
-  t.TiledObject getObjectByName({String layerName, String name}) {
+  t.TiledObject? getObjectByName({required String layerName, required String name}) {
     for (var layer in getObjectGroupLayers().where((layer) => layer.name == layerName)) {
-      final object = layer.objects.firstWhere((obj) {
+      final object = layer.objects.cast().firstWhere((obj) {
         return obj.name == name;
       }, orElse: () => null);
 
@@ -496,8 +513,12 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return null;
   }
 
-  t.TiledObject getObjectFromWorldPosition({String layerName, Vector2 worldPosition, Int2 tileOffset, bool nullIfEmpty: true}) {
-    Int2 position = worldToTileSpace(worldPosition);
+  t.TiledObject? getObjectFromWorldPosition({required String layerName, required Vector2 worldPosition, Int2? tileOffset, bool nullIfEmpty: true}) {
+    Int2? position = worldToTileSpace(worldPosition);
+    if (position == null) {
+      return null;
+    }
+
     if (tileOffset != null) {
       position = position + tileOffset;
     }
@@ -506,15 +527,15 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   }
 
   List<t.ObjectGroup> getObjectGroupLayers() {
-    return tiled.getObjectGroupLayers();
+    return tiled!.getObjectGroupLayers();
   }
 
   List<t.TileLayer> getTileLayerLayers() {
-    return tiled.getTileLayerLayers();
+    return tiled!.getTileLayerLayers();
   }
 
-  t.TiledObject getObjectFromPosition({String layerName, Int2 position, bool nullIfEmpty: true}) {
-    if (tiled == null || !tiled.loaded() || position == null) {
+  t.TiledObject? getObjectFromPosition({required String layerName, required Int2 position, bool nullIfEmpty: true}) {
+    if (tiled == null || !tiled!.loaded() || position == null) {
       return null;
     }
 
@@ -523,9 +544,13 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     }
 
     for (var layer in getObjectGroupLayers().where((layer) => layer.name == layerName)) {
-      final object = layer.objects.firstWhere((obj) {
+      t.TiledObject? object = layer.objects.cast().firstWhere((obj) {
         // we can cache this at load time? only if performance is an issue
-        Int2 objTileSpace = worldToTileSpace(Vector2(obj.x, obj.y));
+        Int2? objTileSpace = worldToTileSpace(Vector2(obj.x, obj.y));
+        if (objTileSpace == null) {
+          return false;
+        }
+
         bool isAtPos = objTileSpace.x == position.x && objTileSpace.y == position.y;
         return isAtPos;
       }, orElse: () => null);
@@ -538,8 +563,8 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return null;
   }
 
-  t.Tile getTile({String layerName, Int2 position, bool nullIfEmpty: true}) {
-    if (tiled == null || !tiled.loaded() || position == null) {
+  t.Tile? getTile({required String layerName, required Int2 position, bool nullIfEmpty: true}) {
+    if (tiled == null || !tiled!.loaded() || position == null) {
       return null;
     }
 
@@ -547,16 +572,16 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
       return null;
     }
 
-    for (var layer in getTileLayerLayers().where((layer) => layer.name == layerName)) {
-      if (position.y >= layer.tileData.length) {
+    for (var layer in getTileLayerLayers().where((layer) => layer.name == layerName && layer.tileData != null)) {
+      if (position.y >= layer.tileData!.length) {
         return null;
       }
-      List<t.Gid> row = layer.tileData[position.y];
+      List<t.Gid> row = layer.tileData![position.y];
       if (position.x >= row.length) {
         return null;
       }
       t.Gid gid = row[position.x];
-      t.Tile tile = tiled.map.tileByGid(gid.tile);
+      t.Tile tile = tiled!.map!.tileByGid(gid.tile);
       if (tile.isEmpty) {
         return null;
       }
@@ -567,16 +592,20 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return null;
   }
 
-  t.Tile getTileFromWorldPosition({String layerName, Vector2 worldPosition, Int2 tileOffset, bool nullIfEmpty: true}) {
-    Int2 position = worldToTileSpace(worldPosition);
+  t.Tile? getTileFromWorldPosition({required String layerName, required Vector2 worldPosition, Int2? tileOffset, bool nullIfEmpty: true}) {
+    Int2? position = worldToTileSpace(worldPosition);
+    if (position == null) {
+      return null;
+    }
+
     if (tileOffset != null) {
       position = position + tileOffset;
     }
     return getTile(layerName: layerName, position: position, nullIfEmpty: nullIfEmpty);
   }
 
-  Rect tileRect(t.Tile tile) {
-    return tiled.tileRect(tile);
+  Rect? tileRect(t.Tile? tile) {
+    return tiled!.tileRect(tile);
 /*
     final tileset = tiled.map.tilesetByTileGId(tile.localId);
     final rect = tileset.computeDrawRect(tile);
@@ -586,14 +615,14 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   }
 
   Int2 mapTileSize() {
-    final width = tiled.map.width;
-    final height = tiled.map.height;
+    final width = tiled!.map!.width;
+    final height = tiled!.map!.height;
     return Int2(width, height);
   }
 
   Vector2 mapPixelSize() {
-    final width = tiled.map.width * tiled.map.tileWidth * scale;
-    final height = tiled.map.height * tiled.map.tileHeight * scale;
+    final width = tiled!.map!.width * tiled!.map!.tileWidth * scale;
+    final height = tiled!.map!.height * tiled!.map!.tileHeight * scale;
     return Vector2(width, height);
   }
 }

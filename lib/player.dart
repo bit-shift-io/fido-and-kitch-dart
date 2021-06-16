@@ -1,17 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:flame/components.dart' hide SpriteAnimation;
+import 'package:flutter/material.dart' hide Switch;
 
 import 'components/entity.dart';
-import 'components/inventory.dart';
 import 'components/sprite_animation.dart';
 import 'components/switch.dart';
 import 'tiled_map.dart';
-import 'package:flame/components.dart' hide SpriteAnimation;
-import 'package:flutter/material.dart' hide Switch;
-import 'components/mixins.dart';
 import 'components/extensions.dart';
-import 'factory.dart';
-import 'game.dart';
 import 'player_states.dart';
 import 'input_action.dart';
 import 'utils/number.dart';
@@ -23,13 +19,13 @@ class InputState {
 
 class Player extends Entity {
   dynamic data;
-  Switch animations;
+  Switch? animations;
 
   Map<String, InputAction> inputActions = Map();
 
   // ECS sample: https://github.com/Unity-Technologies/EntityComponentSystemSamples/tree/master/ECSSamples/Assets/Use%20Case%20Samples/1.%20State%20Machine%20AI
   Map<String, PlayerState> states = Map(); // TODO: replace with Switch or StateMachineComponent
-  PlayerState currentState;
+  PlayerState? currentState;
 
   Vector2 velocity = Vector2(0, 0);
 
@@ -46,8 +42,8 @@ class Player extends Entity {
   }
 
   setState(String name) {
-    PlayerState prevState = currentState;
-    PlayerState nextState = states[name];
+    PlayerState? prevState = currentState;
+    PlayerState? nextState = states[name];
 
     if (prevState != null) {
       prevState.exit();
@@ -91,20 +87,22 @@ class Player extends Entity {
     setState('Idle');
   }
 
-  void setAnimation(animationName, {OnCompleteSpriteAnimation onComplete}) {
+  void setAnimation(animationName, {OnCompleteSpriteAnimation? onComplete}) {
     if (animations == null) {
       return;
     }
 
-    animations.setActiveComponent(animationName);
+    animations!.setActiveComponent(animationName);
 
-    var currentAnimation = animations.activeComponent as SpriteAnimation;
+    final currentAnimation = animations!.activeComponent as SpriteAnimation?;
     if (currentAnimation != null) {
       currentAnimation.width = width;
       currentAnimation.height = height;
 
-      currentAnimation.animation.reset();
-      currentAnimation.animation.onComplete = onComplete;
+      if (currentAnimation.animation != null) {
+        currentAnimation.animation!.reset();
+        currentAnimation.animation!.onComplete = onComplete;
+      }
     }
     else {
       print("Couldn't finad animation $animationName");
@@ -114,7 +112,7 @@ class Player extends Entity {
   @override
   void update(double dt) {
     if (currentState != null) {
-      currentState.update(dt);
+      currentState!.update(dt);
     }
 
     super.update(dt);
@@ -152,8 +150,8 @@ class Player extends Entity {
   Vector2 detectCollision(Vector2 moveVec) {
 
     // perform collision detection
-    TiledMap map = gameRef.map;
-    Int2 tileCoords = map.worldToTileSpace(position);
+    TiledMap map = gameRef.map!;
+    Int2? tileCoords = map.worldToTileSpace(position);
     if (tileCoords != null) {
       Rect playerRect = toRect();
 
@@ -165,17 +163,17 @@ class Player extends Entity {
       //Rect belowTileRect = map.rectFromTilePostion(tileCoordBelow);
       //player.gameRef.debug.drawRect(belowTileRect, Colors.purple, PaintingStyle.fill);
       
-      Tile tileBelow = map.getTile(position: tileCoordBelow, layerName: 'ground');
+      Tile? tileBelow = map.getTile(position: tileCoordBelow, layerName: 'ground');
       if (tileBelow != null && !tileBelow.isEmpty) {
-        Rect tileRect = map.tileRect(tileBelow);
+        Rect? tileRect = map.tileRect(tileBelow);
 
         double playerBottom = playerRect.bottom;
-        double tileTop = tileRect.top;
+        double tileTop = tileRect!.top;
         double playerDistToTile = tileTop - playerBottom;
 
         moveVec.y = min(moveVec.y, playerDistToTile);
 
-        gameRef.debug.drawRect(tileRect, Colors.blue, PaintingStyle.fill);
+        gameRef.debug!.drawRect(tileRect, Colors.blue, PaintingStyle.fill);
       }
 /*
       // TODO: get the tile to the left or right

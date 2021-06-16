@@ -1,12 +1,10 @@
 import 'dart:ui';
-
-import 'components/inventory.dart';
-import 'components/script.dart';
-import 'components/switch.dart';
-import 'components/usable.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
+import 'components/inventory.dart';
+import 'components/script.dart';
+import 'components/usable.dart';
 import 'components/extensions.dart';
 import 'components/entity.dart';
 import 'player.dart';
@@ -143,19 +141,19 @@ enum TeleportState {
 }
 
 class Teleport extends PlayerState {
-  TiledObject from;
-  TiledObject to;
+  TiledObject? from;
+  TiledObject? to;
   TeleportState state = TeleportState.None;
 
   Teleport(Player player, String name) : super(player, name);
 
-  TiledObject getTeleportObjectUnderPlayer() {
-    TiledMap map = player.gameRef.map;
-    return map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
+  TiledObject? getTeleportObjectUnderPlayer() {
+    TiledMap? map = player.gameRef.map;
+    return map!.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
   }
 
   bool canTransition() {
-    TiledObject teleporter = getTeleportObjectUnderPlayer();
+    TiledObject? teleporter = getTeleportObjectUnderPlayer();
     if (teleporter == null) {
       return false;
     }
@@ -174,7 +172,7 @@ class Teleport extends PlayerState {
   bool tryTransition() {
     // if player moved off of the teleporter,
     // clear the tile
-    TiledObject teleporter = getTeleportObjectUnderPlayer();
+    TiledObject? teleporter = getTeleportObjectUnderPlayer();
     if (teleporter == null) {
       from = null;
       to = null;
@@ -211,7 +209,9 @@ class Teleport extends PlayerState {
         state = TeleportState.PlayingToAnim;
         final animationName = data?.nodes['toAnimationName']?.value;
         player.setAnimation(animationName, onComplete: onToAnimationComplete);
-        player.position = Vector2(to.x, to.y);
+        if (to != null) {
+          player.position = Vector2(to!.x, to!.y);
+        }
         break;
 
       case TeleportState.FinishedToAnim:
@@ -230,8 +230,8 @@ class Ladder extends PlayerState {
   Ladder(Player player, String name) : super(player, name);
 
   bool canTransition() {
-    TiledMap map = player.gameRef.map;
-    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
+    TiledMap map = player.gameRef.map!;
+    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
     if (ladderTile != null) {
       return true;
     }
@@ -239,7 +239,7 @@ class Ladder extends PlayerState {
     // if moving down, is there a ladder below us?
     InputState state = player.getInputState();
     if (state.dir.y > 0) {
-      Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
+      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
       if (nextLadderTile != null) {
         return true;
       }
@@ -259,19 +259,21 @@ class Ladder extends PlayerState {
     
     InputState state = player.getInputState();
     
-    TiledMap map = player.gameRef.map;
-    Tile ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
+    TiledMap map = player.gameRef.map!;
+    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
 
     if (ladderTile != null) {
-      Rect ladderTileRect = map.tileRect(ladderTile);
-      player.gameRef.debug.drawRect(ladderTileRect, Colors.pink, PaintingStyle.stroke);
+      Rect? ladderTileRect = map.tileRect(ladderTile);
+      if (ladderTileRect != null) {
+        player.gameRef.debug!.drawRect(ladderTileRect, Colors.pink, PaintingStyle.stroke);
+      }
     }
 
     // moving down
     if (state.dir.y > 0) {
       if (ladderTile == null) {
         // is there a tile below us?
-        Tile nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
+        Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
         if (nextLadderTile == null) {
           // hit the ground
           player.setState('Fall');
@@ -282,7 +284,7 @@ class Ladder extends PlayerState {
     // moving up
     else {
       if (ladderTile == null) {
-        Tile prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
+        Tile? prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
         if (prevLadderTile == null) {
           // can't go any higher
           player.setState('Fall');
@@ -303,12 +305,12 @@ class Elevator extends PlayerState {
 }
 
 class Use extends PlayerState {
-  Entity usableEntity;
-  bool animationComplete;
+  Entity? usableEntity;
+  bool animationComplete = false;
 
   Use(Player player, String name) : super(player, name);
 
-  Entity getUsableUnderPlayer() {
+  Entity? getUsableUnderPlayer() {
     // is there a usable the player can activate?
     List<Entity> usables = player.gameRef.getEntities<Entity>('Usable');
     final playerRect = player.toRect();
@@ -322,15 +324,15 @@ class Use extends PlayerState {
     return null;
   }
 
-  Usable getUsable(Entity entity) {
+  Usable? getUsable(Entity? entity) {
     if (entity == null) {
       return null;
     }
 
     List<Usable> usableComponents = entity.findChildrenByClass<Usable>();
     for (final usable in usableComponents) {
-      Inventory playerInventory = player.findFirstChildByClass<Inventory>();
-      if (usable.requiredItem == null || playerInventory.hasItem(usable.requiredItem, count: usable.requiredItemCount)) {
+      Inventory? playerInventory = player.findFirstChildByClass<Inventory>();
+      if (usable.requiredItem == null || (playerInventory != null && playerInventory.hasItem(usable.requiredItem, count: usable.requiredItemCount))) {
         return usable;
       }
     }
@@ -344,10 +346,10 @@ class Use extends PlayerState {
 
   void enter() {
     usableEntity = getUsableUnderPlayer();
-    Usable usableComponent = getUsable(usableEntity);
+    Usable? usableComponent = getUsable(usableEntity);
     
     animationComplete = false;
-    final animationName = usableComponent.playerAnimationOnUse ?? data?.nodes['animationName']?.value ?? name;
+    final animationName = usableComponent?.playerAnimationOnUse ?? data?.nodes['animationName']?.value ?? name;
     player.setAnimation(animationName, onComplete: onAnimationComplete);
   }
 
@@ -360,12 +362,14 @@ class Use extends PlayerState {
     if (animationComplete) {
       player.setState('Idle');
       // trigger the use state - how do we make this generic?
-      Usable usableComponent = getUsable(usableEntity);
-      Script onUseScript = usableComponent.findFirstChild<Script>('OnUse');
-      if (onUseScript != null) {
-        onUseScript.eval({
-          'entity': usableEntity
-        });
+      Usable? usableComponent = getUsable(usableEntity);
+      if (usableComponent != null) {
+        Script? onUseScript = usableComponent.findFirstChild<Script>('OnUse');
+        if (onUseScript != null) {
+          onUseScript.eval({
+            'entity': usableEntity
+          });
+        }
       }
       /*
       Switch switchComponent = usableEntity.findFirstChild<Switch>('State');
