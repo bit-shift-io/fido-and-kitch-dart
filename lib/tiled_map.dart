@@ -9,7 +9,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:tiled/tiled.dart' as t;
-export 'package:tiled/tiled.dart' show TiledObject, Tile;
+export 'package:tiled/tiled.dart' show TiledObject, TileLayer;
 import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 
@@ -90,6 +90,33 @@ class TsxProv extends t.TsxProvider {
 
     //final str = tilesetMap[key];
     //return str;
+  }
+}
+
+class Tile {
+  t.Gid gid;
+  t.TileLayer layer;
+  Int2 coord; // tile coordinates
+
+  Tile(this.gid, this.layer, this.coord);
+
+  get isEmpty => (gid.tile == 0);
+}
+
+extension ExtraData on t.TileLayer {
+  // can we memo this?
+  Tile? tile(Int2 coord) {
+    if (tileData == null || coord.y >= tileData!.length || coord.y < 0) {
+      return null;
+    }
+
+    final row = tileData![coord.y];
+    if (coord.x >= row.length || coord.x < 0) {
+      return null;
+    }
+
+    final gid = row[coord.x];
+    return Tile(gid, this, coord);
   }
 }
 
@@ -205,19 +232,21 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return Int2(x, y);
   }
 */
-  Rect? tileRect(t.Tile? tile) {
+
+  // Get tile rectangle in world space
+  Rect? tileRect(Tile? tile) {
     if (tile == null) {
       return null;
     }
 
-    final tileset = map!.tilesetByTileGId(tile.localId);
-    final rect = tileset.computeDrawRect(tile);
-
+    final x = tile.coord.x * map!.tileWidth;
+    final y = tile.coord.y * map!.tileHeight;
+/*
     int width = map!.width;
     int x = tile.localId % width ;
     int y = (tile.localId.toDouble() / width.toDouble()).toInt();
-    
-    return Rect.fromLTRB(rect.left.toDouble(), rect.top.toDouble(), rect.right.toDouble(), rect.bottom.toDouble());
+  */  
+    return Rect.fromLTRB(x.toDouble(), y.toDouble(), (x + map!.tileWidth).toDouble(), (y + map!.tileHeight).toDouble());
     //return rectFromTilePostion(Int2(tile.x, tile.y));
   }
 
@@ -235,6 +264,12 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
             ++x;
             return;
           }
+
+          // test it out!
+          //TTile? test = layer.tile(Int2(x, y));
+          //final testCoords = test!.coord;
+          //final testTileset = test.tileset(map);
+
 /*
           int x2 = tile.localId % map.width ;
           int y2 = (tile.localId.toDouble() / map.width.toDouble()).toInt();
@@ -480,7 +515,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return null;
   }
 
-  t.Tile? getTile({required String layerName, required Int2 position, bool nullIfEmpty: true}) {
+  Tile? getTile({required String layerName, required Int2 position, bool nullIfEmpty: true}) {
     if (!loaded() || position == null) {
       return null;
     }
@@ -490,6 +525,9 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     }
 
     for (var layer in getTileLayerLayers().where((layer) => layer.name == layerName && layer.tileData != null)) {
+      Tile? tile = layer.tile(position);
+      return tile;
+      /*
       if (position.y >= layer.tileData!.length) {
         return null;
       }
@@ -503,13 +541,13 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
         return null;
       }
 
-      return tile;
+      return tile;*/
     }
 
     return null;
   }
 
-  t.Tile? getTileFromWorldPosition({required String layerName, required Vector2 worldPosition, Int2? tileOffset, bool nullIfEmpty: true}) {
+  Tile? getTileFromWorldPosition({required String layerName, required Vector2 worldPosition, Int2? tileOffset, bool nullIfEmpty: true}) {
     Int2? position = worldToTileSpace(worldPosition);
     if (position == null) {
       return null;
