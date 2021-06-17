@@ -1,12 +1,12 @@
 mixin HasName {
-  String _name = '';
+  String? _name;
 
   //@override
-  String get name {
+  String? get name {
     return _name;
   }
 
-  set name(String n) {
+  set name(String? n) {
     _name = n;
   }
 }

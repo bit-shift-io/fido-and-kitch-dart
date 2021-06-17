@@ -19,7 +19,7 @@ class PlayerState {
   PlayerState(this.player, this.name) {
     // assign state data from yml to data field
     dynamic statesData = player.data['states'];
-    data = statesData.nodes.firstWhere((s) => s['name'] == name, orElse: () => null);
+    data = statesData.nodes.cast().firstWhere((s) => s['name'] == name, orElse: () => null);
   }
 
   void enter() {
