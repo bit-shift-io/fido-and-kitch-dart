@@ -367,6 +367,7 @@ class Use extends PlayerState {
         Script? onUseScript = usableComponent.findFirstChild<Script>('OnUse');
         if (onUseScript != null) {
           onUseScript.eval({
+            'game': player.gameRef,
             'entity': usableEntity
           });
         }

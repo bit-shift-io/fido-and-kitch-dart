@@ -1,5 +1,5 @@
 component: Entity
-entityList: Teleporters
+entityList: [Entity, Teleporters]
 size: [32, 32]
 children:
   - component: Switch

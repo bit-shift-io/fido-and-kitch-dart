@@ -68,20 +68,24 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     add(system);
   }
 
-  void addEntity(Component entity, String listName) {
-    if (!entityLists.containsKey(listName)) {
-      entityLists[listName] = [];
-    }
+  void addEntity(Component entity, List<String> listNames) {
+    for (final listName in listNames) {
+      if (!entityLists.containsKey(listName)) {
+        entityLists[listName] = [];
+      }
 
-    entityLists[listName]!.add(entity);
+      entityLists[listName]!.add(entity);
+    }
   }
 
-  void removeEntity(Component entity, String listName) {
-    if (!entityLists.containsKey(listName)) {
-      return;
-    }
+  void removeEntity(Component entity, List<String> listNames) {
+    for (final listName in listNames) {
+      if (!entityLists.containsKey(listName)) {
+        return;
+      }
 
-    entityLists[listName]!.remove(entity);
+      entityLists[listName]!.remove(entity);
+    }
   }
 
   List<T> getEntities<T>(String listName) {

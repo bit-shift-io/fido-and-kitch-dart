@@ -9,9 +9,16 @@
 #
 
 component: Entity
-entityList: Usable
+entityList: [Entity, Usable]
 size: [32, 32]
 children:
+  - component: Script
+    name: toggle
+    script: >
+      var c = findFirstChild(entity, 'state')
+      setActiveComponent(c, state)
+      print('The cage has been set to state ' + state)
+      print('TODO: release the captive')
   - component: Usable
     requiredItem: key_${color}
     children:
@@ -21,17 +28,18 @@ children:
               print('dart value:', props)
               props['foo'] = 'bar'
               return props
+
   - component: Switch
-    name: State
-    activeComponent: Closed
+    name: state
+    activeComponent: on
     components:
-      - name: Closed
+      - name: off
         component: Sprite
         image: cage.png
         size: [40, 40]
         srcPosition: [0, 0]
         srcSize: [720, 360]
-      - name: Open
+      - name: on
         component: Sprite
         image: cage.png
         size: [40, 40]

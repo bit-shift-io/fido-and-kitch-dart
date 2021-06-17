@@ -1,5 +1,5 @@
 component: Entity
-entityList: Pickups
+entityList: [Entity, Pickups]
 size: [32, 32]
 children:
   - component: SpriteAnimation

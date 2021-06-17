@@ -34,3 +34,17 @@ Vector2? vector2FromData(dynamic yaml) {
   double y = yaml[1].toDouble();
   return Vector2(x, y);
 }
+
+// given some yaml data, convert to a string list
+List<String> toStringList(dynamic data) {
+  List<String> list = [];
+  if (data is YamlList) {
+    for (final item in data) {
+      list.add(item);
+    }
+    return list;
+  }
+
+  list.add(data);
+  return list;
+}

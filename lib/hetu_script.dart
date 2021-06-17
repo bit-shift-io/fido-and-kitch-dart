@@ -1,9 +1,14 @@
+import 'package:fido_and_kitch/components/entity.dart';
 import 'package:flame/components.dart';
 import 'package:hetu_script/hetu_script.dart';
 
 import 'components/mixins.dart';
 import 'components/extensions.dart';
+import 'components/script.dart';
 import 'components/switch.dart';
+import 'components/tiled_object.dart';
+import 'game.dart';
+import 'tiled_map.dart' as t; // TODO: fix names collision of TiledObject
 
 class HetuScript {
 
@@ -36,6 +41,35 @@ class HetuScript {
         }
 
         return null;
+      },
+      'findObjectById': (MyGame game, int id) {
+        return game.map!.findObjectById(id);
+      },
+      // find entity that is using the TiledObject with id
+      'findEntityByObjectId': (MyGame game, int id) {
+        List<Entity> entities = game.getEntities('Entity');
+        for (final entity in entities) {
+          TiledObject? tiledObject = entity.findFirstChildByClass<TiledObject>();
+          if (tiledObject != null && tiledObject.object != null) {
+            if (tiledObject.object!.id == id) {
+              return entity;
+            }
+          }
+        }
+
+        return null;
+      },
+      'evalScript': (Entity? entity, Script? s, dynamic props) {
+        if (s == null) {
+          return null;
+        }
+
+        // just to make the script more concise
+        if (entity != null) {
+          props['entity'] = entity;
+        }
+
+        return s.eval(props);
       }
   };
 /*
@@ -63,25 +97,37 @@ class HetuScript {
 
     String scriptPrefix = '';
     externalFunctions.forEach((key, value) {
-      scriptPrefix += 'external fun $key\r\n';
+      scriptPrefix += 'external fun $key\n';
     });
 
-    String fullscript = scriptPrefix + '\r\nfun main(';
+    String fullscript = scriptPrefix + '\nfun main(';
     props.forEach((key, value) {
       fullscript += key + ', ';
       positionalArgs.add(value);
     });
-    fullscript += 'props) {\r\n';
+    fullscript += 'props) {\n';
     fullscript += script;
-    fullscript += '\r\n}';
-    print(fullscript);
+    fullscript += '\n}';
+
+    final lines = fullscript.split('\n');
+    int i = 1;
+    for (final line in lines) {
+      print('$i)\t$line');
+      ++i;
+    }
 
     positionalArgs.add(props);
 
-    final hetu = Hetu();
-    await hetu.init(externalFunctions: externalFunctions);
-    await hetu.eval(fullscript);
-    var hetuValue = hetu.invoke('main', positionalArgs: positionalArgs/*, namedArgs: namedArgs*/);
-    return hetuValue;
+    try {
+      final hetu = Hetu();
+      await hetu.init(externalFunctions: externalFunctions);
+      await hetu.eval(fullscript);
+      var hetuValue = hetu.invoke('main', positionalArgs: positionalArgs/*, namedArgs: namedArgs*/);
+      return hetuValue;
+    } catch (e) {
+      print(e);
+    }
+
+    return null;
   }
 }

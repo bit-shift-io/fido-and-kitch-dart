@@ -354,6 +354,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
           properties.forEach((p) {
             if (p.type == t.PropertyType.object) {
               // TODO: resolve object
+              print("resolve object");
             }
             substitutions[p.name] = p.value;
           });
@@ -385,6 +386,18 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
         }
       }
     }
+  }
+
+  t.TiledObject? findObjectById(int id) {
+    for (final objectGroup in getObjectGroupLayers()) {
+      for (final tmxObj in objectGroup.objects) {
+        if (tmxObj.id == id) {
+          return tmxObj;
+        }
+      }
+    }
+
+    return null;
   }
 
   List<t.TiledObject> findObjectsByType(String type) {

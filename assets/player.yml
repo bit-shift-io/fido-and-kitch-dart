@@ -1,5 +1,5 @@
 component: Player
-entityList: Players
+entityList: [Entity, Players]
 name: Kitch
 debugMode: true
 size: [32, 32]

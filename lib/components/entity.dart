@@ -5,18 +5,20 @@ import 'extensions.dart';
 import 'position.dart';
 import '../factory.dart';
 import '../game.dart';
-
+import '../utils/yaml.dart';
 
 
 // root entity
 // which will add itself to the appropriate world entity list
 @HTBinding()
 class Entity extends Position with c.HasGameRef<MyGame> {
-  String entityList = ''; // TODO: replace with a list, an entity might want to be in multiple lists
+  List<String> entityList = [];
 
   Future<void> fromData(dynamic yaml) async {
     await super.fromData(yaml);
-    entityList = yaml['entityList'];
+    
+    entityList = toStringList(yaml['entityList']);
+    print(entityList);
   }
 
   addToEntityLists(MyGame ref) {

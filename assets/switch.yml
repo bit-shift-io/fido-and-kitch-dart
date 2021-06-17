@@ -8,7 +8,7 @@
 #
 
 component: Entity
-entityList: Usable
+entityList: [Entity, Usable]
 size: [32, 32]
 children:
   - component: Usable
@@ -16,32 +16,32 @@ children:
         - component: Script
           name: OnUse
           script: >
-              var c = findFirstChild(entity, 'State')
-              var activeC = getActiveComponent(c)
-              var n = getName(activeC)
-              //var t = ${target}
-              if (n == 'Closed') {
-                //if ('${once}' == '1') {
-                //  print('Switch has already been triggered')
-                //  return
-                //}
-                print('Switch set to open')
-                setActiveComponent(c, 'Open')
-              } else {
-                print('Switch set to closed')
-                setActiveComponent(c, 'Closed')
-              }
+              var c = findFirstChild(entity, 'state')
+              var currentState = getName(getActiveComponent(c))
+              
+              var isOn = (currentState == 'on')
+              var nextState = isOn ? 'off' : 'on';
+              
+              print('isOn:')
+              print(isOn)
+              print('Switch set to ' + nextState)
+              setActiveComponent(c, nextState)
+
+              var targetEntity = findEntityByObjectId(game, ${target})
+              var ts = findFirstChild(targetEntity, 'toggle')
+              props['state'] = nextState
+              evalScript(targetEntity, ts, props)
   - component: Switch
-    name: State
-    activeComponent: Closed
+    name: state
+    activeComponent: on
     components:
-      - name: Closed
+      - name: off
         component: Sprite
         image: switch.png
         size: [32, 32]
         srcPosition: [0, 0]
         srcSize: [160, 160]
-      - name: Open
+      - name: on
         component: Sprite
         image: switch.png
         size: [32, 32]
