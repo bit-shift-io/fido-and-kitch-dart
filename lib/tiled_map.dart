@@ -93,25 +93,17 @@ class TsxProv extends t.TsxProvider {
   }
 }
 
-/// This component renders a tile map based on a TMX file from Tiled.
-class Tiled {
-  String filename;
+class TiledMap extends BaseComponent with HasGameRef<MyGame> {
+  double scale = 1.0;
+  String? filename;
   t.TiledMap? map;
   Image? image;
   Map<String, SpriteBatch> batches = <String, SpriteBatch>{};
   Future? future;
   bool _loaded = false;
-  Size destTileSize;
-
-  //String mapBasePath = 'assets/tiles/';
+  Size? destTileSize;
 
   static Paint paint = Paint()..color = Colors.white;
-
-  /// Creates this Tiled with the filename (for the tmx file resource)
-  /// and destTileSize is the tile size to be rendered (not the tile size in the texture, that one is configured inside Tiled).
-  Tiled(this.filename, this.destTileSize) {
-    future = _load();
-  }
 
   Future _load() async {
     map = await _loadMap();
@@ -137,7 +129,7 @@ class Tiled {
 
     // the image filepath if relstive to the tileset path
     // the tileset path is relative to the map
-    final mapDir = p.dirname(filename);
+    final mapDir = p.dirname(filename!);
     final tilesetDir = p.dirname(tileset.source!);
     final imagePath = p.normalize('$mapDir/$tilesetDir/${tmxImage.source}');
     final imagePathInImages = imagePath.replaceAll('assets/images/', '');
@@ -147,7 +139,7 @@ class Tiled {
   Future<t.TiledMap> _loadMap() {
     return Flame.bundle.loadString('$filename').then((contents) async {
 
-      final mapDir = p.dirname(filename);
+      final mapDir = p.dirname(filename!);
 
       // here we need to parse the XML and extract external tileset filenames
       // then we need to load them as TsxProvider.getSource is no async
@@ -183,11 +175,6 @@ class Tiled {
       if (imagePath != null) {
         result[tmxImage!.source!] = await SpriteBatch.load(imagePath);
       }
-        /*
-      await Future.forEach(tileset.images, (tmxImage) async {
-        final imagePath = getTilesetImagePath(tileset, tmxImage);
-        result[tmxImage.source] = await SpriteBatch.load(imagePath);
-      });*/
     });
     return result;
   }
@@ -286,6 +273,7 @@ class Tiled {
 
   bool loaded() => _loaded;
 
+  @override
   void render(Canvas c) {
     if (!loaded()) {
       return;
@@ -294,34 +282,16 @@ class Tiled {
     batches.forEach((_, batch) {
       batch.render(c);
     });
+
+    super.render(c);
   }
-/*
-  /// This returns an object group fetch by name from a given layer.
-  /// Use this to add custom behaviour to special objects and groups.
-  Future<t.ObjectGroup> getObjectGroupFromLayer(String name) {
-    return future.then((onValue) {
-      return map.objectGroups
-          .firstWhere((objectGroup) => objectGroup.name == name);
-    });
-  }*/
-}
 
-
-class TiledMap extends BaseComponent with HasGameRef<MyGame> {
-  Tiled? tiled;
-  double scale = 1.0;
-  //dynamic data;
-
-  Future load(String fileName) async {
-    // this yaml file contains global data across all maps
-    //const mapYamlFile = 'assets/map.yml';
-    //data = await loadYamlFromFile(mapYamlFile);
-    //final mapDir = p.dirname(mapYamlFile);
-
-    tiled = Tiled(fileName, Size(32.0, 32.0)); // tiles in the loaded map are 16 bbut we are displaying as 32x32
+  Future load(String filename) async {
+    this.filename = filename;
+    this.destTileSize = Size(32.0, 32.0);
     scale = 1.0;
-    await tiled!.future;
-
+    future = _load();
+    await future;
     await createEntitiesFromObjects();
   }
 
@@ -382,19 +352,6 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     }
   }
 
-/*
-  /// This returns an object group fetch by name from a given layer.
-  /// Use this to add custom behaviour to special objects and groups.
-  t.ObjectGroup getObjectGroupFromLayer(String name) {
-      if (tiled == null || !tiled.loaded()) {
-        print('Map still loading!');
-        return null;
-      }
-
-      return tiled.map.objectGroups
-          .firstWhere((objectGroup) => objectGroup.name == name);
-  }*/
-
   List<t.TiledObject> findObjectsByType(String type) {
     List<t.TiledObject> objs = [];
     for (final objectGroup in getObjectGroupLayers()) {
@@ -406,32 +363,6 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     }
     return objs;
   }
-/*
-  void _addObjects({layerName, Component component}) {
-    final t.ObjectGroup objGroup = getObjectGroupFromLayer(layerName);
-    if (objGroup == null) {
-      return;
-    }
-    
-    objGroup.tmxObjects.forEach((t.TiledObject obj) async {
-
-      component
-      final comp = SpriteAnimation(
-        size: Vector2(20.0, 20.0),
-        animation: await SpriteAnimation.load(
-          imageName,
-          SpriteAnimationData.sequenced(amount: 8,
-            stepTime: 0.2,
-            textureSize: Vector2(20, 20)
-          )
-        ),
-      );
-      comp.x = obj.x.toDouble();
-      comp.y = obj.y.toDouble();
-      addChild(comp);
-    });
-  }
-*/
 
 /*
   List<t.Tile> rectIntersectingTiles(Rect r) {
@@ -470,21 +401,15 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return intersectingTiles;
   }
 */
-  @override
-  void render(Canvas c) {
-    super.render(c);
-    if (tiled != null) {
-      tiled!.render(c);
-    }
-  }
+
 
   Int2? worldToTileSpace(Vector2 position) {
-    if (tiled == null || !tiled!.loaded()) {
+    if (!loaded()) {
       return null;
     }
     
-    double gridX = (position.x - (tiled!.map!.tileWidth * scale) + (tiled!.map!.tileWidth * 0.5)) / (tiled!.map!.tileWidth * scale);
-    double gridY = (position.y - (tiled!.map!.tileHeight * scale)) / (tiled!.map!.tileHeight * scale);
+    double gridX = (position.x - (map!.tileWidth * scale) + (map!.tileWidth * 0.5)) / (map!.tileWidth * scale);
+    double gridY = (position.y - (map!.tileHeight * scale)) / (map!.tileHeight * scale);
 
     int x = gridX.round();
     int y = gridY.round();
@@ -526,16 +451,8 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return getObjectFromPosition(layerName: layerName, position: position, nullIfEmpty: nullIfEmpty);
   }
 
-  List<t.ObjectGroup> getObjectGroupLayers() {
-    return tiled!.getObjectGroupLayers();
-  }
-
-  List<t.TileLayer> getTileLayerLayers() {
-    return tiled!.getTileLayerLayers();
-  }
-
   t.TiledObject? getObjectFromPosition({required String layerName, required Int2 position, bool nullIfEmpty: true}) {
-    if (tiled == null || !tiled!.loaded() || position == null) {
+    if (!loaded() || position == null) {
       return null;
     }
 
@@ -564,7 +481,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
   }
 
   t.Tile? getTile({required String layerName, required Int2 position, bool nullIfEmpty: true}) {
-    if (tiled == null || !tiled!.loaded() || position == null) {
+    if (!loaded() || position == null) {
       return null;
     }
 
@@ -581,7 +498,7 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
         return null;
       }
       t.Gid gid = row[position.x];
-      t.Tile tile = tiled!.map!.tileByGid(gid.tile);
+      t.Tile tile = map!.tileByGid(gid.tile);
       if (tile.isEmpty) {
         return null;
       }
@@ -604,25 +521,15 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     return getTile(layerName: layerName, position: position, nullIfEmpty: nullIfEmpty);
   }
 
-  Rect? tileRect(t.Tile? tile) {
-    return tiled!.tileRect(tile);
-/*
-    final tileset = tiled.map.tilesetByTileGId(tile.localId);
-    final rect = tileset.computeDrawRect(tile);
-    return Rect.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
-    //return rectFromTilePostion(Int2(tile.x, tile.y));
-    */
-  }
-
   Int2 mapTileSize() {
-    final width = tiled!.map!.width;
-    final height = tiled!.map!.height;
+    final width = map!.width;
+    final height = map!.height;
     return Int2(width, height);
   }
 
   Vector2 mapPixelSize() {
-    final width = tiled!.map!.width * tiled!.map!.tileWidth * scale;
-    final height = tiled!.map!.height * tiled!.map!.tileHeight * scale;
+    final width = map!.width * map!.tileWidth * scale;
+    final height = map!.height * map!.tileHeight * scale;
     return Vector2(width, height);
   }
 }
