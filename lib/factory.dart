@@ -11,6 +11,7 @@ import 'components/usable.dart';
 import 'player.dart';
 import 'components/position.dart';
 import 'components/switch.dart';
+import 'components/area.dart';
 import 'utils/yaml.dart';
 
 typedef Future<T> CreateComponentFromData<T>(dynamic yaml);
@@ -37,6 +38,7 @@ class Factory {
     'Inventory': inventoryComponentFromData,
     'Script': scriptComponentFromData,
     'TiledObject': tiledObjectComponentFromData,
+    'Area': areaComponentFromData,
   };
 
   void registerComponentFromData(String name, CreateComponentFromData creator) {
@@ -44,8 +46,8 @@ class Factory {
   }
 
   Future<T?> createFromFile<T>(String fileName, { Map<String, dynamic>? substitutions }) async {
+    print("\nCreating entity: $fileName");
     final yaml = await loadYamlFromFile(fileName, substitutions: substitutions);
-    print("creating entity: $fileName");
     return createFromData<T>(yaml);
   }
 

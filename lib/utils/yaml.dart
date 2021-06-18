@@ -11,8 +11,14 @@ dynamic loadYamlFromFile(String fileName, { Map<String, dynamic>? substitutions 
       fileContents = fileContents.replaceAll(keyStr, valueStr);
     });
   }
-  final mapData = loadYaml(fileContents);
-  return mapData;
+  try {
+    final mapData = loadYaml(fileContents);
+    return mapData;
+  } catch (e) {
+    print('Failed to load $fileName:');
+    print(e);
+  }
+  return null;
 }
 
 dynamic yamlFirstWhere(dynamic yaml, Function where) {
