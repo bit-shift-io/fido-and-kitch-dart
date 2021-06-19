@@ -1,4 +1,3 @@
-import 'switch.dart';
 import 'package:flame/components.dart';
 
 import '../factory.dart';
@@ -6,7 +5,7 @@ import '../hetu_script.dart';
 import 'mixins.dart';
 import '../components/extensions.dart';
 
-class Script extends BaseComponent with HasName {
+class Script extends BaseComponent with HasName, HasEntity {
   String script = '';
 
   Future<void> fromData(dynamic yaml) async {
@@ -17,6 +16,10 @@ class Script extends BaseComponent with HasName {
 
   dynamic eval(dynamic props) async {
     HetuScript h = HetuScript();
+    props['entity'] = entity;
+    if (entity != null) {
+      props['game'] = entity!.gameRef;
+    }
     return await h.eval(script, props);
 
     /*
@@ -74,8 +77,19 @@ class Script extends BaseComponent with HasName {
   }
 }
 
-Future<Script> scriptComponentFromData(dynamic yaml) async {
+Future<Script> scriptComponentFromData(dynamic data) async {
   final comp = new Script();
-  await comp.fromData(yaml);
+  await comp.fromData(data);
+  return comp;
+}
+
+Script? scriptComponentFromString(String name, String? script) {
+  if (script == null) {
+    return null;
+  }
+
+  final comp = new Script();
+  comp.name = name;
+  comp.script = script;
   return comp;
 }

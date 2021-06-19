@@ -375,9 +375,10 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
           comp.y = tmxObj.y.toDouble();
           
           Entity e = comp as Entity;
-          
           if (e != null) {
-            e.addToEntityLists(gameRef);
+            e.resolve(gameRef);
+            //e.entity = e;
+            //e.addToEntityLists(gameRef);
           }
           gameRef.add(comp);
         } catch (e) {

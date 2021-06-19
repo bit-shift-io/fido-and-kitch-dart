@@ -1,18 +1,23 @@
 import 'mixins.dart';
+import 'extensions.dart';
 import 'position.dart';
 import '../utils/script.dart';
+import 'script.dart';
 
 //
 // Detect objects entering and exiting
 //
 @HTBinding()
 class Area extends Position {
-  String onEnterScript = '';
-  String onExitScript = '';
+  Script? onEnterScript;
+  Script? onExitScript;
   List<String> entityLayers = []; // the list of entity layers to check for 'collisions' that might trigger this
 
   Future<void> fromData(dynamic data) async {
     super.fromData(data);
+
+    addChildIf(onEnterScript = scriptComponentFromString('onEnterScript', data['onEnterScript']));
+    addChildIf(onExitScript = scriptComponentFromString('onExitScript', data['onExitScript']));
   }
 }
 

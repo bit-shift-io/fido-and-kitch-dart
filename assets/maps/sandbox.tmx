@@ -39,9 +39,9 @@
     <property name="color" value="red"/>
    </properties>
   </object>
-  <object id="21" name="S" type="switch" x="236.672" y="143.206">
+  <object id="21" name="S" type="switch" x="236.672" y="173.352">
    <properties>
-    <property name="target" type="object" value="20"/>
+    <property name="target" type="object" value="29"/>
    </properties>
   </object>
   <object id="23" type="coin" x="48.7876" y="495.142">

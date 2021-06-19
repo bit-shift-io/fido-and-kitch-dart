@@ -70,6 +70,11 @@ class HetuScript {
         }
 
         return s.eval(props);
+      },
+      'reset': (SpriteAnimation? s) {
+        if (s != null) {
+          s.reset();
+        }
       }
   };
 /*

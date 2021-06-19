@@ -1,8 +1,15 @@
 import 'package:flame/components.dart';
 
 import 'mixins.dart';
+import 'visitor.dart';
 
 extension AddChildren on BaseComponent {
+  void addChildIf(Component? child) async {
+    if (child != null) {
+      await this.addChild(child);
+    }
+  }
+
   void addChildren(List<Component> children) async {
     for (final c in children) {
       this.addChild(c);
@@ -38,5 +45,15 @@ extension AddChildren on BaseComponent {
       }
     }
     return null;
+  }
+
+  visit(ComponentVisitor visitor) {
+    visitor.visit(this);
+
+    for (final c in children) {
+      if (c is BaseComponent) {
+        c.visit(visitor);
+      }
+    }
   }
 }

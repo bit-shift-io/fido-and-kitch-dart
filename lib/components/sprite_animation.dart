@@ -1,13 +1,17 @@
 import 'dart:ui';
-
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-
-import 'mixins.dart';
-import '../utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 
+import 'extensions.dart';
+import 'mixins.dart';
+import '../utils/yaml.dart';
+import 'script.dart';
+
 class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
+  Script? onComplete;
+  bool resetOnComplete = true;
+
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     String? image = yaml['image'];
@@ -18,6 +22,9 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
     int frames = yaml['frames'];
     Vector2 textureSize = vector2FromData(yaml['textureSize']) ?? Vector2(0, 0);
     Vector2? size = vector2FromData(yaml['size']);
+    resetOnComplete = yaml['resetOnComplete'] ?? resetOnComplete;
+
+    addChildIf(onComplete = scriptComponentFromString('onComplete', yaml['onComplete']));
 
     // if no size given, infer from textureSize
     if (size == null) {
@@ -68,11 +75,31 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
       animation = animation.reversed();
     }
 
+    if (animation != null) {
+      animation.onComplete = this.onCompleteCallback;
+    }
+
     this.animation = animation;
     this.size = size;
     //return new SpriteAnimation(size: size, animation: animation);
   }
+
+  void onCompleteCallback() {
+    if (onComplete != null) {
+      onComplete!.eval({}); // TODO: how do we get entity, game and other props here?
+    }
+    if (resetOnComplete == true) {
+      this.reset();
+    }
+  }
+
+  void reset() {
+    if (this.animation != null) {
+      this.animation!.reset();
+    }
+  }
 }
+
 
 Future<SpriteAnimation> spriteAnimationComponentFromData(dynamic yaml) async {
   SpriteAnimation comp = new SpriteAnimation();
