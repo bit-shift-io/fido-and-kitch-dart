@@ -1,7 +1,44 @@
 import 'package:flame/components.dart';
 
+import 'entity.dart';
 import 'mixins.dart';
 import 'visitor.dart';
+
+extension Resolve on Component {
+  void resolve(Entity entity) {
+    if (this is HasName) {
+      final hn = this as HasName;
+      print("\tresolve called on ${hn.name}");
+    }
+    
+    // can we not use the same mechanic as HasGameRef?
+    // not likely as we cant mixin HasEntity with BaseComponent
+    if (this is HasEntity) {
+      final ce = this as HasEntity;
+      ce.entity = entity;
+    }
+
+    if (this is WithResolve) {
+      final wr = this as WithResolve;
+      wr.resolve(entity);
+      // return here? this would mean WithResolve needs to notify all children
+    }
+
+    // notify children
+    if (this is BaseComponent) {
+      final bc = this as BaseComponent;
+      for (final c in bc.children) {
+        c.resolve(entity);
+      }
+    }
+  }
+
+  visit(ComponentVisitor visitor) {
+    if (this is Component) {
+      visitor.visit(this);
+    }
+  }
+}
 
 extension AddChildren on BaseComponent {
   void addChildIf(Component? child) async {

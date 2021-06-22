@@ -12,10 +12,11 @@ class Area extends Position {
   Script? onEnterScript;
   Script? onExitScript;
   List<String> entityLayers = []; // the list of entity layers to check for 'collisions' that might trigger this
+  bool enabled = true;
 
   Future<void> fromData(dynamic data) async {
     super.fromData(data);
-
+    enabled = data['enabled'] ?? this.enabled;
     addChildIf(onEnterScript = scriptComponentFromString('onEnterScript', data['onEnterScript']));
     addChildIf(onExitScript = scriptComponentFromString('onExitScript', data['onExitScript']));
   }

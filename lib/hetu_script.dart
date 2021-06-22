@@ -21,7 +21,11 @@ class HetuScript {
   HetuScript._internal();
 
   Map<String, Function> externalFunctions = {
-      'findFirstChild': (Component c, String name) {
+      'findFirstChild': (Component? c, String name) {
+        if (c == null) {
+          return null;
+        }
+
         if (c is BaseComponent) {
           BaseComponent b = c as BaseComponent;
           return b.findFirstChild<Component>(name);
@@ -59,14 +63,9 @@ class HetuScript {
 
         return null;
       },
-      'evalScript': (Entity? entity, Script? s, dynamic props) {
+      'evalScript': (Script? s, dynamic props) {
         if (s == null) {
           return null;
-        }
-
-        // just to make the script more concise
-        if (entity != null) {
-          props['entity'] = entity;
         }
 
         return s.eval(props);

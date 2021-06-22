@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 
 import 'entity.dart';
 import 'visitor.dart';
+import 'extensions.dart';
 
 mixin HasName {
   String? _name;
@@ -41,4 +42,8 @@ mixin WithComponentVisitor {
       visitor.visit(c);
     }
   }
+}
+
+mixin WithResolve {
+  void resolve(Entity entity) {}
 }

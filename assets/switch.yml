@@ -30,7 +30,7 @@ children:
               var targetEntity = findEntityByObjectId(game, ${target})
               var ts = findFirstChild(targetEntity, 'toggle')
               props['state'] = nextState
-              evalScript(targetEntity, ts, props)
+              evalScript(ts, props)
   - component: Switch
     name: state
     activeComponent: on
