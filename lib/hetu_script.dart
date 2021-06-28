@@ -8,7 +8,6 @@ import 'components/script.dart';
 import 'components/switch.dart';
 import 'components/tiled_object.dart';
 import 'game.dart';
-import 'tiled_map.dart' as t; // TODO: fix names collision of TiledObject
 
 class HetuScript {
 
@@ -21,13 +20,16 @@ class HetuScript {
   HetuScript._internal();
 
   Map<String, Function> externalFunctions = {
+      'playerExit': (Game game) {
+        print('PLAYER EXITED');
+      },
       'findFirstChild': (Component? c, String name) {
         if (c == null) {
           return null;
         }
 
         if (c is BaseComponent) {
-          BaseComponent b = c as BaseComponent;
+          BaseComponent b = c;
           return b.findFirstChild<Component>(name);
         }
         return null;
@@ -46,11 +48,11 @@ class HetuScript {
 
         return null;
       },
-      'findObjectById': (MyGame game, int id) {
+      'findObjectById': (Game game, int id) {
         return game.map!.findObjectById(id);
       },
       // find entity that is using the TiledObject with id
-      'findEntityByObjectId': (MyGame game, int id) {
+      'findEntityByObjectId': (Game game, int id) {
         List<Entity> entities = game.getEntities('Entity');
         for (final entity in entities) {
           TiledObject? tiledObject = entity.findFirstChildByClass<TiledObject>();

@@ -3,6 +3,7 @@ import 'package:fido_and_kitch/components/visitor.dart';
 import 'package:flame/components.dart';
 
 import '../factory.dart';
+import '../game.dart';
 import 'entity.dart';
 import 'mixins.dart';
 import 'extensions.dart';
@@ -12,7 +13,7 @@ import '../utils/script.dart';
 // A list of components with only 1 active at once
 //
 @HTBinding()
-class Switch extends BaseComponent with HasName, WithResolve, WithComponentVisitor {
+class Switch extends BaseComponent with HasName, WithResolve, WithComponentVisitor, HasEntity {
   Map<String, Component> components = Map();
 
   Component? activeComponent;
@@ -27,7 +28,8 @@ class Switch extends BaseComponent with HasName, WithResolve, WithComponentVisit
     }
     activeComponent = components[name];
     if (activeComponent != null) {
-      addChild(activeComponent!);
+      Game? gr = (entity != null && entity!.hasGameRef) ? entity!.gameRef : null;
+      addChild(activeComponent!, gameRef: gr);
     }
   }
 

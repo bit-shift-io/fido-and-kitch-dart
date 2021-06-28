@@ -1,5 +1,5 @@
 import 'package:flame/flame.dart';
-import 'package:flame/game.dart';
+import 'package:flame/game.dart' hide Game;
 import 'package:flutter/material.dart';
 //import 'package:flame_splash_screen/flame_splash_screen.dart';
 
@@ -27,7 +27,7 @@ class GameWrapper extends StatefulWidget {
 
 class GameWrapperState extends State<GameWrapper> {
   //bool splashGone = false;
-  MyGame? game;
+  Game? game;
   final _focusNode = FocusNode();
 
   @override
@@ -65,7 +65,7 @@ class GameWrapperState extends State<GameWrapper> {
     }
 
     setState(() {
-        game = MyGame();
+        game = Game();
         _focusNode.requestFocus();
         //splashGone = SKIP_SPLASH ? true : splashGone;
       });
@@ -96,7 +96,7 @@ class GameWrapperState extends State<GameWrapper> {
       );
     }
 
-    return GameWidget<MyGame>(game: game!);
+    return GameWidget<Game>(game: game!);
     /*
     return Container(
       color: Colors.white,

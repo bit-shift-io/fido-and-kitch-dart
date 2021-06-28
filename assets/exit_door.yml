@@ -19,6 +19,7 @@ children:
     entityLayers: [Player]
     onEnterScript: >
       print('some player entered the area')
+      playerExit(player)
     onExitScript: >
       print('some player exited the area')
   - component: Usable

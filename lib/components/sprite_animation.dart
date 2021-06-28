@@ -20,7 +20,7 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
     bool loop = yaml['loop'];
     bool reversed = yaml['reversed'] ?? false;
     int frames = yaml['frames'];
-    Vector2 textureSize = vector2FromData(yaml['textureSize']) ?? Vector2(0, 0);
+    Vector2? textureSize = vector2FromData(yaml['textureSize']);
     Vector2? size = vector2FromData(yaml['size']);
     resetOnComplete = yaml['resetOnComplete'] ?? resetOnComplete;
 
@@ -39,7 +39,7 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
         image, 
         c.SpriteAnimationData.sequenced(amount: frames,
           stepTime: stepTime,
-          textureSize: textureSize,
+          textureSize: textureSize!,
           loop: loop
         )
       );
@@ -80,7 +80,7 @@ class SpriteAnimation extends c.SpriteAnimationComponent with HasName {
     }
 
     this.animation = animation;
-    this.size = size;
+    this.size = size!;
     //return new SpriteAnimation(size: size, animation: animation);
   }
 

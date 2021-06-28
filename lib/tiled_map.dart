@@ -120,7 +120,7 @@ extension ExtraData on t.TileLayer {
   }
 }
 
-class TiledMap extends BaseComponent with HasGameRef<MyGame> {
+class TiledMap extends BaseComponent with HasGameRef<Game> {
   double scale = 1.0;
   String? filename;
   t.TiledMap? map;
@@ -327,7 +327,6 @@ class TiledMap extends BaseComponent with HasGameRef<MyGame> {
     scale = 1.0;
     future = _load();
     await future;
-    await createEntitiesFromObjects();
   }
 
   Future createEntitiesFromObjects() async {

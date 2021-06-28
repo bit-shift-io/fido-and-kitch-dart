@@ -10,7 +10,7 @@ import 'package:flame/gestures.dart';
 import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
 
-//import 'package:flame_forge2d/forge2d_game.dart';
+import 'package:flame_forge2d/forge2d_game.dart';
 
 import 'player.dart';
 
@@ -18,15 +18,8 @@ import 'components/system.dart';
 import 'debug.dart';
 import 'factory.dart';
 
-class MyGame2 extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
-  @override
-  void onKeyEvent(RawKeyEvent event) {
-    // TODO: implement onKeyEvent
-  }
-}
-
 // this is the world in ECS terms
-class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector, KeyboardEvents {
+class Game extends Forge2DGame with DoubleTapDetector, TapDetector, KeyboardEvents {
   final double squareSize = 20;
   bool running = true;
 
@@ -47,7 +40,8 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     add(map!);
 
     Player? p = await Factory().createFromFile<Player>('assets/player.yml');
-    p!.addToEntityLists(this);
+    p!.resolve(this);
+    //p!.addToEntityLists(this);
     //addEntity(p, p.entityList);
 
     /*
@@ -104,6 +98,9 @@ class MyGame extends /*Forge2DGame*/BaseGame with DoubleTapDetector, TapDetector
     // set the viewport to fit the whole map to the screen
     Vector2 mapSize = map!.mapPixelSize();
     viewport = FixedResolutionViewport(mapSize);
+    camera.zoom = 1;
+
+    map!.createEntitiesFromObjects();
 
     List<TiledObject> spawns = map!.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {

@@ -7,7 +7,7 @@ import '../components/extensions.dart';
 import '../components/system.dart';
 import '../game.dart';
 
-class PickupSystem extends System with HasGameRef<MyGame> {
+class PickupSystem extends System with HasGameRef<Game> {
   @override
   void update(double delta) {
     // TODO: for each player, see if they intersect any pickups

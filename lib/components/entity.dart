@@ -9,7 +9,7 @@ import '../utils/yaml.dart';
 // root entity
 // which will add itself to the appropriate world entity list
 @HTBinding()
-class Entity extends Position with c.HasGameRef<MyGame> {
+class Entity extends Position with c.HasGameRef<Game> {
   List<String> entityList = [];
 
   Future<void> fromData(dynamic yaml) async {
@@ -17,16 +17,16 @@ class Entity extends Position with c.HasGameRef<MyGame> {
     await super.fromData(yaml);
   }
 
-  addToEntityLists(MyGame ref) {
+  addToEntityLists(Game ref) {
     ref.addEntity(this, entityList);
   }
 
-  removeFromEntityLists(MyGame ref) {
+  removeFromEntityLists(Game ref) {
     ref.removeEntity(this, entityList);
   }
 
   // Call this once loaded from file
-  resolve(MyGame ref) {
+  resolve(Game ref) {
     gameRef = ref;
     addToEntityLists(ref);
 
