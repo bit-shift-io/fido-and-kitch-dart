@@ -59,6 +59,8 @@ class Player extends Entity {
   Future<void> fromData(dynamic yaml) async {
     await super.fromData(yaml);
     
+    final c = children; // for debugging
+
     data = yaml;
     debugMode = yaml['debugMode'] ?? false;
 

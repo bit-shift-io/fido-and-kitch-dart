@@ -1,4 +1,5 @@
 
+import 'components/physics_body.dart';
 import 'components/script.dart';
 import 'package:flame/components.dart';
 import 'components/inventory.dart';
@@ -39,6 +40,7 @@ class Factory {
     'Script': scriptComponentFromData,
     'TiledObject': tiledObjectComponentFromData,
     'Area': areaComponentFromData,
+    'PhysicsBody': physicsBodyComponentFromData,
   };
 
   void registerComponentFromData(String name, CreateComponentFromData creator) {
@@ -52,6 +54,10 @@ class Factory {
   }
 
   Future<T?> createFromData<T>(dynamic yaml) async {
+    if (yaml == null) {
+      return null;
+    }
+
     String componentName = yaml['component'];
     try {
       final creator = fromDataMap[componentName];

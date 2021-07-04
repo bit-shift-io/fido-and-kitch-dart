@@ -19,7 +19,7 @@ import 'debug.dart';
 import 'factory.dart';
 
 // this is the world in ECS terms
-class Game extends Forge2DGame with DoubleTapDetector, TapDetector, KeyboardEvents {
+class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetector, KeyboardEvents {
   final double squareSize = 20;
   bool running = true;
 
