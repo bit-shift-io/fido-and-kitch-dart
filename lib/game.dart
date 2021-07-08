@@ -102,11 +102,17 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
     map!.createEntitiesFromObjects();
 
+    // convert tile layers into physics - TODO: can we have a layer flags which turns colissions on or off?
+    final groundTileLayers = map!.getTileLayerLayers().where((layer) => layer.name == 'ground');
+    for (TileLayer tileLayer in groundTileLayers) {
+      tileLayer.createStaticPhysicsBodies(map!);
+    }
+
     List<TiledObject> spawns = map!.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
       TiledObject spawn = spawns[i];
       Player p = players[i];
-      p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble()));
+      p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble() + 32.0));
       add(p); // add to world to start updating and rendering
     }
   }

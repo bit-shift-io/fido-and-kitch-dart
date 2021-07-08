@@ -4,6 +4,8 @@ name: Kitch
 debugMode: true
 size: [32, 32]
 children:
+    - component: PhysicsBody
+      name: PhysicsBody
     - component: Switch
       name: Animations
       components:

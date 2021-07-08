@@ -4,6 +4,7 @@ import 'package:flame/components.dart' hide SpriteAnimation;
 import 'package:flutter/material.dart' hide Switch;
 
 import 'components/entity.dart';
+import 'components/physics_body.dart';
 import 'components/sprite_animation.dart';
 import 'components/switch.dart';
 import 'tiled_map.dart';
@@ -20,6 +21,7 @@ class InputState {
 class Player extends Entity {
   dynamic data;
   Switch? animations;
+  PhysicsBody? physicsBody;
 
   Map<String, InputAction> inputActions = Map();
 
@@ -68,6 +70,12 @@ class Player extends Entity {
     animations = findFirstChild<Switch>('Animations');
     if (animations == null) {
       print("Couldn't find SwitchComponent named 'Animations'");
+      return;
+    }
+
+    physicsBody = findFirstChild<PhysicsBody>('PhysicsBody');
+    if (physicsBody == null) {
+      print("Couldn't find PhysicsBody named 'PhysicsBody'");
       return;
     }
 
@@ -200,6 +208,9 @@ class Player extends Entity {
 
   void spawn(Vector2 position) {
     this.position = position;
+    if (physicsBody != null) {
+      physicsBody!.body!.setPosition(position);
+    }
   }
 
   // move to a player input component

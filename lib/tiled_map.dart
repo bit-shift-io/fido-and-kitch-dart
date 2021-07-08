@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 import 'dart:async';
 import 'dart:ui';
+import 'package:fido_and_kitch/components/physics_body.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
+
 import 'components/entity.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -117,6 +120,82 @@ extension ExtraData on t.TileLayer {
 
     final gid = row[coord.x];
     return Tile(gid, this, coord);
+  }
+
+  Body createStaticPhysicsBodyForTile(Size size, Vector2 offset, World world) {
+      // Define the circle shape.
+      final shape = PolygonShape();
+      shape.setAsBoxXY(size.width * 0.5, size.height * 0.5);
+/*
+      // Create fixture using the circle shape.
+      final circleFixtureDef = FixtureDef(shape)
+        ..friction = .9
+        ..restitution = 1.0;
+*/
+      // Create a body def.
+      final bodyDef = BodyDef();
+
+      bodyDef.position = offset + Vector2(size.width * 0.5, size.height * 0.5);
+      var body = world.createBody(bodyDef);
+      //bodies.add(body);
+      //body.createFixture(circleFixtureDef);
+      body.createFixtureFromShape(shape);
+
+      return body;
+  }
+
+  void createStaticPhysicsBodies(TiledMap tiledMap) {
+    final map = tiledMap.map!;
+    int y = 0;
+    this.tileData!.forEach((tileRow) {
+
+      int x = 0;
+      tileRow.forEach((gid) {
+        t.Tile tile = map.tileByGid(gid.tile);
+        if (tile.isEmpty) {
+          ++x;
+          return;
+        }
+
+        // test it out!
+        //TTile? test = layer.tile(Int2(x, y));
+        //final testCoords = test!.coord;
+        //final testTileset = test.tileset(map);
+
+/*
+        int x2 = tile.localId % map.width ;
+        int y2 = (tile.localId.toDouble() / map.width.toDouble()).toInt();
+  */
+
+        final tileset = map.tilesetByTileGId(gid.tile); //tile.localId);
+        
+        final rect = tileset.computeDrawRect(tile);
+        final src = Rect.fromLTRB(rect.left.toDouble(), rect.top.toDouble(), rect.right.toDouble(), rect.bottom.toDouble());
+
+        final flips = _SimpleFlips.fromFlips(gid.flips);
+        final Size tileSize = Size(tileset.tileWidth!.toDouble(), tileset.tileHeight!.toDouble());
+
+        final offset = Vector2(
+            x.toDouble() * tileSize.width +
+                (gid.flips.horizontally ? tileSize.width : 0),
+            y.toDouble() * tileSize.height +
+                (gid.flips.vertically ? tileSize.height : 0),
+          );
+
+        Body body = createStaticPhysicsBodyForTile(tileSize, offset, tiledMap.gameRef.world);
+
+        // to debug draw
+        PhysicsBody physicsBody = new PhysicsBody();
+        physicsBody.body = body;
+        physicsBody.debugMode = true;
+        tiledMap.gameRef.add(physicsBody);
+
+        ++x;
+      });
+
+      ++y;
+    });
+
   }
 }
 

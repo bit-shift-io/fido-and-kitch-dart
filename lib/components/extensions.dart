@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'entity.dart';
 import 'mixins.dart';
@@ -92,5 +93,11 @@ extension AddChildren on BaseComponent {
         c.visit(visitor);
       }
     }
+  }
+}
+
+extension BodyExtras on Body {
+  void setPosition(Vector2 position) {
+    this.setTransform(position, this.angle);
   }
 }
