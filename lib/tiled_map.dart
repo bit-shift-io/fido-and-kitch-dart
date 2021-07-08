@@ -662,4 +662,47 @@ class TiledMap extends BaseComponent with HasGameRef<Game> {
     final height = map!.height * map!.tileHeight * scale;
     return Vector2(width, height);
   }
+
+  Body createStaticPhysicsBodyBoundary() {
+    final def = BodyDef();
+    final boundaryBody = gameRef.world.createBody(def);
+    boundaryBody.userData = 'Boundary';
+
+    final shape = PolygonShape();
+
+    final fixtureDef = FixtureDef(shape);
+
+    final width = map!.width * map!.tileWidth * scale;
+    final height = map!.height * map!.tileHeight * scale;
+
+    final boundaryX = width;
+    final boundaryY = height;
+
+    shape.setAsEdge(
+      Vector2(0, 0),
+      Vector2(boundaryX, 0),
+    );
+
+    boundaryBody.createFixture(fixtureDef);
+
+    shape.setAsEdge(
+      Vector2(boundaryX, 0),
+      Vector2(boundaryX, boundaryY),
+    );
+    boundaryBody.createFixture(fixtureDef);
+
+    shape.setAsEdge(
+      Vector2(boundaryX, boundaryY),
+      Vector2(0, boundaryY),
+    );
+    boundaryBody.createFixture(fixtureDef);
+
+    shape.setAsEdge(
+      Vector2(0, boundaryY),
+      Vector2(0, 0),
+    );
+    boundaryBody.createFixture(fixtureDef);
+
+    return boundaryBody;
+  }
 }

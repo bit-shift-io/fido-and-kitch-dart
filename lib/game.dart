@@ -105,6 +105,7 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     camera.zoom = 1;
 
     map!.createEntitiesFromObjects();
+    map!.createStaticPhysicsBodyBoundary();
 
     // convert tile layers into physics - TODO: can we have a layer flags which turns colissions on or off?
     final groundTileLayers = map!.getTileLayerLayers().where((layer) => layer.name == 'ground');
