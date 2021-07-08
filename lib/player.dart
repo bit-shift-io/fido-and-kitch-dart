@@ -144,7 +144,13 @@ class Player extends Entity {
   void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0, bool collisionDetection: true}) {
     InputState state = getInputState();
 
-    physicsBody!.body!.linearVelocity = Vector2(state.dir.x * 2000.0 * dt, physicsBody!.body!.linearVelocity.y);
+    physicsBody!.body!.gravityScale = gravity ? 1.0 : 0.0;
+
+    final vel = Vector2(state.dir.x * 2000.0 * dt, physicsBody!.body!.linearVelocity.y);
+    if (!gravity) {
+      vel.y = state.dir.y * 2000.0 * dt;
+    }
+    physicsBody!.body!.linearVelocity = vel;
     /*
     Vector2 moveVec = Vector2(state.dir.x, 0);//velocity.y);
     
