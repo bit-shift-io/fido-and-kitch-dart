@@ -72,7 +72,7 @@ class Player extends Entity {
       print("Couldn't find Position named 'Position'");
       return;
     }
-    position!.anchor = Anchor.bottomCenter;
+    position!.anchor = Anchor.center;
 
     // pull out any named components we need
     animations = position!.findFirstChild<Switch>('Animations');

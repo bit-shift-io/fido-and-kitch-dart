@@ -54,3 +54,11 @@ List<String> toStringList(dynamic data) {
   list.add(data);
   return list;
 }
+
+double? toDouble(dynamic data) {
+  if (data == null) {
+    return null;
+  }
+
+  return data.toDouble();
+}

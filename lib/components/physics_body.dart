@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Position;
 import 'package:flame/components.dart' as c;
@@ -10,10 +9,11 @@ import '../utils/yaml.dart';
 import 'entity.dart';
 import 'mixins.dart';
 
-
-// flame_forge2d sucks! loos it and just use forge2d?
 class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, c.HasGameRef<Game> {
   c.PositionComponent? positionComponent;
+
+  BodyDef bodyDef = BodyDef();
+  List<FixtureDef> fixureDefs = [];
   Body? body;
 
   static const defaultColor = Color.fromARGB(128, 255, 0, 0);
@@ -35,17 +35,72 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
     }
   }
 
+  BodyDef bodyDefFromData(dynamic data) {
+    BodyDef def = BodyDef();
+    def.userData = this;
+    def.linearDamping = toDouble(data['linearDamping']) ?? def.linearDamping;
+    def.angularDamping = toDouble(data['angularDamping']) ?? def.angularDamping;
+
+    final type = data['type'];
+    switch (type) {
+    case 'dynamic':
+      def.type = BodyType.dynamic;
+      break;
+
+    case 'kinematic':
+      def.type = BodyType.kinematic;
+      break;
+
+    case 'static':
+      def.type = BodyType.static;
+      break;
+    } 
+
+    return def;
+  }
+
+  Shape shapeFromData(dynamic data) {
+    final type = data['type'];
+
+    if (type == 'circle') {
+      CircleShape c = CircleShape();
+      c.radius = toDouble(data['radius']) ?? 10.0;
+      return c;
+    } else if (type == 'polygon') {
+      PolygonShape shape = PolygonShape();
+      return shape;
+    } else if (type == 'box') {
+      PolygonShape b = PolygonShape();
+      final size = vector2FromData(data['size']);
+      if (size != null) {
+        b.setAsBoxXY(size.x, size.y);
+      }
+      return b;
+    }
+
+    // return something at least!
+    print('PhysicsBody: Unknown shape: $type');
+    CircleShape c = CircleShape();
+    c.radius = 10.0;
+    return c;
+  }
+
+  FixtureDef fixtureDefFromData(dynamic data) {
+    Shape shape = shapeFromData(data['shape']);
+    FixtureDef def = FixtureDef(shape);
+    def.restitution = toDouble(data['restitution']) ?? def.restitution;
+    def.density = toDouble(data['density']) ?? def.density;
+    def.friction = toDouble(data['friction']) ?? def.friction;
+    return def;
+  }
+
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     debugMode = yaml['debugMode'] ?? this.debugMode;
-    //size = vector2FromData(yaml['size']) ?? this.size;
-    //position = vector2FromData(yaml['position']) ?? this.position;
-    //addChildren(await Factory().createFromDataArray(yaml['children']));
-
-    // TODO: positionComponent should point to an existing component, need to do some sort of name lookup and resolution....
-    //positionComponent = (await Factory().createFromData(yaml['positionComponent'])) ?? this.positionComponent;
-    
-    print('yay');
+    bodyDef = bodyDefFromData(yaml['bodyDef']);
+    for (final fd in yaml['fixtureDefs']) {
+      fixureDefs.add(fixtureDefFromData(fd));
+    }
   }
 
   @override
@@ -55,25 +110,11 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
   }
 
   Body createBody() {
-    double radius = 10;
-    //Vector2 _position = Vector2(0, 0);
-
-    final shape = CircleShape();
-    shape.radius = radius;
-
-    final fixtureDef = FixtureDef(shape)
-      ..restitution = 0.8
-      ..density = 1.0
-      ..friction = 0.0;
-
-    final bodyDef = BodyDef()
-      // To be able to determine object in collision
-      ..userData = this
-      ..angularDamping = 0.8
-      //..position = _position
-      ..type = BodyType.dynamic;
-
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
+    Body b = world.createBody(bodyDef);
+    for (final f in fixureDefs) {
+      b.createFixture(f);
+    }
+    return b;
   }
 
   @override

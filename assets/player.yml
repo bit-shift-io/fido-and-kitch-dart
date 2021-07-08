@@ -57,6 +57,16 @@ children:
       name: Inventory
     - component: PhysicsBody
       name: PhysicsBody
+      bodyDef:
+        type: dynamic
+        angularDamping: 0.0
+      fixtureDefs:
+        - shape:
+            type: circle
+            radius: 16
+          restitution: 0.8
+          density: 1.0
+          friction: 0.0
 states:
   - name: Idle
   - name: Walk
