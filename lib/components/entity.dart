@@ -1,5 +1,6 @@
 import 'package:flame/components.dart' as c;
 
+import '../factory.dart';
 import '../utils/script.dart';
 import 'extensions.dart';
 import 'position.dart';
@@ -9,12 +10,12 @@ import '../utils/yaml.dart';
 // root entity
 // which will add itself to the appropriate world entity list
 @HTBinding()
-class Entity extends Position with c.HasGameRef<Game> {
+class Entity extends c.BaseComponent with c.HasGameRef<Game> {
   List<String> entityList = [];
 
   Future<void> fromData(dynamic yaml) async {
     entityList = toStringList(yaml['entityList']);
-    await super.fromData(yaml);
+    addChildren(await Factory().createFromDataArray(yaml['children']));
   }
 
   addToEntityLists(Game ref) {

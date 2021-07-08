@@ -3,6 +3,7 @@ import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'components/inventory.dart';
+import 'components/position.dart';
 import 'components/script.dart';
 import 'components/usable.dart';
 import 'components/extensions.dart';
@@ -149,7 +150,7 @@ class Teleport extends PlayerState {
 
   TiledObject? getTeleportObjectUnderPlayer() {
     TiledMap? map = player.gameRef.map;
-    return map!.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
+    return map!.getObjectFromWorldPosition(worldPosition: player.position!.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
   }
 
   bool canTransition() {
@@ -210,7 +211,7 @@ class Teleport extends PlayerState {
         final animationName = data?.nodes['toAnimationName']?.value;
         player.setAnimation(animationName, onComplete: onToAnimationComplete);
         if (to != null) {
-          player.position = Vector2(to!.x, to!.y);
+          player.position!.position = Vector2(to!.x, to!.y);
         }
         break;
 
@@ -231,7 +232,7 @@ class Ladder extends PlayerState {
 
   bool canTransition() {
     TiledMap map = player.gameRef.map!;
-    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
+    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, layerName: 'ladders');
     if (ladderTile != null) {
       return true;
     }
@@ -239,7 +240,7 @@ class Ladder extends PlayerState {
     // if moving down, is there a ladder below us?
     InputState state = player.getInputState();
     if (state.dir.y > 0) {
-      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
+      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
       if (nextLadderTile != null) {
         return true;
       }
@@ -260,7 +261,7 @@ class Ladder extends PlayerState {
     InputState state = player.getInputState();
     
     TiledMap map = player.gameRef.map!;
-    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position, layerName: 'ladders');
+    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, layerName: 'ladders');
 
     if (ladderTile != null) {
       Rect? ladderTileRect = map.tileRect(ladderTile);
@@ -273,7 +274,7 @@ class Ladder extends PlayerState {
     if (state.dir.y > 0) {
       if (ladderTile == null) {
         // is there a tile below us?
-        Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
+        Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
         if (nextLadderTile == null) {
           // hit the ground
           player.setState('Fall');
@@ -284,7 +285,7 @@ class Ladder extends PlayerState {
     // moving up
     else {
       if (ladderTile == null) {
-        Tile? prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
+        Tile? prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
         if (prevLadderTile == null) {
           // can't go any higher
           player.setState('Fall');
@@ -313,9 +314,9 @@ class Use extends PlayerState {
   Entity? getUsableUnderPlayer() {
     // is there a usable the player can activate?
     List<Entity> usables = player.gameRef.getEntities<Entity>('Usable');
-    final playerRect = player.toRect();
+    final playerRect = player.position!.toRect();
     for (final usable in usables) {
-      final usableRect = usable.toRect();
+      final usableRect = usable.findFirstChildByClass<Position>()!.toRect();
       if (playerRect.overlaps(usableRect)) {
         return usable;
       }

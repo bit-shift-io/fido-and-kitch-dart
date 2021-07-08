@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide Switch;
 
 import 'components/entity.dart';
 import 'components/physics_body.dart';
+import 'components/position.dart';
 import 'components/sprite_animation.dart';
 import 'components/switch.dart';
 import 'tiled_map.dart';
@@ -22,6 +23,7 @@ class Player extends Entity {
   dynamic data;
   Switch? animations;
   PhysicsBody? physicsBody;
+  Position? position;
 
   Map<String, InputAction> inputActions = Map();
 
@@ -32,7 +34,6 @@ class Player extends Entity {
   Vector2 velocity = Vector2(0, 0);
 
   Player() : super() {
-    anchor = Anchor.bottomCenter;
   }
 
   addState(PlayerState state) {
@@ -64,20 +65,28 @@ class Player extends Entity {
     final c = children; // for debugging
 
     data = yaml;
-    debugMode = yaml['debugMode'] ?? false;
+    debugMode = yaml['debugMode'] ?? this.debugMode;
+
+    position = findFirstChildByClass<Position>();
+    if (position == null) {
+      print("Couldn't find Position named 'Position'");
+      return;
+    }
+    position!.anchor = Anchor.bottomCenter;
 
     // pull out any named components we need
-    animations = findFirstChild<Switch>('Animations');
+    animations = position!.findFirstChild<Switch>('Animations');
     if (animations == null) {
       print("Couldn't find SwitchComponent named 'Animations'");
       return;
     }
 
-    physicsBody = findFirstChild<PhysicsBody>('PhysicsBody');
+    physicsBody = findFirstChildByClass<PhysicsBody>();
     if (physicsBody == null) {
       print("Couldn't find PhysicsBody named 'PhysicsBody'");
       return;
     }
+
 
     addInputAction('move_left', InputAction(keyLabel: 'ArrowLeft'));
     addInputAction('move_right', InputAction(keyLabel: 'ArrowRight'));
@@ -107,8 +116,8 @@ class Player extends Entity {
 
     final currentAnimation = animations!.activeComponent as SpriteAnimation?;
     if (currentAnimation != null) {
-      currentAnimation.width = width;
-      currentAnimation.height = height;
+      currentAnimation.width = position!.width;
+      currentAnimation.height = position!.height;
 
       if (currentAnimation.animation != null) {
         currentAnimation.animation!.reset();
@@ -126,19 +135,24 @@ class Player extends Entity {
       currentState!.update(dt);
     }
 
+    position!.position = physicsBody!.body!.position;
+
     super.update(dt);
   }
 
   // move this to a player movement component?
   void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0, bool collisionDetection: true}) {
     InputState state = getInputState();
-    Vector2 moveVec = Vector2(state.dir.x, velocity.y);
+
+    physicsBody!.body!.linearVelocity = Vector2(state.dir.x * 2000.0 * dt, physicsBody!.body!.linearVelocity.y);
+    /*
+    Vector2 moveVec = Vector2(state.dir.x, 0);//velocity.y);
     
     // TODO: if moveVec is greater than say half the tile size, break it up
     // and do multiple collision checks to aacount for low fps
     // for now we have this to stop extreme issues while debugging:
-    dt = min(dt, 0.033);
-
+    //dt = min(dt, 0.033);
+/*
     if (gravity) {
       moveVec.y += 9.8 * dt;
     }
@@ -153,18 +167,18 @@ class Player extends Entity {
       moveVec = detectCollision(moveVec);
     }
 
-
+*/
     velocity = moveVec;
-    move(moveVec);
+    move(moveVec);*/
   }
 
   Vector2 detectCollision(Vector2 moveVec) {
 
     // perform collision detection
     TiledMap map = gameRef.map!;
-    Int2? tileCoords = map.worldToTileSpace(position);
+    Int2? tileCoords = map.worldToTileSpace(position!.position);
     if (tileCoords != null) {
-      Rect playerRect = toRect();
+      Rect playerRect = position!.toRect();
 
       //player.gameRef.debug.drawRect(playerRect, Colors.yellow, PaintingStyle.fill);
       
@@ -207,7 +221,7 @@ class Player extends Entity {
   }
 
   void spawn(Vector2 position) {
-    this.position = position;
+    this.position!.position = position;
     if (physicsBody != null) {
       physicsBody!.body!.setPosition(position);
     }
@@ -239,7 +253,8 @@ class Player extends Entity {
   }
 
   void move(Vector2 offset) {
-    position += offset;
+    physicsBody!.body!.applyLinearImpulse(offset);
+    //position!.position += offset;
   }
 }
 

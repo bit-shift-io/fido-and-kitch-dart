@@ -1,3 +1,5 @@
+import 'package:fido_and_kitch/components/position.dart';
+
 import '../components/entity.dart';
 import '../components/inventory.dart';
 import '../components/pickup.dart';
@@ -15,9 +17,9 @@ class PickupSystem extends System with HasGameRef<Game> {
     final pickups = gameRef.getEntities<Entity>('Pickups');
 
     for (final player in players) {
-      final playerRect = player.toRect();
+      final playerRect = player.position!.toRect();
       for (final pickup in pickups) {
-        final pickupRect = pickup.toRect();
+        final pickupRect = pickup.findFirstChildByClass<Position>()!.toRect();
         if (playerRect.overlaps(pickupRect)) {
           gameRef.remove(pickup);
           pickup.removeFromEntityLists(gameRef);

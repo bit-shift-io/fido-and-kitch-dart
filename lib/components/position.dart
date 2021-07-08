@@ -11,6 +11,7 @@ class Position extends c.PositionComponent with HasName {
 
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
+    debugMode = yaml['debugMode'] ?? this.debugMode;
     size = vector2FromData(yaml['size']) ?? this.size;
     position = vector2FromData(yaml['position']) ?? this.position;
     addChildren(await Factory().createFromDataArray(yaml['children']));

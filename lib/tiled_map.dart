@@ -183,13 +183,13 @@ extension ExtraData on t.TileLayer {
           );
 
         Body body = createStaticPhysicsBodyForTile(tileSize, offset, tiledMap.gameRef.world);
-
+/*
         // to debug draw
         PhysicsBody physicsBody = new PhysicsBody();
         physicsBody.body = body;
         physicsBody.debugMode = true;
         tiledMap.gameRef.add(physicsBody);
-
+*/
         ++x;
       });
 

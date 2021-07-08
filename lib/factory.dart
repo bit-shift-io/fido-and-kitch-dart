@@ -31,7 +31,7 @@ class Factory {
     'SpriteAnimation': spriteAnimationComponentFromData,
     'Sprite': spriteComponentFromData,
     'Switch': switchComponentFromData,
-    'PositionComponent': positionComponentFromData,
+    'Position': positionComponentFromData,
     'Entity': entityComponentFromData,
     'Player': playerComponentFromData,
     'Pickup': pickupComponentFromData,
@@ -62,7 +62,7 @@ class Factory {
     try {
       final creator = fromDataMap[componentName];
       if (creator == null) {
-        print('No creator found for $componentName');
+        print('No creator found for \'$componentName\'');
         return null;
       }
       print("\tcreating component: $componentName with name ${yaml['name']}");

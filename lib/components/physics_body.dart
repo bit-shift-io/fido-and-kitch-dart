@@ -56,7 +56,7 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
 
   Body createBody() {
     double radius = 10;
-    Vector2 _position = Vector2(0, 0);
+    //Vector2 _position = Vector2(0, 0);
 
     final shape = CircleShape();
     shape.radius = radius;
@@ -64,13 +64,13 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
     final fixtureDef = FixtureDef(shape)
       ..restitution = 0.8
       ..density = 1.0
-      ..friction = 0.4;
+      ..friction = 0.0;
 
     final bodyDef = BodyDef()
       // To be able to determine object in collision
       ..userData = this
       ..angularDamping = 0.8
-      ..position = _position
+      //..position = _position
       ..type = BodyType.dynamic;
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);

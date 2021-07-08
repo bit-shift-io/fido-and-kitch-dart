@@ -2,58 +2,61 @@ component: Player
 entityList: [Entity, Players]
 name: Kitch
 debugMode: true
-size: [32, 32]
 children:
-    - component: PhysicsBody
-      name: PhysicsBody
-    - component: Switch
-      name: Animations
-      components:
-        - component: SpriteAnimation
-          name: Idle
-          images: cat/Idle (${i+1}).png
-          stepTime: 0.2
-          loop: true
-          frames: 10
-        - component: SpriteAnimation
-          name: Walk
-          images: cat/Walk (${i+1}).png
-          stepTime: 0.2
-          loop: true
-          frames: 10
-        - component: SpriteAnimation
-          name: Fall
-          images: cat/Fall (${i+1}).png
-          stepTime: 0.2
-          loop: true
-          frames: 8
-        - component: SpriteAnimation
-          name: Dead
-          images: cat/Dead (${i+1}).png
-          stepTime: 0.2
-          loop: false
-          frames: 10
-        - component: SpriteAnimation
-          name: TeleportFrom
-          images: cat/Dead (${i+1}).png
-          stepTime: 0.2
-          loop: false
-          frames: 10
-        - component: SpriteAnimation
-          name: TeleportTo
-          images: cat/Dead (${i+1}).png
-          stepTime: 0.2
-          loop: false
-          frames: 10
-          reversed: true
-        - component: SpriteAnimation
-          name: Use
-          images: cat/Fall (${i+1}).png
-          stepTime: 0.1
-          loop: false
-          frames: 8
+    - component: Position
+      size: [32, 32]
+      debugMode: true
+      children:
+      - component: Switch
+        name: Animations
+        components:
+          - component: SpriteAnimation
+            name: Idle
+            images: cat/Idle (${i+1}).png
+            stepTime: 0.2
+            loop: true
+            frames: 10
+          - component: SpriteAnimation
+            name: Walk
+            images: cat/Walk (${i+1}).png
+            stepTime: 0.2
+            loop: true
+            frames: 10
+          - component: SpriteAnimation
+            name: Fall
+            images: cat/Fall (${i+1}).png
+            stepTime: 0.2
+            loop: true
+            frames: 8
+          - component: SpriteAnimation
+            name: Dead
+            images: cat/Dead (${i+1}).png
+            stepTime: 0.2
+            loop: false
+            frames: 10
+          - component: SpriteAnimation
+            name: TeleportFrom
+            images: cat/Dead (${i+1}).png
+            stepTime: 0.2
+            loop: false
+            frames: 10
+          - component: SpriteAnimation
+            name: TeleportTo
+            images: cat/Dead (${i+1}).png
+            stepTime: 0.2
+            loop: false
+            frames: 10
+            reversed: true
+          - component: SpriteAnimation
+            name: Use
+            images: cat/Fall (${i+1}).png
+            stepTime: 0.1
+            loop: false
+            frames: 8
     - component: Inventory
       name: Inventory
+    - component: PhysicsBody
+      name: PhysicsBody
 states:
   - name: Idle
   - name: Walk

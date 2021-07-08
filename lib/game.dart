@@ -30,6 +30,10 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
   Debug? debug;
 
   Future<void> onLoad() async {
+    const tileSize = 32.0;
+    const tileSizeInMetres = 1;
+    const gravityMultiplier = tileSizeInMetres * tileSize;
+    world.setGravity(Vector2(0, 10.0 * gravityMultiplier));
     // register anything needed here
     //await HetuScript().init();
 
@@ -112,7 +116,7 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
       TiledObject spawn = spawns[i];
       Player p = players[i];
-      p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble() + 32.0));
+      p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble() - 32.0));
       add(p); // add to world to start updating and rendering
     }
   }
