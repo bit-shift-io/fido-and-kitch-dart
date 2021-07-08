@@ -55,7 +55,7 @@ class Idle extends PlayerState {
   void update(double dt) {
     InputState state = player.getInputState();
 
-    player.applyMovement(dt, gravity: true);
+    player.applyMovement(dt);
 
     if (player.velocity.y > 0.0) {
       player.setState('Fall');
@@ -87,7 +87,7 @@ class Walk extends PlayerState {
 
   @override
   void update(double dt) {
-    player.applyMovement(dt, gravity: true, movementSpeed: data['movementSpeed'].toDouble());
+    player.applyMovement(dt, movementSpeed: data['movementSpeed'].toDouble());
 
     if (player.velocity.y > 0.0) {
       player.setState('Fall');
@@ -272,10 +272,10 @@ class Ladder extends PlayerState {
 
     // moving down
     if (state.dir.y > 0) {
-      if (ladderTile == null) {
+      if (ladderTile == null || ladderTile.isEmpty) {
         // is there a tile below us?
         Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
-        if (nextLadderTile == null) {
+        if (nextLadderTile == null || nextLadderTile.isEmpty) {
           // hit the ground
           player.setState('Fall');
           return;
@@ -283,14 +283,21 @@ class Ladder extends PlayerState {
       }
     }
     // moving up
-    else {
-      if (ladderTile == null) {
+    else if (state.dir.y < 0) {
+      if (ladderTile == null || ladderTile.isEmpty) {
         Tile? prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
-        if (prevLadderTile == null) {
+        if (prevLadderTile == null || prevLadderTile.isEmpty) {
           // can't go any higher
           player.setState('Fall');
           return;
         }
+      }
+    }
+    // no vertical movement
+    else {
+      if (ladderTile == null || ladderTile.isEmpty) {
+        player.setState('Fall');
+        return;
       }
     }
 

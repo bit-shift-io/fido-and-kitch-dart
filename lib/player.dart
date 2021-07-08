@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flame/components.dart' hide SpriteAnimation;
+import 'package:flame_forge2d/flame_forge2d.dart' hide Position;
 import 'package:flutter/material.dart' hide Switch;
 
 import 'components/entity.dart';
@@ -144,11 +145,15 @@ class Player extends Entity {
   void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0, bool collisionDetection: true}) {
     InputState state = getInputState();
 
-    physicsBody!.body!.gravityScale = gravity ? 1.0 : 0.0;
-
-    final vel = Vector2(state.dir.x * 2000.0 * dt, physicsBody!.body!.linearVelocity.y);
+    final moveDt = 2000.0 * dt;
+    final vel = Vector2(state.dir.x * moveDt, physicsBody!.body!.linearVelocity.y);
     if (!gravity) {
-      vel.y = state.dir.y * 2000.0 * dt;
+      vel.y = state.dir.y * moveDt;
+      //physicsBody!.body!.gravityScale = 1;
+      physicsBody!.body!.setType(BodyType.kinematic);
+    } else {
+      physicsBody!.body!.setType(BodyType.dynamic);
+      //physicsBody!.body!.gravityScale = 1;
     }
     physicsBody!.body!.linearVelocity = vel;
     /*
