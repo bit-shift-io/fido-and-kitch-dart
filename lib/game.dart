@@ -1,19 +1,16 @@
 import 'dart:math';
 import 'package:flutter/src/services/raw_keyboard.dart';
-
-import 'hetu_script.dart';
-
-import 'systems/pickup_system.dart';
-import 'tiled_map.dart';
+import 'package:tiled/tiled.dart' as t;
 import 'package:flame/components.dart';
 import 'package:flame/gestures.dart';
 import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
-
 import 'package:flame_forge2d/forge2d_game.dart';
 
+import 'hetu_script.dart';
+import 'systems/pickup_system.dart';
+import 'tiled_map.dart';
 import 'player.dart';
-
 import 'components/system.dart';
 import 'debug.dart';
 import 'factory.dart';
@@ -113,9 +110,9 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
       tileLayer.createStaticPhysicsBodies(map!);
     }
 
-    List<TiledObject> spawns = map!.findObjectsByType("spawn");
+    List<t.TiledObject> spawns = map!.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
-      TiledObject spawn = spawns[i];
+      t.TiledObject spawn = spawns[i];
       Player p = players[i];
       p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble() - 32.0));
       add(p); // add to world to start updating and rendering

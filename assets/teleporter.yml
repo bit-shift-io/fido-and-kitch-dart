@@ -1,9 +1,11 @@
 component: Entity
 entityList: [Entity, Teleporters]
+debugMode: true
 children:
   - component: Position
     size: [32, 32]
     debugMode: true
+    anchor: bottomLeft
     children:
       - component: Switch
         activeComponent: Teleporter2

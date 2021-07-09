@@ -10,7 +10,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:tiled/tiled.dart' as t;
-export 'package:tiled/tiled.dart' show TiledObject, TileLayer;
+export 'package:tiled/tiled.dart' show TileLayer;
 import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 

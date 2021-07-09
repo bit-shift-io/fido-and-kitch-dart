@@ -50,7 +50,11 @@
   <object id="25" type="coin" x="398.605" y="332.171">
    <ellipse/>
   </object>
-  <object id="26" type="teleporter" gid="123" x="193.683" y="511.321" width="32" height="32"/>
+  <object id="26" type="teleporter" gid="123" x="193.683" y="511.321" width="32" height="32">
+   <properties>
+    <property name="target" type="object" value="28"/>
+   </properties>
+  </object>
   <object id="28" type="teleporter" gid="123" x="323.95" y="543.5" width="32" height="32">
    <properties>
     <property name="target" type="object" value="26"/>

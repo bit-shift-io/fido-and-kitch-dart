@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
+import 'components/tiled_object.dart';
 import 'components/inventory.dart';
 import 'components/position.dart';
 import 'components/script.dart';
@@ -146,19 +147,36 @@ enum TeleportState {
 }
 
 class Teleport extends PlayerState {
-  TiledObject? from;
-  TiledObject? to;
+  Entity? from;
+  Entity? to;
   TeleportState state = TeleportState.None;
 
   Teleport(Player player, String name) : super(player, name);
 
-  TiledObject? getTeleportObjectUnderPlayer() {
-    TiledMap? map = player.gameRef.map;
-    return map!.getObjectFromWorldPosition(worldPosition: player.position!.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
+  Entity? getTeleportUnderPlayer() {
+    // TODO: Teleporter entity should use a physics object to trigger
+    // on player contact
+    final teleporters = player.gameRef.getEntities<Entity>('Teleporters');
+    final playerRect = player.position!.toRect();
+    for (final t in teleporters) {
+      // if the teleporter has no target, its a one way teleporter
+      final tiledObj = t.findFirstChildByClass<TiledObject>();
+      final target = tiledObj!.object!.properties.cast().firstWhere((p) => p.name == 'target', orElse: () => null);
+      if (target == null) {
+        continue;
+      }
+        
+      final tRect = t.findFirstChildByClass<Position>()!.toRect();
+      if (playerRect.overlaps(tRect)) {
+        return t;
+      }
+    }
+
+    return null;
   }
 
   bool canTransition() {
-    TiledObject? teleporter = getTeleportObjectUnderPlayer();
+    Entity? teleporter = getTeleportUnderPlayer();
     if (teleporter == null) {
       return false;
     }
@@ -177,7 +195,7 @@ class Teleport extends PlayerState {
   bool tryTransition() {
     // if player moved off of the teleporter,
     // clear the tile
-    TiledObject? teleporter = getTeleportObjectUnderPlayer();
+    Entity? teleporter = getTeleportUnderPlayer();
     if (teleporter == null) {
       from = null;
       to = null;
@@ -187,16 +205,30 @@ class Teleport extends PlayerState {
   }
 
   void enter() {
-    /* TODO: FIXME
     state = TeleportState.PlayingFromAnim;
 
-    TiledMap map = player.gameRef.map;
-    from = map.getObjectFromWorldPosition(worldPosition: player.position, layerName: 'teleporters'); // TODO: FIXME! Get from collision contact or teleporters entity list
-    to = map.getObjectByName(layerName: 'teleporters', name: from.properties['target']); /// TODO: FIXME! Get from collision contact or teleporters entity list
+    //TiledMap map = player.gameRef.map!;
+    from = getTeleportUnderPlayer(); // TODO: FIXME! Get from collision contact or teleporters entity list
+    
+    final tiledObj = from!.findFirstChildByClass<TiledObject>();
+    final targetProperty = tiledObj!.object!.properties.cast().firstWhere((p) => p.name == 'target', orElse: () => null);
+    to = null;
+    if (targetProperty != null) {
+      final teleporters = player.gameRef.getEntities<Entity>('Teleporters');
+      for (final t in teleporters) {
+        // if the teleporter has no target, its a one way teleporter
+        final tiledObj = t.findFirstChildByClass<TiledObject>();
+        if (tiledObj!.object!.id == int.parse(targetProperty.value)) {
+          to = t;
+          break;
+        }
+      }
+    }
 
     final animationName = data?.nodes['fromAnimationName']?.value;
     player.setAnimation(animationName, onComplete: onFromAnimationComplete);
-    */
+
+    player.physicsBody!.body!.linearVelocity.x = 0;
   }
 
   void onFromAnimationComplete() {
@@ -215,7 +247,10 @@ class Teleport extends PlayerState {
         final animationName = data?.nodes['toAnimationName']?.value;
         player.setAnimation(animationName, onComplete: onToAnimationComplete);
         if (to != null) {
-          player.position!.position = Vector2(to!.x, to!.y);
+          Position? toPosition = to!.findFirstChildByClass<Position>();
+          if (toPosition != null) {
+            player.physicsBody!.body!.setPosition(toPosition!.position);
+          }
         }
         break;
 
