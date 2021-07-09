@@ -145,7 +145,7 @@ class Player extends Entity {
   void applyMovement(double dt, {bool gravity: true, double movementSpeed = 1.0, bool collisionDetection: true}) {
     InputState state = getInputState();
 
-    final moveDt = 2000.0 * dt;
+    final moveDt = movementSpeed * 1000.0 * dt;
     final vel = Vector2(state.dir.x * moveDt, physicsBody!.body!.linearVelocity.y);
     if (!gravity) {
       vel.y = state.dir.y * moveDt;
@@ -266,6 +266,28 @@ class Player extends Entity {
   void move(Vector2 offset) {
     physicsBody!.body!.applyLinearImpulse(offset);
     //position!.position += offset;
+  }
+
+
+  Vector2 get positionBottomCenter {
+    return position!.position + Vector2(0, position!.size.y);
+  }
+
+  // Return the tile under the player or null if not on the ground
+  Tile? getGroundTile() {
+    // what tile is at the players feet?
+    final pos = positionBottomCenter + Vector2(0, 1.0);
+    TiledMap map = gameRef.map!;
+    Tile? tile = map.getTileFromWorldPosition(worldPosition: pos, layerName: 'ground');
+    if (tile != null && !tile.isEmpty) {
+      return tile;
+    }
+
+    return null;
+  }
+
+  bool get isOnGround {
+    return getGroundTile() != null;
   }
 }
 

@@ -12,6 +12,9 @@ import '../game.dart';
 class PickupSystem extends System with HasGameRef<Game> {
   @override
   void update(double delta) {
+    // TODO: fix me, chnage make a pickup entity?
+    return; 
+
     // TODO: for each player, see if they intersect any pickups
     final players = gameRef.players;
     final pickups = gameRef.getEntities<Entity>('Pickups');

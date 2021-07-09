@@ -57,8 +57,7 @@ class Idle extends PlayerState {
 
     player.applyMovement(dt);
 
-    if (player.velocity.y > 0.0) {
-      player.setState('Fall');
+    if (player.states['Fall']!.tryTransition()) {
       return;
     }
 
@@ -87,14 +86,14 @@ class Walk extends PlayerState {
 
   @override
   void update(double dt) {
+    InputState state = player.getInputState();
     player.applyMovement(dt, movementSpeed: data['movementSpeed'].toDouble());
 
-    if (player.velocity.y > 0.0) {
-      player.setState('Fall');
+    if (player.states['Fall']!.tryTransition()) {
       return;
     }
 
-    if (player.velocity.x == 0.0) {
+    if (state.dir.x == 0.0) {
       player.setState('Idle');
       return;
     }
@@ -108,6 +107,11 @@ class Walk extends PlayerState {
 
 class Fall extends PlayerState {
   Fall(Player player, String name) : super(player, name);
+
+  bool canTransition() {
+    bool inAir = !player.isOnGround;
+    return inAir;
+  }
 
   @override
   void update(double dt) {
@@ -230,23 +234,29 @@ class Teleport extends PlayerState {
 class Ladder extends PlayerState {
   Ladder(Player player, String name) : super(player, name);
 
-  bool canTransition() {
+  Tile? getLadderTile() {
+    // what tile is at the players feet?
+    final pos = player.positionBottomCenter;
     TiledMap map = player.gameRef.map!;
-    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, layerName: 'ladders');
-    if (ladderTile != null) {
-      return true;
+    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: pos, layerName: 'ladders');
+    if (ladderTile != null && !ladderTile.isEmpty) {
+      return ladderTile;
     }
 
     // if moving down, is there a ladder below us?
     InputState state = player.getInputState();
     if (state.dir.y > 0) {
-      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
-      if (nextLadderTile != null) {
-        return true;
+      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: pos, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
+      if (nextLadderTile != null && !nextLadderTile.isEmpty) {
+        return nextLadderTile;
       }
     }
 
-    return false;
+    return null;
+  }
+
+  bool canTransition() {
+    return getLadderTile() != null;
   }
 
   @override
@@ -258,48 +268,21 @@ class Ladder extends PlayerState {
     // 2. when moving up, we push out above the ladder. Shouldn't be able to leave the ground
     // 3. sliding off the side of a ladder allows the player to run in the air for a bit?!
     
-    InputState state = player.getInputState();
+    Tile? ladderTile = getLadderTile();
+    if (ladderTile == null) {
+      player.setState('Fall');
+      return;
+    }
     
     TiledMap map = player.gameRef.map!;
-    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, layerName: 'ladders');
-
-    if (ladderTile != null) {
-      Rect? ladderTileRect = map.tileRect(ladderTile);
-      if (ladderTileRect != null) {
-        player.gameRef.debug!.drawRect(ladderTileRect, Colors.pink, PaintingStyle.stroke);
-      }
+    Rect? ladderTileRect = map.tileRect(ladderTile);
+    if (ladderTileRect != null) {
+      player.gameRef.debug!.drawRect(ladderTileRect, Colors.black, PaintingStyle.fill);
     }
-
-    // moving down
-    if (state.dir.y > 0) {
-      if (ladderTile == null || ladderTile.isEmpty) {
-        // is there a tile below us?
-        Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
-        if (nextLadderTile == null || nextLadderTile.isEmpty) {
-          // hit the ground
-          player.setState('Fall');
-          return;
-        }
-      }
-    }
-    // moving up
-    else if (state.dir.y < 0) {
-      if (ladderTile == null || ladderTile.isEmpty) {
-        Tile? prevLadderTile = map.getTileFromWorldPosition(worldPosition: player.position!.position, tileOffset: Int2.fromVector2(-state.dir), layerName: 'ladders');
-        if (prevLadderTile == null || prevLadderTile.isEmpty) {
-          // can't go any higher
-          player.setState('Fall');
-          return;
-        }
-      }
-    }
-    // no vertical movement
-    else {
-      if (ladderTile == null || ladderTile.isEmpty) {
-        player.setState('Fall');
-        return;
-      }
-    }
+   
+    // TODO: as we move up or down, lerp the player
+    // towards the centre of the tile and make them not be able to get off
+    // when there are walls to the side
 
     player.applyMovement(dt, gravity: false, collisionDetection: false, movementSpeed: data['movementSpeed'].toDouble());
   }

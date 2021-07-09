@@ -1,9 +1,7 @@
 import 'dart:math' as math;
 import 'dart:async';
 import 'dart:ui';
-import 'package:fido_and_kitch/components/physics_body.dart';
-import 'package:flame_forge2d/flame_forge2d.dart';
-
+import 'package:flame_forge2d/flame_forge2d.dart' hide Position;
 import 'components/entity.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -19,6 +17,8 @@ import 'package:path/path.dart' as p;
 import 'factory.dart';
 import 'game.dart';
 import 'utils/number.dart';
+import 'components/extensions.dart';
+import 'components/position.dart';
 
 /// Tiled represents all flips and rotation using three possible flips: horizontal, vertical and diagonal.
 /// This class converts that representation to a simpler one, that uses one angle (with pi/2 steps) and two flips (H or V).
@@ -426,6 +426,11 @@ class TiledMap extends BaseComponent with HasGameRef<Game> {
             continue;
           }
 
+          // debugging
+          if (type != 'teleporter') {
+            continue;
+          }
+
           String filename = "assets/$type.yml";
           List<t.Property> properties = tmxObj.properties;
           Map<String, dynamic> substitutions = {};
@@ -439,26 +444,21 @@ class TiledMap extends BaseComponent with HasGameRef<Game> {
           substitutions['type'] = type;
           substitutions['filename'] = filename;
           substitutions['name'] = tmxObj.name;
-          //substitutions['x'] = tmxObj.x;
-          //substitutions['y'] = tmxObj.y;
-          PositionComponent? comp = await f.createFromFile<PositionComponent>(filename, substitutions: substitutions);
-          if (comp == null) {
+          substitutions['position'] = '[${tmxObj.x.toDouble()}, ${tmxObj.y.toDouble()}]';
+          Entity? e = await f.createFromFile<Entity>(filename, substitutions: substitutions);
+          if (e == null) {
             continue;
           }
 
-          Component tmxObjectComponent = await f.createFromData({'component': 'TiledObject', 'name': 'TiledObject', 'object': tmxObj});
-          comp.addChild(tmxObjectComponent);
-
-          comp.x = tmxObj.x.toDouble();
-          comp.y = tmxObj.y.toDouble();
-          
-          Entity e = comp as Entity;
-          if (e != null) {
-            e.resolve(gameRef);
-            //e.entity = e;
-            //e.addToEntityLists(gameRef);
+          Position? p = e.findFirstChildByClass<Position>();
+          if (p != null) {
+            p.position = Vector2(tmxObj.x.toDouble(), tmxObj.y.toDouble());
           }
-          gameRef.add(comp);
+
+          Component tmxObjectComponent = await f.createFromData({'component': 'TiledObject', 'name': 'TiledObject', 'object': tmxObj});
+          e.addChild(tmxObjectComponent);
+          e.resolve(gameRef);
+          gameRef.add(e); // add to world to start updating and rendering
         } catch (e) {
           // this is not an entity
           //print(e);

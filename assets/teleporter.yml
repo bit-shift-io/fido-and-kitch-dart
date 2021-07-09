@@ -1,15 +1,18 @@
 component: Entity
 entityList: [Entity, Teleporters]
-size: [32, 32]
 children:
-  - component: Switch
-    activeComponent: Teleporter2
-    components:
-      - name: Teleporter1
-        component: Sprite
-        image: teleporter_1.png
-        size: [20, 20]
-      - name: Teleporter2
-        component: Sprite
-        image: teleporter_2.png
-        size: [20, 20]
+  - component: Position
+    size: [32, 32]
+    debugMode: true
+    children:
+      - component: Switch
+        activeComponent: Teleporter2
+        components:
+          - name: Teleporter1
+            component: Sprite
+            image: teleporter_1.png
+            size: [20, 20]
+          - name: Teleporter2
+            component: Sprite
+            image: teleporter_2.png
+            size: [20, 20]
