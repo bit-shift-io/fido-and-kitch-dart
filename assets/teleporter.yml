@@ -13,8 +13,8 @@ children:
           - name: Teleporter1
             component: Sprite
             image: teleporter_1.png
-            size: [20, 20]
+            size: [32, 32]
           - name: Teleporter2
             component: Sprite
             image: teleporter_2.png
-            size: [20, 20]
+            size: [32, 32]

@@ -14,6 +14,7 @@ export 'package:tiled/tiled.dart' show TileLayer;
 import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 
+import 'components/physics_body.dart';
 import 'factory.dart';
 import 'game.dart';
 import 'utils/number.dart';
@@ -126,21 +127,12 @@ extension ExtraData on t.TileLayer {
       // Define the circle shape.
       final shape = PolygonShape();
       shape.setAsBoxXY(size.width * 0.5, size.height * 0.5);
-/*
-      // Create fixture using the circle shape.
-      final circleFixtureDef = FixtureDef(shape)
-        ..friction = .9
-        ..restitution = 1.0;
-*/
+
       // Create a body def.
       final bodyDef = BodyDef();
-
       bodyDef.position = offset + Vector2(size.width * 0.5, size.height * 0.5);
       var body = world.createBody(bodyDef);
-      //bodies.add(body);
-      //body.createFixture(circleFixtureDef);
       body.createFixtureFromShape(shape);
-
       return body;
   }
 
@@ -535,11 +527,11 @@ class TiledMap extends BaseComponent with HasGameRef<Game> {
       return null;
     }
     
-    double gridX = (position.x - (map!.tileWidth * scale) + (map!.tileWidth * 0.5)) / (map!.tileWidth * scale);
+    double gridX = (position.x - (map!.tileWidth * scale)) / (map!.tileWidth * scale);
     double gridY = (position.y - (map!.tileHeight * scale)) / (map!.tileHeight * scale);
 
-    int x = gridX.round();
-    int y = gridY.round();
+    int x = gridX.ceil();
+    int y = gridY.ceil();
 
     return Int2(x, y);
   }

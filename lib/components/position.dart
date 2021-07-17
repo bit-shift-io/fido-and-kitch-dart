@@ -1,3 +1,5 @@
+import 'package:flame/components.dart';
+
 import '../utils/yaml.dart';
 import 'package:flame/components.dart' as c;
 import 'package:flame/game.dart';
@@ -35,6 +37,15 @@ class Position extends c.PositionComponent with HasName, WithResolve {
 
   void resolve(Entity entity) {
     debugMode = dm;
+  }
+
+  /// get position given a certain anchor point
+  Vector2 getPosition(Anchor a) {
+    return anchor.toOtherAnchorPosition(
+      position,
+      a,
+      size,
+    );
   }
 }
 

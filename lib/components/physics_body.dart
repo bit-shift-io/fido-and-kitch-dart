@@ -1,10 +1,7 @@
 import 'dart:ui';
-import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Position;
 import 'package:flame/components.dart' as c;
 import '../game.dart';
-import './position.dart';
-import '../factory.dart';
 import '../utils/yaml.dart';
 import 'entity.dart';
 import 'mixins.dart';
@@ -39,6 +36,7 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
     BodyDef def = BodyDef();
     def.userData = this;
     def.linearDamping = toDouble(data['linearDamping']) ?? def.linearDamping;
+    def.fixedRotation = data['fixedRotation'] ?? def.fixedRotation;
     def.angularDamping = toDouble(data['angularDamping']) ?? def.angularDamping;
 
     final type = data['type'];
@@ -126,6 +124,9 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
   }
 
   World get world => gameRef.world;
+
+  set linearVelocity(Vector2 v) => body?.linearVelocity = v;
+  Vector2 get linearVelocity => body?.linearVelocity ?? Vector2.zero();
 
 /// The matrix used for preparing the canvas
 //  final c.Matrix4 _transform = c.Matrix4.identity();

@@ -59,12 +59,12 @@ children:
       name: PhysicsBody
       bodyDef:
         type: dynamic
-        angularDamping: 0.0
+        fixedRotation: true
       fixtureDefs:
         - shape:
-            type: circle
-            radius: 16
-          restitution: 0.8
+            type: box
+            size: [15.5, 15.5]
+          restitution: 0.0
           density: 1.0
           friction: 0.0
 states:

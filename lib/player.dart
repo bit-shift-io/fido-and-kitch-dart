@@ -268,17 +268,44 @@ class Player extends Entity {
     //position!.position += offset;
   }
 
-
   Vector2 get positionBottomCenter {
-    return position!.position + Vector2(0, position!.size.y);
+    return position!.getPosition(Anchor.bottomCenter);
+  }
+  
+  Vector2 get positionBottomLeft {
+    return position!.getPosition(Anchor.bottomLeft);
+  }
+
+  Vector2 get positionBottomRight {
+    return position!.getPosition(Anchor.bottomRight);
   }
 
   // Return the tile under the player or null if not on the ground
   Tile? getGroundTile() {
-    // what tile is at the players feet?
-    final pos = positionBottomCenter + Vector2(0, 1.0);
+
     TiledMap map = gameRef.map!;
+
+    //Int2? tc = map.worldToTileSpace(Vector2(60, 60));
+
+    final groundDistVec = Vector2(0, 10.0);
+    // what tile is at the players feet?
+    Vector2 pos = positionBottomLeft + groundDistVec;
+
+    
+    gameRef.debug!.drawRect(Rect.fromCircle(center: pos.toOffset(), radius: 5), Colors.black, PaintingStyle.fill);
+    
+
     Tile? tile = map.getTileFromWorldPosition(worldPosition: pos, layerName: 'ground');
+    if (tile != null && !tile.isEmpty) {
+      return tile;
+    }
+
+    pos = positionBottomRight + groundDistVec;
+
+    gameRef.debug!.drawRect(Rect.fromCircle(center: pos.toOffset(), radius: 5), Colors.black, PaintingStyle.fill);
+    
+
+    tile = map.getTileFromWorldPosition(worldPosition: pos, layerName: 'ground');
     if (tile != null && !tile.isEmpty) {
       return tile;
     }

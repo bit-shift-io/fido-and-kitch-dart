@@ -88,8 +88,7 @@ class Walk extends PlayerState {
   @override
   void update(double dt) {
     InputState state = player.getInputState();
-    player.applyMovement(dt, movementSpeed: data['movementSpeed'].toDouble());
-
+    
     if (player.states['Fall']!.tryTransition()) {
       return;
     }
@@ -102,6 +101,8 @@ class Walk extends PlayerState {
     if (player.states['Teleport']!.tryTransition()) {
       return;
     }
+
+    player.applyMovement(dt, movementSpeed: data['movementSpeed'].toDouble());
   }
 }
 
@@ -115,10 +116,18 @@ class Fall extends PlayerState {
   }
 
   @override
+  void enter() {
+    // stop any linear velocity
+    if (player.physicsBody != null) {
+      player.physicsBody!.linearVelocity.setZero();
+    }
+  }
+
+  @override
   void update(double dt) {
-    player.applyMovement(dt);
+    player.applyMovement(dt, movementSpeed: 0.0);
     
-    if (player.velocity.y == 0.0) {
+    if (player.velocity.y == 0.0 && player.isOnGround) {
       player.setState('Idle');
     }
 
@@ -166,7 +175,8 @@ class Teleport extends PlayerState {
         continue;
       }
         
-      final tRect = t.findFirstChildByClass<Position>()!.toRect();
+      var tRect = t.findFirstChildByClass<Position>()!.toRect();
+      tRect = tRect.deflate(tRect.width * 0.5);
       if (playerRect.overlaps(tRect)) {
         return t;
       }
@@ -249,7 +259,7 @@ class Teleport extends PlayerState {
         if (to != null) {
           Position? toPosition = to!.findFirstChildByClass<Position>();
           if (toPosition != null) {
-            player.physicsBody!.body!.setPosition(toPosition!.position);
+            player.physicsBody!.body!.setPosition(toPosition.center);
           }
         }
         break;
@@ -269,19 +279,26 @@ class Teleport extends PlayerState {
 class Ladder extends PlayerState {
   Ladder(Player player, String name) : super(player, name);
 
-  Tile? getLadderTile() {
+  Tile? getLadderTile({bool inUpdate = false}) {
+    InputState state = player.getInputState();
+
+    final ladderOffset = Vector2(0, 5.0);
+
     // what tile is at the players feet?
     final pos = player.positionBottomCenter;
     TiledMap map = player.gameRef.map!;
-    Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: pos, layerName: 'ladders');
-    if (ladderTile != null && !ladderTile.isEmpty) {
-      return ladderTile;
+
+    // if moving up (or if in the ladder state) is there a ladder tile we are on?
+    if (inUpdate || state.dir.y < 0) {
+      Tile? ladderTile = map.getTileFromWorldPosition(worldPosition: pos - ladderOffset, layerName: 'ladders');
+      if (ladderTile != null && !ladderTile.isEmpty) {
+        return ladderTile;
+      }
     }
 
     // if moving down, is there a ladder below us?
-    InputState state = player.getInputState();
     if (state.dir.y > 0) {
-      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: pos, tileOffset: Int2.fromVector2(state.dir), layerName: 'ladders');
+      Tile? nextLadderTile = map.getTileFromWorldPosition(worldPosition: pos + ladderOffset/*, tileOffset: Int2.fromVector2(state.dir)*/, layerName: 'ladders');
       if (nextLadderTile != null && !nextLadderTile.isEmpty) {
         return nextLadderTile;
       }
@@ -291,7 +308,8 @@ class Ladder extends PlayerState {
   }
 
   bool canTransition() {
-    return getLadderTile() != null;
+    final can = getLadderTile(inUpdate: false) != null;
+    return can;
   }
 
   @override
@@ -303,7 +321,7 @@ class Ladder extends PlayerState {
     // 2. when moving up, we push out above the ladder. Shouldn't be able to leave the ground
     // 3. sliding off the side of a ladder allows the player to run in the air for a bit?!
     
-    Tile? ladderTile = getLadderTile();
+    Tile? ladderTile = getLadderTile(inUpdate: true);
     if (ladderTile == null) {
       player.setState('Fall');
       return;
