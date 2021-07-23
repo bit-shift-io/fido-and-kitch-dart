@@ -12,6 +12,7 @@ import 'systems/pickup_system.dart';
 import 'tiled_map.dart';
 import 'player.dart';
 import 'components/system.dart';
+import 'components/extensions.dart';
 import 'debug.dart';
 import 'factory.dart';
 
@@ -114,7 +115,7 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     for (int i = 0; i < min(players.length, spawns.length); ++i) {
       t.TiledObject spawn = spawns[i];
       Player p = players[i];
-      p.spawn(Vector2(spawn.x.toDouble(), spawn.y.toDouble() - 32.0));
+      p.spawn(spawn.positionCenter);
       add(p); // add to world to start updating and rendering
     }
   }

@@ -289,17 +289,12 @@ class Player extends Entity {
   Tile? getGroundTile() {
 
     TiledMap map = gameRef.map!;
-
-    //Int2? tc = map.worldToTileSpace(Vector2(60, 60));
-
-    final groundDistVec = Vector2(0, 10.0);
+    final groundDistVec = Vector2(0, 2.0);
     // what tile is at the players feet?
     Vector2 pos = positionBottomLeft + groundDistVec;
 
-    
     gameRef.debug!.drawRect(Rect.fromCircle(center: pos.toOffset(), radius: 5), Colors.black, PaintingStyle.fill);
     
-
     Tile? tile = map.getTileFromWorldPosition(worldPosition: pos, layerName: 'ground');
     if (tile != null && !tile.isEmpty) {
       return tile;

@@ -47,6 +47,21 @@ class Position extends c.PositionComponent with HasName, WithResolve {
       size,
     );
   }
+/*
+  /// Set the top left position regardless of the anchor
+  set topLeftPosition(Vector2 position) {
+    this.position = position + (anchor.toVector2()..multiply(size));
+  }
+*/
+  // set the position with a given anchor
+  void setPosition(Vector2 pos, Anchor a) {
+    Vector2 offset = a.toVector2()..multiply(size);
+    topLeftPosition = pos - offset;
+
+    //this.position = position + offset;
+    //Vector2 p = getPosition(a);
+    print("p");
+  }
 }
 
 Future<Position> positionComponentFromData(dynamic yaml) async {

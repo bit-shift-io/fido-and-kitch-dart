@@ -418,11 +418,12 @@ class TiledMap extends BaseComponent with HasGameRef<Game> {
             continue;
           }
 
+/*
           // debugging
           if (type != 'teleporter') {
             continue;
           }
-
+*/
           String filename = "assets/$type.yml";
           List<t.Property> properties = tmxObj.properties;
           Map<String, dynamic> substitutions = {};
@@ -444,7 +445,7 @@ class TiledMap extends BaseComponent with HasGameRef<Game> {
 
           Position? p = e.findFirstChildByClass<Position>();
           if (p != null) {
-            p.position = Vector2(tmxObj.x.toDouble(), tmxObj.y.toDouble());
+            p.setPosition(tmxObj.positionCenter, Anchor.center);
           }
 
           Component tmxObjectComponent = await f.createFromData({'component': 'TiledObject', 'name': 'TiledObject', 'object': tmxObj});

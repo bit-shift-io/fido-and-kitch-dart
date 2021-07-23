@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:tiled/tiled.dart' as t;
 
 import 'entity.dart';
 import 'mixins.dart';
@@ -100,4 +101,10 @@ extension BodyExtras on Body {
   void setPosition(Vector2 position) {
     this.setTransform(position, this.angle);
   }
+}
+
+extension TiledObjectExtras on t.TiledObject {
+  Vector2 get positionCenter {
+    return this.isRectangle ? Vector2(this.x, this.y) + (Vector2(this.width, -this.height) * 0.5) : Vector2(this.x, this.y);
+  } 
 }
