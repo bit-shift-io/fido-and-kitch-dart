@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="39">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="43">
  <tileset firstgid="1" source="../generic_platformer_tiles.tsx"/>
  <layer id="4" name="sky" width="20" height="20">
   <data encoding="base64">
@@ -22,21 +22,6 @@
   </data>
  </layer>
  <objectgroup id="13" name="game">
-  <object id="18" name="K" type="key" x="303.106" y="175.428">
-   <properties>
-    <property name="color" value="red"/>
-   </properties>
-  </object>
-  <object id="19" name="K" type="key" x="431.822" y="175.428">
-   <properties>
-    <property name="color" value="green"/>
-   </properties>
-  </object>
-  <object id="20" name="C" type="cage" x="80.9667" y="366.426">
-   <properties>
-    <property name="color" value="red"/>
-   </properties>
-  </object>
   <object id="21" name="S" type="switch" x="236.672" y="173.352">
    <properties>
     <property name="target" type="object" value="29"/>
@@ -53,10 +38,13 @@
    </properties>
   </object>
   <object id="29" name="E" type="exit_door" x="366.773" y="172.5"/>
-  <object id="31" x="-207.67" y="882.599"/>
-  <object id="35" x="-249.539" y="696.701"/>
   <object id="36" name="coin" type="coin" gid="123" x="350.773" y="350.952" width="32" height="32"/>
-  <object id="37" gid="123" x="-180.127" y="573.696" width="32" height="32"/>
   <object id="38" name="spawn" type="spawn" gid="123" x="91.1847" y="191.85" width="32" height="32"/>
+  <object id="41" name="cage" type="cage" gid="123" x="32" y="384" width="32" height="32"/>
+  <object id="42" name="key" type="key" gid="123" x="96" y="384" width="32" height="32">
+   <properties>
+    <property name="color" value="red"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

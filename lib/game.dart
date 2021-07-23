@@ -41,21 +41,9 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     map = TiledMap();
     add(map!);
 
-    Player? p = await Factory().createFromFile<Player>('assets/player.yml');
-    p!.resolve(this);
-    //p!.addToEntityLists(this);
-    //addEntity(p, p.entityList);
-
-    /*
-    add(p
-      ..x = 200
-      ..y = 200);
-      */
-
     debug = Debug();
     add(debug!);
  
-
     map!.load('assets/maps/sandbox.tmx').then(onMapLoad);  
   }
 
@@ -94,7 +82,7 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
   List<Player> get players => getEntities<Player>('Players');
 
-  void onMapLoad(value) {
+  void onMapLoad(value) async {
     print('map loaded');
 
     // set the viewport to fit the whole map to the screen
@@ -110,6 +98,10 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     for (TileLayer tileLayer in groundTileLayers) {
       tileLayer.createStaticPhysicsBodies(map!);
     }
+
+
+    Player? p = await Factory().createFromFile<Player>('assets/player.yml');
+    p!.resolve(this);
 
     List<t.TiledObject> spawns = map!.findObjectsByType("spawn");
     for (int i = 0; i < min(players.length, spawns.length); ++i) {

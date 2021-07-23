@@ -9,41 +9,44 @@
 
 component: Entity
 entityList: [Entity, Usable]
-size: [32, 32]
 children:
-  - component: Usable
+  - component: Position
+    debugMode: false
+    size: [32, 32]
     children:
-        - component: Script
-          name: OnUse
-          script: >
-              var c = findFirstChild(entity, 'state')
-              var currentState = getName(getActiveComponent(c))
-              
-              var isOn = (currentState == 'on')
-              var nextState = isOn ? 'off' : 'on';
-              
-              print('isOn:')
-              print(isOn)
-              print('Switch set to ' + nextState)
-              setActiveComponent(c, nextState)
+      - component: Usable
+        children:
+            - component: Script
+              name: OnUse
+              script: >
+                  var c = findFirstChild(entity, 'state')
+                  var currentState = getName(getActiveComponent(c))
+                  
+                  var isOn = (currentState == 'on')
+                  var nextState = isOn ? 'off' : 'on';
+                  
+                  print('isOn:')
+                  print(isOn)
+                  print('Switch set to ' + nextState)
+                  setActiveComponent(c, nextState)
 
-              var targetEntity = findEntityByObjectId(game, ${target})
-              var ts = findFirstChild(targetEntity, 'toggle')
-              props['state'] = nextState
-              evalScript(ts, props)
-  - component: Switch
-    name: state
-    activeComponent: on
-    components:
-      - name: off
-        component: Sprite
-        image: switch.png
-        size: [32, 32]
-        srcPosition: [0, 0]
-        srcSize: [160, 160]
-      - name: on
-        component: Sprite
-        image: switch.png
-        size: [32, 32]
-        srcPosition: [160, 160]
-        srcSize: [160, 160]
+                  var targetEntity = findEntityByObjectId(game, ${target})
+                  var ts = findFirstChild(targetEntity, 'toggle')
+                  props['state'] = nextState
+                  evalScript(ts, props)
+      - component: Switch
+        name: state
+        activeComponent: on
+        components:
+          - name: off
+            component: Sprite
+            image: switch.png
+            size: [32, 32]
+            srcPosition: [0, 0]
+            srcSize: [160, 160]
+          - name: on
+            component: Sprite
+            image: switch.png
+            size: [32, 32]
+            srcPosition: [160, 160]
+            srcSize: [160, 160]

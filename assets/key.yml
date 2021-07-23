@@ -9,10 +9,12 @@
 
 component: Entity
 entityList: [Entity, Pickups]
-size: [32, 32]
 children:
-  - component: Sprite
-    image: key_${color}.png
-    size: [20, 20]
-  - component: Pickup
-    itemName: key_${color}
+  - component: Position
+    debugMode: false
+    children:
+      - component: Sprite
+        image: key_${color}.png
+        size: [20, 20]
+      - component: Pickup
+        itemName: key_${color}
