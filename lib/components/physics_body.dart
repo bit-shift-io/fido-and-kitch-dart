@@ -12,6 +12,7 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
   BodyDef bodyDef = BodyDef();
   List<FixtureDef> fixureDefs = [];
   Body? body;
+  AABB aabb = AABB();
 
   static const defaultColor = Color.fromARGB(128, 255, 0, 0);
   Paint paint = Paint()..color = defaultColor;
@@ -101,9 +102,42 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
     }
   }
 
+  AABB bodyAABB(Body body) {
+    AABB aabb = AABB();
+    bool first = true;
+    for (final fixture in body.fixtures) {
+      AABB shape_aabb = AABB();
+      fixture.shape.computeAABB(shape_aabb, Transform.zero(), 0);
+      if (first) {
+        aabb = shape_aabb;
+        first = false;
+      } else {
+        aabb.combine(shape_aabb);
+      }
+      /*
+      switch (fixture.type) {
+        case ShapeType.chain:
+          print("physics_body boundsFromBody TODO: chain shape");
+          break;
+        case ShapeType.circle:
+          print("physics_body boundsFromBody TODO: circle shape");
+          break;
+        case ShapeType.edge:
+          print("physics_body boundsFromBody TODO: edge shape");
+          break;
+        case ShapeType.polygon:
+          final polygon = fixture.shape as PolygonShape;
+          polygon.vertices.map((v) => v.toOffset()).toList(growable: false)
+          break;
+      }*/
+    }
+    return aabb;
+  }
+
   @override
   void resolve(Entity entity) {
     body = createBody();
+    aabb = bodyAABB(body!);
     debugMode = true; // adding child resets this value?!
   }
 

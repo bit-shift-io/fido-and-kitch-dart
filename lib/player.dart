@@ -273,11 +273,16 @@ class Player extends Entity {
   }
   
   Vector2 get positionBottomLeft {
-    return position!.getPosition(Anchor.bottomLeft);
+    //Vector2 c = position!.position;
+    Vector2 bl = physicsBody!.body!.position + Vector2(physicsBody!.aabb.lowerBound.x, physicsBody!.aabb.upperBound.y) + Vector2(-1, 0);
+    //Vector2 bl2 = position!.getPosition(Anchor.bottomLeft);
+    return bl;
   }
 
   Vector2 get positionBottomRight {
-    return position!.getPosition(Anchor.bottomRight);
+    Vector2 br = physicsBody!.body!.position + physicsBody!.aabb.upperBound + Vector2(1, 0);
+    return br;
+    //return position!.getPosition(Anchor.bottomRight);
   }
 
   // Return the tile under the player or null if not on the ground
