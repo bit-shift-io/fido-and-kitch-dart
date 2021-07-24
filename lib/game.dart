@@ -8,6 +8,7 @@ import 'package:flame/keyboard.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 
 import 'hetu_script.dart';
+import 'input.dart';
 import 'systems/pickup_system.dart';
 import 'tiled_map.dart';
 import 'player.dart';
@@ -17,7 +18,7 @@ import 'debug.dart';
 import 'factory.dart';
 
 // this is the world in ECS terms
-class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetector, KeyboardEvents {
+class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetector, KeyboardEvents, VerticalDragDetector, HorizontalDragDetector {
   final double squareSize = 20;
   bool running = true;
 
@@ -152,5 +153,67 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     }
 
     running = !running;
+  }
+
+  @override
+  void onHorizontalDragDown(DragDownInfo info) {
+    print('onHorizontalDragDown');
+  }
+
+  @override
+  void onHorizontalDragStart(DragStartInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.Start, Vector2.zero()));
+    }
+  }
+
+  @override
+  void onHorizontalDragUpdate(DragUpdateInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.Update, info.delta.global));
+    }
+  }
+
+  @override
+  void onHorizontalDragEnd(DragEndInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.End, info.velocity));
+    }
+  }
+
+  @override
+  void onHorizontalDragCancel() {
+    print('onHorizontalDragCancel');
+  }
+
+  @override
+  void onVerticalDragDown(DragDownInfo info) {
+    print('onVerticalDragDown');
+  }
+
+  @override
+  void onVerticalDragStart(DragStartInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.Start, Vector2.zero()));
+    }
+  }
+
+  @override
+  void onVerticalDragUpdate(DragUpdateInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.Update, info.delta.global));
+    }
+  }
+
+  @override
+  void onVerticalDragEnd(DragEndInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.End, info.velocity));
+    }
+  }
+
+  @override
+  void onVerticalDragCancel() {
+    print('onVerticalDragCancel');
   }
 }

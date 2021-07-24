@@ -12,7 +12,7 @@ import 'components/switch.dart';
 import 'tiled_map.dart';
 import 'components/extensions.dart';
 import 'player_states.dart';
-import 'input_action.dart';
+import 'input.dart';
 import 'utils/number.dart';
 
 class InputState {
@@ -228,6 +228,33 @@ class Player extends Entity {
   void onKeyEvent(e) {
     for (var a in inputActions.values) {
       a.onKeyEvent(e);
+    }
+  }
+
+  void onGestureEvent(e) {
+    switch (e.type) {
+      case GestureEventType.Drag: {
+        if (e.state == GestureState.End) {
+          inputActions['move_left']!.isKeyDown = false;
+          inputActions['move_right']!.isKeyDown = false;
+          inputActions['move_up']!.isKeyDown = false;
+          inputActions['move_down']!.isKeyDown = false;
+          return;
+        }
+        final v = e.velocity;
+        if (v.x < 0.0) {
+          inputActions['move_left']!.isKeyDown = true;
+        }
+        if (v.x > 0.0) {
+          inputActions['move_right']!.isKeyDown = true;
+        }
+        if (v.y < 0.0) {
+          inputActions['move_up']!.isKeyDown = true;
+        }
+        if (v.y > 0.0) {
+          inputActions['move_down']!.isKeyDown = true;
+        }
+      } break;
     }
   }
 

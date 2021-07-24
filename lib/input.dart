@@ -1,3 +1,4 @@
+import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
 
@@ -27,4 +28,22 @@ class InputAction {
       isKeyDown = e is RawKeyDownEvent;
     }*/
   }
+}
+
+enum GestureEventType {
+  Drag,
+}
+
+enum GestureState {
+  Start,
+  End,
+  Update
+}
+
+class GestureEvent {
+  GestureState state;
+  GestureEventType type;
+  Vector2 velocity;
+
+  GestureEvent(this.type, this.state, this.velocity);
 }
