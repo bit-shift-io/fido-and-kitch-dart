@@ -132,6 +132,7 @@ extension ExtraData on t.TileLayer {
       final bodyDef = BodyDef();
       bodyDef.position = offset + Vector2(size.width * 0.5, size.height * 0.5);
       var body = world.createBody(bodyDef);
+      body.userData = 'Tile';
       body.createFixtureFromShape(shape);
       return body;
   }
