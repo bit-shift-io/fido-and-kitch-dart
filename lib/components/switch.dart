@@ -51,6 +51,8 @@ class Switch extends BaseComponent with HasName, WithResolve, WithComponentVisit
 
   @override
   void resolve(Entity entity) {
+    this.resolveChildren(entity);
+    
     // notify children
     for (final c in components.values.toList()) {
       if (activeComponent != c) {

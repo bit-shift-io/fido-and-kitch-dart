@@ -62,3 +62,11 @@ double? toDouble(dynamic data) {
 
   return data.toDouble();
 }
+
+bool? toBool(dynamic data) {
+  if (data == null) {
+    return null;
+  }
+
+  return (data == true || data == 'true' || data == '1') ? true : false;
+}

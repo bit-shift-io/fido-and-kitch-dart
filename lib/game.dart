@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flame_forge2d/contact_callbacks.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:tiled/tiled.dart' as t;
@@ -9,6 +8,7 @@ import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 
+import 'components/area.dart';
 import 'components/physics_body.dart';
 import 'hetu_script.dart';
 import 'input.dart';
@@ -19,35 +19,6 @@ import 'components/system.dart';
 import 'components/extensions.dart';
 import 'debug.dart';
 import 'factory.dart';
-
-class PhysicsContactCallback implements ContactCallback<PhysicsBody, PhysicsBody> {
-  
-  @override
-  void begin(PhysicsBody ball, PhysicsBody wall, Contact contact) {
-    print("begin");
-  }
-
-  @override
-  void end(PhysicsBody ball, PhysicsBody wall, Contact contact) {
-    print("ennd");
-  }
-
-  @override
-  ContactTypes<PhysicsBody, PhysicsBody> types = ContactTypes<PhysicsBody, PhysicsBody>();
-
-  @override
-  void postSolve(PhysicsBody a, PhysicsBody b, Contact contact, ContactImpulse impulse) {
-    // TODO: implement postSolve
-    print("postSolve");
-  }
-
-  @override
-  void preSolve(PhysicsBody a, PhysicsBody b, Contact contact, Manifold oldManifold) {
-    // TODO: implement preSolve
-    print("preSolve");
-  }
-
-}
 
 // this is the world in ECS terms
 class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetector, KeyboardEvents, VerticalDragDetector, HorizontalDragDetector {
@@ -68,8 +39,11 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     // register anything needed here
     //await HetuScript().init();
 
+    // setup special contact callbacks
+    addContactCallback(AreaContactCallback());
+
     // load these from yaml?
-    addSystem(new PickupSystem());
+    //addSystem(new PickupSystem());
     
     map = TiledMap();
     add(map!);
@@ -79,8 +53,6 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
  
     map!.load('assets/maps/sandbox.tmx').then(onMapLoad);  
 
-    // test
-    addContactCallback(PhysicsContactCallback());
   }
 
   void addSystem(System system) {

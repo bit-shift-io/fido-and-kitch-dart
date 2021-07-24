@@ -7,6 +7,16 @@ import 'mixins.dart';
 import 'visitor.dart';
 
 extension Resolve on Component {
+  void resolveChildren(Entity entity) {
+    // notify children
+    if (this is BaseComponent) {
+      final bc = this as BaseComponent;
+      for (final c in bc.children) {
+        c.resolve(entity);
+      }
+    }
+  }
+
   void resolve(Entity entity) {
     if (this is HasName) {
       final hn = this as HasName;
@@ -24,15 +34,18 @@ extension Resolve on Component {
       final wr = this as WithResolve;
       wr.resolve(entity);
       // return here? this would mean WithResolve needs to notify all children
+      return;
     }
 
+    this.resolveChildren(entity);
+/*
     // notify children
     if (this is BaseComponent) {
       final bc = this as BaseComponent;
       for (final c in bc.children) {
         c.resolve(entity);
       }
-    }
+    }*/
   }
 
   visit(ComponentVisitor visitor) {

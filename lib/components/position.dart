@@ -36,6 +36,7 @@ class Position extends c.PositionComponent with HasName, WithResolve {
   }
 
   void resolve(Entity entity) {
+    this.resolveChildren(entity);
     debugMode = dm;
   }
 

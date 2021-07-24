@@ -17,3 +17,11 @@ children:
             component: Sprite
             image: teleporter_2.png
             size: [32, 32]
+  - component: Area
+    onEnter:
+      print("teleporter area onEnter")
+    onExit: 
+      print("teleporter area onExit")
+    shape:
+      type: box
+      size: [10, 15]

@@ -1,10 +1,91 @@
 import 'dart:ui';
 import 'package:flame_forge2d/flame_forge2d.dart' hide Position;
+export 'package:flame_forge2d/flame_forge2d.dart' hide Position;
+export 'package:flame_forge2d/contact_callbacks.dart';
 import 'package:flame/components.dart' as c;
 import '../game.dart';
 import '../utils/yaml.dart';
 import 'entity.dart';
 import 'mixins.dart';
+import 'extensions.dart';
+
+BodyDef bodyDefFromData(dynamic data) {
+  BodyDef def = BodyDef();
+  //def.userData = this;
+  def.linearDamping = toDouble(data['linearDamping']) ?? def.linearDamping;
+  def.fixedRotation = data['fixedRotation'] ?? def.fixedRotation;
+  def.angularDamping = toDouble(data['angularDamping']) ?? def.angularDamping;
+
+  final type = data['type'];
+  switch (type) {
+  case 'dynamic':
+    def.type = BodyType.dynamic;
+    break;
+
+  case 'kinematic':
+    def.type = BodyType.kinematic;
+    break;
+
+  case 'static':
+    def.type = BodyType.static;
+    break;
+  } 
+
+  return def;
+}
+
+
+Shape shapeFromData(dynamic data) {
+  final type = data['type'];
+
+  if (type == 'circle') {
+    CircleShape c = CircleShape();
+    c.radius = toDouble(data['radius']) ?? 10.0;
+    return c;
+  } else if (type == 'polygon') {
+    PolygonShape shape = PolygonShape();
+    return shape;
+  } else if (type == 'box') {
+    PolygonShape b = PolygonShape();
+    final size = vector2FromData(data['size']);
+    if (size != null) {
+      b.setAsBoxXY(size.x, size.y);
+    }
+    return b;
+  }
+
+  // return something at least!
+  print('PhysicsBody: Unknown shape: $type');
+  CircleShape c = CircleShape();
+  c.radius = 10.0;
+  return c;
+}
+
+FixtureDef fixtureDefFromData(dynamic data) {
+  Shape shape = shapeFromData(data['shape']);
+  FixtureDef def = FixtureDef(shape);
+  def.restitution = toDouble(data['restitution']) ?? def.restitution;
+  def.density = toDouble(data['density']) ?? def.density;
+  def.friction = toDouble(data['friction']) ?? def.friction;
+  def.isSensor = toBool(data['isSensor']) ?? def.isSensor;
+  return def;
+}
+
+AABB bodyAABB(Body body) {
+  AABB aabb = AABB();
+  bool first = true;
+  for (final fixture in body.fixtures) {
+    AABB shape_aabb = AABB();
+    fixture.shape.computeAABB(shape_aabb, Transform.zero(), 0);
+    if (first) {
+      aabb = shape_aabb;
+      first = false;
+    } else {
+      aabb.combine(shape_aabb);
+    }
+  }
+  return aabb;
+}
 
 class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, c.HasGameRef<Game> {
   c.PositionComponent? positionComponent;
@@ -33,109 +114,20 @@ class PhysicsBody extends c.BaseComponent with HasName, WithResolve, HasEntity, 
     }
   }
 
-  BodyDef bodyDefFromData(dynamic data) {
-    BodyDef def = BodyDef();
-    def.userData = this;
-    def.linearDamping = toDouble(data['linearDamping']) ?? def.linearDamping;
-    def.fixedRotation = data['fixedRotation'] ?? def.fixedRotation;
-    def.angularDamping = toDouble(data['angularDamping']) ?? def.angularDamping;
-
-    final type = data['type'];
-    switch (type) {
-    case 'dynamic':
-      def.type = BodyType.dynamic;
-      break;
-
-    case 'kinematic':
-      def.type = BodyType.kinematic;
-      break;
-
-    case 'static':
-      def.type = BodyType.static;
-      break;
-    } 
-
-    return def;
-  }
-
-  Shape shapeFromData(dynamic data) {
-    final type = data['type'];
-
-    if (type == 'circle') {
-      CircleShape c = CircleShape();
-      c.radius = toDouble(data['radius']) ?? 10.0;
-      return c;
-    } else if (type == 'polygon') {
-      PolygonShape shape = PolygonShape();
-      return shape;
-    } else if (type == 'box') {
-      PolygonShape b = PolygonShape();
-      final size = vector2FromData(data['size']);
-      if (size != null) {
-        b.setAsBoxXY(size.x, size.y);
-      }
-      return b;
-    }
-
-    // return something at least!
-    print('PhysicsBody: Unknown shape: $type');
-    CircleShape c = CircleShape();
-    c.radius = 10.0;
-    return c;
-  }
-
-  FixtureDef fixtureDefFromData(dynamic data) {
-    Shape shape = shapeFromData(data['shape']);
-    FixtureDef def = FixtureDef(shape);
-    def.restitution = toDouble(data['restitution']) ?? def.restitution;
-    def.density = toDouble(data['density']) ?? def.density;
-    def.friction = toDouble(data['friction']) ?? def.friction;
-    return def;
-  }
-
   Future<void> fromData(dynamic yaml) async {
     name = yaml['name'];
     debugMode = yaml['debugMode'] ?? this.debugMode;
     bodyDef = bodyDefFromData(yaml['bodyDef']);
+    bodyDef.userData = this;
     for (final fd in yaml['fixtureDefs']) {
       fixureDefs.add(fixtureDefFromData(fd));
     }
   }
 
-  AABB bodyAABB(Body body) {
-    AABB aabb = AABB();
-    bool first = true;
-    for (final fixture in body.fixtures) {
-      AABB shape_aabb = AABB();
-      fixture.shape.computeAABB(shape_aabb, Transform.zero(), 0);
-      if (first) {
-        aabb = shape_aabb;
-        first = false;
-      } else {
-        aabb.combine(shape_aabb);
-      }
-      /*
-      switch (fixture.type) {
-        case ShapeType.chain:
-          print("physics_body boundsFromBody TODO: chain shape");
-          break;
-        case ShapeType.circle:
-          print("physics_body boundsFromBody TODO: circle shape");
-          break;
-        case ShapeType.edge:
-          print("physics_body boundsFromBody TODO: edge shape");
-          break;
-        case ShapeType.polygon:
-          final polygon = fixture.shape as PolygonShape;
-          polygon.vertices.map((v) => v.toOffset()).toList(growable: false)
-          break;
-      }*/
-    }
-    return aabb;
-  }
-
   @override
   void resolve(Entity entity) {
+    this.resolveChildren(entity);
+
     body = createBody();
     aabb = bodyAABB(body!);
     debugMode = true; // adding child resets this value?!

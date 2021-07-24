@@ -12,5 +12,15 @@ children:
           stepTime: 0.2
           loop: true
           frames: 8
-        - component: Pickup
-          itemName: Coin
+    - component: Pickup
+      name: Pickup
+      itemName: Coin
+    - component: Area
+      onEnter:
+        print("coin area onEnter")
+        removeEntity(entity)
+        var pickupComp = findFirstChild(entity, 'Pickup')
+        givePickupToPlayer(pickupComp, otherEntity);
+      shape:
+        type: box
+        size: [10, 15]

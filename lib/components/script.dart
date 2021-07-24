@@ -18,7 +18,12 @@ class Script extends BaseComponent with HasName, HasEntity {
     HetuScript h = HetuScript();
     props['entity'] = entity;
     if (entity != null) {
-      props['game'] = entity!.gameRef;
+      try {
+        final gr = entity!.gameRef;
+        props['game'] = gr;
+      } catch (e) {
+        print(e);
+      }
     } else {
       print("Error: Script $name has no entity!");
     }

@@ -1,7 +1,9 @@
 import 'package:fido_and_kitch/components/entity.dart';
+import 'package:fido_and_kitch/components/pickup.dart';
 import 'package:flame/components.dart';
 import 'package:hetu_script/hetu_script.dart';
 
+import 'components/inventory.dart';
 import 'components/mixins.dart';
 import 'components/extensions.dart';
 import 'components/script.dart';
@@ -76,6 +78,28 @@ class HetuScript {
         if (s != null) {
           s.reset();
         }
+      },
+      'removeEntity': (Entity? e) {
+        if (e == null) {
+          return;
+        }
+
+        final gameRef = e.gameRef;
+        gameRef.remove(e);
+        e.removeFromEntityLists(gameRef);
+      },
+      'givePickupToPlayer': (Pickup? pickup, Entity? player) {
+        if (pickup == null || player == null) {
+          return false;
+        }
+
+        Inventory? playerInventory = player.findFirstChildByClass<Inventory>();
+        if (playerInventory != null) {
+          print('Player picked up ${pickup.itemName}');
+          playerInventory.addItem(pickup.itemName, count: pickup.itemCount);
+        }
+
+        return true;
       }
   };
 /*
