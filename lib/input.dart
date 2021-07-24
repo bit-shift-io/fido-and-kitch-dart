@@ -32,6 +32,7 @@ class InputAction {
 
 enum GestureEventType {
   Drag,
+  Tap
 }
 
 enum GestureState {

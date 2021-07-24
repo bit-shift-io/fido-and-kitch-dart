@@ -22,6 +22,13 @@
             "request": "launch",
             "program": "lib/main.dart",
             "deviceId": "macos"
+        },
+        {
+            "name": "Flutter: Fabian Android",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "294361199805"
         }
     ]
 }

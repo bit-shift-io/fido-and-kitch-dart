@@ -121,7 +121,18 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
   }
 
   @override
+  void onTapDown(TapDownInfo info) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Tap, GestureState.Start, Vector2.zero()));
+    }
+  }
+
+  @override
   void onTapUp(details) {
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Tap, GestureState.End, Vector2.zero()));
+    }
+
     /*
     final touchArea = Rect.fromCenter(
       center: details.localPosition,
@@ -157,7 +168,7 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
   @override
   void onHorizontalDragDown(DragDownInfo info) {
-    print('onHorizontalDragDown');
+    //print('onHorizontalDragDown');
   }
 
   @override
@@ -183,12 +194,12 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
   @override
   void onHorizontalDragCancel() {
-    print('onHorizontalDragCancel');
+    //print('onHorizontalDragCancel');
   }
 
   @override
   void onVerticalDragDown(DragDownInfo info) {
-    print('onVerticalDragDown');
+    //print('onVerticalDragDown');
   }
 
   @override
@@ -214,6 +225,6 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
   @override
   void onVerticalDragCancel() {
-    print('onVerticalDragCancel');
+    //print('onVerticalDragCancel');
   }
 }

@@ -255,6 +255,15 @@ class Player extends Entity {
           inputActions['move_down']!.isKeyDown = true;
         }
       } break;
+
+      case GestureEventType.Tap: {
+        if (e.state == GestureState.End) {
+          inputActions['use']!.isKeyDown = false;
+          return;
+        }
+
+        inputActions['move_left']!.isKeyDown = true;
+      } break;
     }
   }
 
