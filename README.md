@@ -8,14 +8,6 @@ Run:
 
     ./install.sh
 
-For now there are some additional steps required:
-
-In hetu-script-autobbinding/pubspec.yaml add the dependency:
-
-    meta: <=1.3.0
-
-then build hetu-script-autobbinding/build.sh
-
 To generate the autobindings run:
 
     ./script-generate.sh
@@ -26,7 +18,7 @@ Via console:
 
     flutter run
 
-Better yet, use VSCode, just open it up and use the Run and debug options.
+Better yet, use VSCode with dart and flutter extension, just open it up and use the Run and debug options.
 
 ## Map Editor
 
