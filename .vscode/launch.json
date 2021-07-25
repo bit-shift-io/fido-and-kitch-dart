@@ -5,9 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter: Attach to Device",
+            "name": "Flutter: Macos",
             "type": "dart",
-            "request": "attach"
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "macos"
+        },
+        {
+            "name": "Flutter: Linux",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "linux"
+        },
+        {
+            "name": "Flutter: Windows",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "windows"
+        },
+        {
+            "name": "Flutter: Fabian Android",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "294361199805"
         },
         {
             "name": "Flutter: Chrome",
@@ -17,18 +40,9 @@
             "deviceId": "chrome"
         },
         {
-            "name": "Flutter: Macos",
+            "name": "Flutter: Attach to Device",
             "type": "dart",
-            "request": "launch",
-            "program": "lib/main.dart",
-            "deviceId": "macos"
+            "request": "attach"
         },
-        {
-            "name": "Flutter: Fabian Android",
-            "type": "dart",
-            "request": "launch",
-            "program": "lib/main.dart",
-            "deviceId": "294361199805"
-        }
     ]
 }

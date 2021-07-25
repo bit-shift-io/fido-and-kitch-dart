@@ -1,17 +1,27 @@
 #!/bin/bash
 # https://github.com/hetu-script/hetu-script-autobinding/issues/5#issuecomment-858601380
 
-yay --noconfirm --needed -S flutter chromium ninja
-export CHROME_EXECUTABLE=/usr/bin/chromium
-flutter pub get
 
-# config flutter
-# https://www.rockyourcode.com/how-to-get-flutter-and-android-working-on-arch-linux/
-sudo groupadd flutterusers
-sudo gpasswd -a $USER flutterusers
-sudo chown -R :flutterusers /opt/flutter
-sudo chmod -R g+w /opt/flutter/
-sudo chown -R $USER:flutterusers /opt/flutter
+# one time setup of flutter for arch linux
+if false; then
+  yay --noconfirm --needed -S flutter 
+  yay -S clang
+
+  # only if you want to run in web browser (no recommended)
+  #yay -S chromium ninja
+  #export CHROME_EXECUTABLE=/usr/bin/chromium
+
+  # config flutter
+  # https://www.rockyourcode.com/how-to-get-flutter-and-android-working-on-arch-linux/
+  sudo groupadd flutterusers
+  sudo gpasswd -a $USER flutterusers
+  sudo chown -R :flutterusers /opt/flutter
+  sudo chmod -R g+w /opt/flutter/
+  sudo chown -R $USER:flutterusers /opt/flutter
+fi
+
+
+flutter pub get
 
 # setup hetu script
 # https://hetu.dev/
@@ -45,14 +55,13 @@ dart pub get
 ./build.sh
 cd ..
 
+
 #mkdir -p bin
 #dart compile exe lib/main.dart -o bin/ht-binding-generator --no-sound-null-safety
 # hetu script complete
 
 # compile
-flutter config --enable-linux-desktop
 flutter run
-flutter doctor
 
 echo -e '\n\ninstall complete'
 notify-send 'Install' 'Install completed'
