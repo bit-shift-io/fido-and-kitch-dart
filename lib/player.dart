@@ -336,7 +336,7 @@ class Player extends Entity {
   Tile? getGroundTile() {
 
     TiledMap map = gameRef.map!;
-    final groundDistVec = Vector2(0, 2.0);
+    final groundDistVec = Vector2(0, 5.0);
     // what tile is at the players feet?
     Vector2 pos = positionBottomLeft + groundDistVec;
 

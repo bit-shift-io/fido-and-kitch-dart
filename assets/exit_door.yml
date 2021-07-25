@@ -5,32 +5,6 @@ children:
     debugMode: false
     size: [32, 32]
     children:
-      - component: Script
-        name: toggle
-        script: >
-          var switchComponent = findFirstChild(entity, 'state')
-          var currentState = getName(getActiveComponent(c))
-          if (state == 'off') {
-            setActiveComponent(switchComponent, 'on_to_off')
-            print('The exit_door has been set to state on_to_off')
-          }
-          if (state == 'on') {
-            setActiveComponent(switchComponent, 'off_to_on')
-            print('The exit_door has been set to state off_to_on')
-          }
-      - component: Area
-        entityLayers: [Player]
-        onEnterScript: >
-          print('some player entered the area')
-          playerExit(player)
-        onExitScript: >
-          print('some player exited the area')
-      - component: Usable
-        children:
-          - component: Script
-            name: OnUse
-            script: >
-                print('todo')
       - component: Switch
         name: state
         activeComponent: off
@@ -59,7 +33,9 @@ children:
             onComplete: >
               print('off_to_on animation is now finished....')
               var switch = findFirstChild(entity, 'state')
-              setActiveComponent(switch, 'on');
+              setActiveComponent(switch, 'on')
+              var area = findFirstChild(entity, 'area')
+              setEnabled(area, true)
           - component: SpriteAnimation
             name: on_to_off
             image: door.png
@@ -72,4 +48,34 @@ children:
             onComplete: >
               print('on_to_off animation is now finished....')
               var switch = findFirstChild(entity, 'state')
-              setActiveComponent(switch, 'off');
+              setActiveComponent(switch, 'off')
+              var area = findFirstChild(entity, 'area')
+              setEnabled(area, false)
+  - component: Script
+    name: toggle
+    script: >
+      var switchComponent = findFirstChild(entity, 'state')
+      var currentState = getName(getActiveComponent(c))
+      if (state == 'off') {
+        setActiveComponent(switchComponent, 'on_to_off')
+        print('The exit_door has been set to state on_to_off')
+      }
+      if (state == 'on') {
+        setActiveComponent(switchComponent, 'off_to_on')
+        print('The exit_door has been set to state off_to_on')
+      }
+  - component: Area
+    name: area
+    enabled: false
+    onEnter: >
+      print('some player entered the area')
+      playerExit(otherEntity)
+    shape:
+      type: box
+      size: [15, 15]
+  - component: Usable
+    children:
+      - component: Script
+        name: OnUse
+        script: >
+            print('todo')

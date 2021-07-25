@@ -105,13 +105,13 @@ class Area extends c.BaseComponent with HasName, WithResolve, HasEntity, c.HasGa
   }
 
   void onEnterContact(PhysicsBody body) {
-    if (onEnter != null) {
+    if (onEnter != null && enabled == true) {
       onEnter!.eval({'otherBody': body, 'otherEntity': body.entity});
     }
   }
 
   void onExitContact(PhysicsBody body) {
-    if (onExit != null) {
+    if (onExit != null && enabled == true) {
       onExit!.eval({'otherBody': body, 'otherEntity': body.entity});
     }
   }

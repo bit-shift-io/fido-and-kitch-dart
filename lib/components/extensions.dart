@@ -68,7 +68,7 @@ extension AddChildren on BaseComponent {
     }
   }
 
-  T? findFirstChild<T>(String name) {
+  T? findFirstChild<T>(String name, {bool recursive = true}) {
     for (final c in children) {
       if (c is HasName) {
         HasName cname = c as HasName;
@@ -77,6 +77,16 @@ extension AddChildren on BaseComponent {
         }
       }
     }
+
+    for (final c in children) {
+      if (c is BaseComponent) {
+        T? t = c.findFirstChild(name, recursive: recursive);
+        if (t != null) {
+          return t;
+        }
+      }
+    }
+
     return null;
   }
 

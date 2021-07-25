@@ -202,7 +202,9 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
   @override
   void onHorizontalDragCancel() {
-    //print('onHorizontalDragCancel');
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.End, Vector2.zero()));
+    }
   }
 
   @override
@@ -233,6 +235,8 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
 
   @override
   void onVerticalDragCancel() {
-    //print('onVerticalDragCancel');
+    for (Player p in players) {
+      p.onGestureEvent(GestureEvent(GestureEventType.Drag, GestureState.End, Vector2.zero()));
+    }
   }
 }

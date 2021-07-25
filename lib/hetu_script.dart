@@ -3,6 +3,7 @@ import 'package:fido_and_kitch/components/pickup.dart';
 import 'package:flame/components.dart';
 import 'package:hetu_script/hetu_script.dart';
 
+import 'components/area.dart';
 import 'components/inventory.dart';
 import 'components/mixins.dart';
 import 'components/extensions.dart';
@@ -22,7 +23,7 @@ class HetuScript {
   HetuScript._internal();
 
   Map<String, Function> externalFunctions = {
-      'playerExit': (Game game) {
+      'playerExit': (Entity? player) {
         print('PLAYER EXITED');
       },
       'findFirstChild': (Component? c, String name) {
@@ -39,7 +40,10 @@ class HetuScript {
       'setActiveComponent': (Switch s, String name) {
         s.setActiveComponent(name);
       },
-      'getActiveComponent': (Switch s) {
+      'getActiveComponent': (Switch? s) {
+        if (s == null) {
+          return null;
+        }
         return s.activeComponent;
       },
       'getName': (Component c) {
@@ -100,6 +104,11 @@ class HetuScript {
         }
 
         return true;
+      },
+      'setEnabled': (Component? c, bool enabled) {
+        if (c is Area) {
+          c.enabled = enabled;
+        }
       }
   };
 /*
