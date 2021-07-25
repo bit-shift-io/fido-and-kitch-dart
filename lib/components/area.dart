@@ -9,7 +9,7 @@ import 'position.dart';
 import '../utils/script.dart';
 import 'script.dart';
 
-class AreaContactCallback implements ContactCallback<PhysicsBody, Area> {
+class AreaPhysicsBodyContactCallback implements ContactCallback<PhysicsBody, Area> {
   
   @override
   void begin(PhysicsBody a, Area b, Contact contact) {
@@ -31,6 +31,35 @@ class AreaContactCallback implements ContactCallback<PhysicsBody, Area> {
 
   @override
   void preSolve(PhysicsBody a, Area b, Contact contact, Manifold oldManifold) {
+    print("preSolve");
+  }
+
+}
+
+
+class AreaAreaContactCallback implements ContactCallback<Area, Area> {
+  
+  @override
+  void begin(Area a, Area b, Contact contact) {
+    //b.onEnterContact(a);
+    print("area contact ara!");
+  }
+
+  @override
+  void end(Area a, Area b, Contact contact) {
+    //b.onExitContact(a);
+  }
+
+  @override
+  ContactTypes<Area, Area> types = ContactTypes<Area, Area>();
+
+  @override
+  void postSolve(Area a, Area b, Contact contact, ContactImpulse impulse) {
+    //print("postSolve");
+  }
+
+  @override
+  void preSolve(Area a, Area b, Contact contact, Manifold oldManifold) {
     //print("preSolve");
   }
 
@@ -48,6 +77,8 @@ class Area extends c.BaseComponent with HasName, WithResolve, HasEntity, c.HasGa
   PhysicsBody physicsBody = new PhysicsBody();
 
   Future<void> fromData(dynamic data) async {
+    name = data['name'];
+
     //await super.fromData(data);
     enabled = data['enabled'] ?? this.enabled;
     addChildIf(onEnter = scriptComponentFromString('onEnter', data['onEnter']));
@@ -55,6 +86,8 @@ class Area extends c.BaseComponent with HasName, WithResolve, HasEntity, c.HasGa
 
     BodyDef bodyDef = BodyDef();
     bodyDef.userData = this;
+    bodyDef.type = BodyType.dynamic; // incase of moving areas
+    bodyDef.gravityScale = 0;
     physicsBody.bodyDef = bodyDef;
     Shape shape = shapeFromData(data['shape']);
     FixtureDef fixtureDef = FixtureDef(shape);

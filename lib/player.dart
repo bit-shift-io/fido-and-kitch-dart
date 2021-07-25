@@ -4,6 +4,7 @@ import 'package:flame/components.dart' hide SpriteAnimation;
 import 'package:flame_forge2d/flame_forge2d.dart' hide Position;
 import 'package:flutter/material.dart' hide Switch;
 
+import 'components/area.dart';
 import 'components/entity.dart';
 import 'components/physics_body.dart';
 import 'components/position.dart';
@@ -25,6 +26,7 @@ class Player extends Entity {
   Switch? animations;
   PhysicsBody? physicsBody;
   Position? position;
+  Area? useSensor;
 
   Map<String, InputAction> inputActions = Map();
 
@@ -88,6 +90,11 @@ class Player extends Entity {
       return;
     }
 
+    useSensor = findFirstChild<Area>('UseSensor');
+    if (useSensor == null) {
+      print("Couldn't find Area named 'UseSensor'");
+    }
+
 
     addInputAction('move_left', InputAction(keyLabel: 'ArrowLeft'));
     addInputAction('move_right', InputAction(keyLabel: 'ArrowRight'));
@@ -136,7 +143,11 @@ class Player extends Entity {
       currentState!.update(dt);
     }
 
-    position!.position = physicsBody!.body!.position;
+    final pos = physicsBody!.body!.position;
+    position!.position = pos;
+    if (useSensor != null) {
+      useSensor!.physicsBody!.body!.setPosition(pos);
+    }
 
     super.update(dt);
   }

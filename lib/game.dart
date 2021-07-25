@@ -40,7 +40,8 @@ class Game extends Forge2DGame with HasCollidables, DoubleTapDetector, TapDetect
     //await HetuScript().init();
 
     // setup special contact callbacks
-    addContactCallback(AreaContactCallback());
+    addContactCallback(AreaPhysicsBodyContactCallback());
+    addContactCallback(AreaAreaContactCallback());
 
     // load these from yaml?
     //addSystem(new PickupSystem());

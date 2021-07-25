@@ -67,6 +67,11 @@ children:
           restitution: 0.0
           density: 1.0
           friction: 0.0
+    - component: Area
+      name: UseSensor
+      shape:
+        type: box
+        size: [20, 20]
 states:
   - name: Idle
   - name: Walk
