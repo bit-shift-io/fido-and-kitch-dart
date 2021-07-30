@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="36" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="15">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="36" height="22" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="17">
  <tileset firstgid="1" source="../generic_platformer_tiles.tsx"/>
  <layer id="1" name="ground" width="36" height="22">
   <data encoding="base64">
@@ -62,5 +62,11 @@
     <property name="color" value="green"/>
    </properties>
   </object>
+  <object id="15" type="teleporter" gid="123" x="1120" y="160" width="32" height="32">
+   <properties>
+    <property name="target" type="object" value="16"/>
+   </properties>
+  </object>
+  <object id="16" type="teleporter" gid="123" x="1120" y="32" width="32" height="32"/>
  </objectgroup>
 </map>
